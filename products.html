@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookStore - Sản phẩm</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body id="page-products">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">BookStore</a>
+      <nav class="main-nav">
+        <a href="products.html">Sản phẩm</a>
+        <a href="index.html#about">Giới thiệu</a>
+      </nav>
+      <div class="header-actions">
+        <input id="search-input" class="search-input" placeholder="Tìm sách, tác giả..." />
+        <a id="cart-link" href="cart.html" class="icon-btn">🛒 <span id="cart-count">0</span></a>
+        <a id="auth-link" href="login.html" class="btn-auth">Đăng nhập</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="filters">
+      <div>
+        <label>Thể loại</label>
+        <select id="filter-category">
+          <option value="">Tất cả</option>
+        </select>
+      </div>
+      <div>
+        <label>Sắp xếp</label>
+        <select id="sort-select">
+          <option value="default">Mặc định</option>
+          <option value="price-asc">Giá: thấp → cao</option>
+          <option value="price-desc">Giá: cao → thấp</option>
+          <option value="newest">Mới nhất</option>
+        </select>
+      </div>
+      <div>
+        <label>Khoảng giá</label>
+        <input id="price-min" placeholder="từ" type="number" />
+        <input id="price-max" placeholder="đến" type="number" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Kết quả</h2>
+      <div id="product-grid" class="grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year2"></span> BookStore.</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

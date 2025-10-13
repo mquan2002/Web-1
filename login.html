@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookStore - Đăng nhập</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body id="page-login">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">BookStore</a>
+    </div>
+  </header>
+
+  <main class="container auth-container">
+    <div class="auth-card">
+      <h2>Đăng nhập</h2>
+      <input id="login-username" placeholder="Tên đăng nhập (email)" />
+      <input id="login-password" placeholder="Mật khẩu" type="password" />
+      <button id="btn-login" class="btn primary">Đăng nhập</button>
+
+      <hr />
+      <h3>Chưa có tài khoản? Đăng ký</h3>
+      <input id="reg-username" placeholder="Email" />
+      <input id="reg-password" placeholder="Mật khẩu" type="password" />
+      <button id="btn-register" class="btn">Đăng ký</button>
+      <p id="auth-msg" class="muted"></p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year5"></span> BookStore.</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

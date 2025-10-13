@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookStore - Trang chủ</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body id="page-home">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">BookStore</a>
+      <nav class="main-nav">
+        <a href="products.html">Sản phẩm</a>
+        <a href="index.html#about">Giới thiệu</a>
+        <a href="index.html#contact">Liên hệ</a>
+      </nav>
+      <div class="header-actions">
+        <button id="btn-search" class="icon-btn">🔍</button>
+        <a id="cart-link" href="cart.html" class="icon-btn">🛒 <span id="cart-count">0</span></a>
+        <a id="auth-link" href="login.html" class="btn-auth">Đăng nhập</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h1>Thư viện trực tuyến — sách cho mọi nhà</h1>
+          <p>Mua sách nhanh, giao tận nhà. Nhiều đầu sách mới mỗi tuần.</p>
+          <a class="btn primary" href="products.html">Khám phá ngay</a>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1200&q=80&auto=format&fit=crop" alt="books">
+        </div>
+      </div>
+    </section>
+
+    <section class="container section">
+      <h2>Sách nổi bật</h2>
+      <div id="featured-list" class="grid"></div>
+    </section>
+
+    <section id="about" class="container section">
+      <h2>Về BookStore</h2>
+      <p>BookStore demo — dự án học tập: hiển thị, tìm kiếm, giỏ hàng, đăng nhập giả (LocalStorage).</p>
+    </section>
+
+    <section id="contact" class="container section">
+      <h2>Liên hệ</h2>
+      <p>Email: bookstore@example.com — Điện thoại: 0123 456 789</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year"></span> BookStore. All rights reserved.</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "b001",
+    "title": "Những người khốn khổ",
+    "author": "Victor Hugo",
+    "category": "Văn học",
+    "price": 120000,
+    "cover": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tác phẩm kinh điển về số phận con người và xã hội."
+  },
+  {
+    "id": "b002",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "category": "Phát triển bản thân",
+    "price": 195000,
+    "cover": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=60&auto=format&fit=crop",
+    "desc": "Cẩm nang thay đổi thói quen từng bước, hiệu quả."
+  },
+  {
+    "id": "b003",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": "Công nghệ",
+    "price": 250000,
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=60&auto=format&fit=crop",
+    "desc": "Nguyên tắc viết mã sạch, dễ bảo trì."
+  },
+  {
+    "id": "b004",
+    "title": "Tuổi trẻ đáng giá bao nhiêu",
+    "author": "Rosie Nguyễn",
+    "category": "Phát triển bản thân",
+    "price": 99000,
+    "cover": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=60&auto=format&fit=crop",
+    "desc": "Sách dành cho giới trẻ muốn định hướng tương lai."
+  },
+  {
+    "id": "b005",
+    "title": "Đắc nhân tâm",
+    "author": "Dale Carnegie",
+    "category": "Kỹ năng sống",
+    "price": 85000,
+    "cover": "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800&q=60&auto=format&fit=crop",
+    "desc": "Kỹ năng giao tiếp và tạo ảnh hưởng."
+  },
+  {
+    "id": "b006",
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "category": "Lịch sử",
+    "price": 220000,
+    "cover": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=60&auto=format&fit=crop",
+    "desc": "Lược sử loài người một cách hấp dẫn."
+  },
+  {
+    "id": "b007",
+    "title": "Lập trình JavaScript nâng cao",
+    "author": "Nguyễn Văn A",
+    "category": "Công nghệ",
+    "price": 160000,
+    "cover": "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&q=60&auto=format&fit=crop",
+    "desc": "Từ cơ bản đến nâng cao trong JS."
+  },
+  {
+    "id": "b008",
+    "title": "Truyện ngắn chọn lọc",
+    "author": "Nhiều tác giả",
+    "category": "Văn học",
+    "price": 78000,
+    "cover": "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tuyển tập truyện ngắn thú vị."
+  },
+  {
+    "id": "b009",
+    "title": "Thiết kế UX cho người mới",
+    "author": "Lê Thị B",
+    "category": "Thiết kế",
+    "price": 135000,
+    "cover": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=60&auto=format&fit=crop",
+    "desc": "Cẩm nang cơ bản để bắt đầu UX/UI."
+  },
+  {
+    "id": "b010",
+    "title": "Kỹ năng quản lý thời gian",
+    "author": "Brian Tracy",
+    "category": "Kỹ năng sống",
+    "price": 76000,
+    "cover": "https://images.unsplash.com/photo-1518972559570-8a84b5d2b48f?w=800&q=60&auto=format&fit=crop",
+    "desc": "Phương pháp tối ưu hóa thời gian làm việc."
+  }
+]
