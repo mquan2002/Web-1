@@ -59,7 +59,7 @@ function createProductCard(book){
     <div class="product-meta">${book.author} • ${book.category}</div>
     <div class="price">${money(book.price)}</div>
     <div style="margin-top:10px;display:flex;gap:8px">
-      <a class="btn" href="detail.html?id=${book.id}">Xem</a>
+      <a class="btn" href="details.html?id=${book.id}">Xem</a>
       <button class="btn primary add-btn" data-id="${book.id}">Thêm vào giỏ</button>
     </div>
   `;
@@ -224,24 +224,153 @@ function renderCart(){
     saveCart([]); updateCartCount(); renderCart();
   });
 }
+/* ---------- Validation ---------- */
+function validateEmail(email) {
+  const emailRegex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return emailRegex.test(email);
+}
 
-/* ---------- Auth (simple) ---------- */
+function validatePassword(password) {
+  return password.length >= 6;
+}
+function showError(inputEl, message) {
+  let errorEl = inputEl.nextElementSibling;
+  if (!errorEl || !errorEl.classList.contains('error-msg')) {
+    errorEl = document.createElement('div');
+    errorEl.className = 'error-msg';
+    errorEl.style.color = '#e81123';
+    errorEl.style.fontSize = '0.85rem';
+    errorEl.style.marginTop = '4px';
+    inputEl.parentNode.insertBefore(errorEl, inputEl.nextSibling);
+  }
+  errorEl.textContent = message;
+  inputEl.style.borderColor = '#e81123';
+}
+function clearError(inputEl) {
+  const errorEl = inputEl.nextElementSibling;
+  if (errorEl && errorEl.classList.contains('error-msg')) {
+    errorEl.textContent = '';
+  }
+  inputEl.style.borderColor = '#e6eef2';
+}
+
+/* ---------- Auth  ---------- */
 function initAuthPage(){
   document.getElementById('year5').textContent = new Date().getFullYear();
+
+  const loginEmail = $('#login-username');
+  const loginPass = $('#login-password');
+  const regEmail = $('#reg-username');
+  const regPass = $('#reg-password');
+  const authMsg = $('#auth-msg');
+
+
+  // login email and password validation onblur
+    loginEmail.addEventListener('blur', () => {
+    const val = loginEmail.value.trim();
+    if (val === '') {
+      showError(loginEmail, 'Email không được trống');
+    } else {
+      clearError(loginEmail);
+    }
+  });
+    loginPass.addEventListener('blur', () => {
+    const val = loginPass.value;
+    if (val === '') {
+      showError(loginPass, 'Mật khẩu không được để trống');
+    } else {
+      clearError(loginPass);
+    }
+  });
+
+    // register email and password validation onblur
+    regEmail.addEventListener('blur', () => {
+    const val = regEmail.value.trim();
+    if (val === '') {
+      showError(regEmail, 'Email không được để trống');
+    } else if (!validateEmail(val)) {
+      showError(regEmail, 'Email không hợp lệ');
+    } else {
+      clearError(regEmail);
+    }
+  });
+    regPass.addEventListener('blur', () => {
+    const val = regPass.value;
+    if (val === '') {
+      showError(regPass, 'Mật khẩu không được để trống');
+    } else if (!validatePassword(val)) {
+      showError(regPass, 'Mật khẩu phải có ít nhất 6 ký tự');
+    } else {
+      clearError(regPass);
+    }
+  });
+
+    loginEmail.addEventListener('input', () => {
+      if (loginEmail.value.trim() !== '') clearError(loginEmail);
+    });
+    loginPass.addEventListener('input', () => {
+      if (loginPass.value !== '') clearError(loginPass);
+    });
+    regEmail.addEventListener('input', () => {
+      if (regEmail.value.trim() !== '') clearError(regEmail);
+    });
+    regPass.addEventListener('input', () => {
+      if (regPass.value !== '') clearError(regPass);
+    });
+
   $('#btn-register').addEventListener('click', ()=>{
     const email = $('#reg-username').value.trim();
     const pass = $('#reg-password').value;
-    if(!email || !pass) return $('#auth-msg').textContent = 'Vui lòng nhập đầy đủ.';
+    
+    authMsg.textContent = '';
+    authMsg.style.color = '';
+    let hasError = false;
+
+    if (!email){
+      showError(regEmail, 'Email không được để trống');
+      hasError = true;
+    } else if (!validateEmail(email)) {
+      showError(regEmail, 'Email không hợp lệ');
+      hasError = true;
+    } else {
+      clearError(regEmail);
+    }
+    if (!pass){
+      showError(regPass, 'Mật Khẩu không được trống');
+      hasError = true;
+    } else if (!validatePassword(pass)) {
+      showError(regPass, 'Mật khẩu phải có ít nhất 6 ký tự');
+      hasError = true;
+    } else {
+      clearError(regPass);
+    }
+
+    if (hasError) return;
+
     const users = getUsers();
     if(users.find(u=>u.username===email)) return $('#auth-msg').textContent = 'Tài khoản đã tồn tại.';
     users.push({username: email, password: pass});
     saveUsers(users);
     $('#auth-msg').textContent = 'Đăng ký thành công. Bạn có thể đăng nhập.';
+    $('#auth-msg').style.color = '#00a884';
     $('#reg-username').value=''; $('#reg-password').value='';
+    clearError(regEmail); clearError(regPass);
   });
   $('#btn-login').addEventListener('click', ()=>{
     const email = $('#login-username').value.trim();
     const pass = $('#login-password').value;
+
+    authMsg.textContent = '';
+    let hasError = false;
+    if(!email){
+      showError(loginEmail, "Email không được để trống");
+      hasError=true;
+    }
+    if(!pass){
+      showError(loginPass, "Mật khẩu không được để trống");
+      hasError=true;
+    }
+    if (hasError) return;
     const users = getUsers();
     const u = users.find(x=>x.username===email && x.password===pass);
     if(!u) return $('#auth-msg').textContent = 'Sai thông tin đăng nhập.';
