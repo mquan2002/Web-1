@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Thanh toán - BookStore</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="page-checkout">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">BookStore</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Thông tin thanh toán</h2>
+    <form id="checkout-form" class="checkout-form">
+      <label>Họ tên:</label>
+      <input type="text" id="fullname" required>
+
+      <label>Số điện thoại:</label>
+      <input type="tel" id="phone" required>
+
+      <label>Địa chỉ giao hàng:</label>
+      <textarea id="address" required></textarea>
+
+      <label>Phương thức thanh toán:</label>
+      <select id="payment">
+        <option value="cod">Thanh toán khi nhận hàng</option>
+        <option value="bank">Chuyển khoản ngân hàng</option>
+      </select>
+
+      <div id="order-summary" class="cart-summary"></div>
+      <button type="submit" class="btn primary">Xác nhận thanh toán</button>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year6"></span> BookStore.</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

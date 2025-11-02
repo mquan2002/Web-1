@@ -249,7 +249,7 @@ function renderCart(){
     <div class="cart-summary">
       <div class="cart-row"><div>Tạm tính</div><div>${money(total)}</div></div>
       <div style="padding-top:10px;text-align:right">
-        <button id="checkout" class="btn primary">Thanh toán (mô phỏng)</button>
+        <button id="checkout" class="btn primary">Thanh toán</button>
       </div>
     </div>
   `;
@@ -274,9 +274,13 @@ function renderCart(){
   // checkout
   $('#checkout').addEventListener('click', ()=>{
     const auth = getAuth();
-    if(!auth){ if(confirm('Bạn cần đăng nhập để thanh toán. Đến trang đăng nhập?')) location.href='login.html'; return; }
-    alert('Thanh toán mô phỏng thành công. Cám ơn bạn, ' + auth.username);
-    saveCart([]); updateCartCount(); renderCart();
+    if (!auth) {
+      if (confirm('Bạn cần đăng nhập để thanh toán.\nChuyển đến trang đăng nhập?')) {
+        location.href = 'login.html';
+      }
+      return;
+    }
+    location.href = 'checkout.html';
   });
 }
 /* ---------- Validation ---------- */
@@ -403,7 +407,11 @@ function initAuthPage(){
     if (hasError) return;
 
     const users = getUsers();
-    if(users.find(u=>u.username===email)) return $('#auth-msg').textContent = 'Tài khoản đã tồn tại.'; authMsg.style.color = '#e81123';
+    if(users.find(u=>u.username===email)){
+      authMsg.textContent = 'Tài khoản đã tồn tại.'; 
+      authMsg.style.color = '#e81123';
+      return;
+    }
     users.push({username: email, password: pass});
     saveUsers(users);
     $('#auth-msg').textContent = 'Đăng ký thành công. Bạn có thể đăng nhập.';
@@ -431,7 +439,11 @@ function initAuthPage(){
     if (hasError) return;
     const users = getUsers();
     const u = users.find(x=>x.username===email && x.password===pass);
-    if(!u) return $('#auth-msg').textContent = 'Sai thông tin đăng nhập.'; authMsg.style.color = '#e81123';
+    if(!u){
+      authMsg.textContent = 'Sai thông tin đăng nhập.'; 
+      authMsg.style.color = '#e81123';
+      return;
+    }
     setAuth({username: u.username});
     location.href = 'index.html';
   });
