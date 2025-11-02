@@ -65,7 +65,6 @@ function createProductCard(book){
   `;
   return div;
 }
-
 /* ---------- Home page ---------- */
 async function initHome(){
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -82,6 +81,10 @@ async function initHome(){
 }
 
 /* ---------- Products page ---------- */
+let currentPage = 1;
+const itemsPerPage = 8;
+let filteredBooks = [];
+
 function populateCategories(selectEl){
   const cats = Array.from(new Set(BOOKS.map(b=>b.category)));
   cats.forEach(c=>{
@@ -89,11 +92,60 @@ function populateCategories(selectEl){
     selectEl.appendChild(opt);
   });
 }
+
 function renderProducts(list){
+  filteredBooks = list;
   const grid = $('#product-grid');
   grid.innerHTML = '';
-  list.forEach(b => grid.appendChild(createProductCard(b)));
+  
+  // Calc Pagination
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const endIdx = startIdx + itemsPerPage;
+  const paginatedList = list.slice(startIdx, endIdx);
+  
+  paginatedList.forEach(b => grid.appendChild(createProductCard(b)));
+  
+  renderPagination(list.length);
 }
+
+function renderPagination(totalItems){
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  let paginationEl = $('#pagination');
+  
+  if(!paginationEl){
+    paginationEl = document.createElement('div');
+    paginationEl.id = 'pagination';
+    paginationEl.className = 'pagination';
+    $('#product-grid').parentNode.appendChild(paginationEl);
+  }
+  
+  paginationEl.innerHTML = `
+    <button id="prev-page" ${currentPage === 1 ? 'disabled' : ''}> < </button>
+    <span class="page-info">Trang ${currentPage} / ${totalPages}</span>
+    <button id="next-page" ${currentPage === totalPages ? 'disabled' : ''}> > </button>
+  `;
+  
+  // Pagination event
+  const prevBtn = $('#prev-page');
+  const nextBtn = $('#next-page');
+
+  $('#prev-page')?.addEventListener('click', ()=>{
+    if(currentPage > 1){
+      currentPage--;
+      renderProducts(filteredBooks);
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  });
+  
+  $('#next-page')?.addEventListener('click', ()=>{
+    if(currentPage < totalPages){
+      currentPage++;
+      renderProducts(filteredBooks);
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  });
+}
+
 function applyFilters(){
   let list = BOOKS.slice();
   const q = $('#search-input') ? $('#search-input').value.trim().toLowerCase() : '';
@@ -108,8 +160,9 @@ function applyFilters(){
 
   if(sort === 'price-asc') list.sort((a,b)=>a.price-b.price);
   else if(sort === 'price-desc') list.sort((a,b)=>b.price-a.price);
-  else if(sort === 'newest') list.sort((a,b)=>a.id.localeCompare(b.id)); // simple
+  else if(sort === 'newest') list.sort((a,b)=>a.id.localeCompare(b.id));
 
+  currentPage = 1;
   renderProducts(list);
 }
 
@@ -146,6 +199,8 @@ function renderDetail(book){
 
 /* ---------- Cart ---------- */
 function addToCart(id, qty=1){
+  const auth = getAuth();
+  if (!auth) return alert('Bạn cần đăng nhập để thêm sản phẩm!');
   const book = BOOKS.find(b=>b.id===id);
   if(!book) return alert('Sách không tồn tại.');
   const cart = getCart();
@@ -348,7 +403,7 @@ function initAuthPage(){
     if (hasError) return;
 
     const users = getUsers();
-    if(users.find(u=>u.username===email)) return $('#auth-msg').textContent = 'Tài khoản đã tồn tại.';
+    if(users.find(u=>u.username===email)) return $('#auth-msg').textContent = 'Tài khoản đã tồn tại.'; authMsg.style.color = '#e81123';
     users.push({username: email, password: pass});
     saveUsers(users);
     $('#auth-msg').textContent = 'Đăng ký thành công. Bạn có thể đăng nhập.';
@@ -361,19 +416,22 @@ function initAuthPage(){
     const pass = $('#login-password').value;
 
     authMsg.textContent = '';
+    authMsg.style.color = '';
     let hasError = false;
     if(!email){
       showError(loginEmail, "Email không được để trống");
       hasError=true;
+      clearError(loginEmail); 
     }
     if(!pass){
       showError(loginPass, "Mật khẩu không được để trống");
       hasError=true;
+      clearError(loginPass);
     }
     if (hasError) return;
     const users = getUsers();
     const u = users.find(x=>x.username===email && x.password===pass);
-    if(!u) return $('#auth-msg').textContent = 'Sai thông tin đăng nhập.';
+    if(!u) return $('#auth-msg').textContent = 'Sai thông tin đăng nhập.'; authMsg.style.color = '#e81123';
     setAuth({username: u.username});
     location.href = 'index.html';
   });
