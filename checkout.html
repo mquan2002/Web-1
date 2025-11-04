@@ -4,8 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Thanh toán - BookStore</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/checkout.css">
 </head>
+
 <body id="page-checkout">
   <header class="site-header">
     <div class="container header-inner">
@@ -13,26 +14,59 @@
     </div>
   </header>
 
-  <main class="container">
-    <h2>Thông tin thanh toán</h2>
+  <main class="container">    
+    <h2>Thông tin thanh toán</h2> 
     <form id="checkout-form" class="checkout-form">
-      <label>Họ tên:</label>
-      <input type="text" id="fullname" required>
-
-      <label>Số điện thoại:</label>
-      <input type="tel" id="phone" required>
-
-      <label>Địa chỉ giao hàng:</label>
-      <textarea id="address" required></textarea>
-
-      <label>Phương thức thanh toán:</label>
-      <select id="payment">
-        <option value="cod">Thanh toán khi nhận hàng</option>
-        <option value="bank">Chuyển khoản ngân hàng</option>
+      <label id="address">Địa chỉ</label>
+      <select id="addressSelect" aria-label="Chọn địa chỉ">
+        <option value="">-- Chọn địa chỉ --</option>
+        <option value="new">Nhập địa chỉ mới</option>
       </select>
 
-      <div id="order-summary" class="cart-summary"></div>
-      <button type="submit" class="btn primary">Xác nhận thanh toán</button>
+      <div id="newAddressContainer" class="new-address" aria-hidden="true">
+        <label for="fullname">Họ và tên</label>
+        <input id="fullname" type="text" placeholder="Nhập họ và tên" />
+
+
+        <label for="phone" style="margin-top:8px">Số điện thoại</label>
+        <input id="phone" type="tel" placeholder="0xxxxxxxxxx" />
+
+
+        <label for="street" style="margin-top:8px">Địa chỉ (số nhà, đường)</label>
+        <input id="street" type="text" placeholder="Số nhà, tên đường" />
+
+
+        <div class="row" style="margin-top:8px">
+          <div class="col">
+            <label for="district">Quận / Huyện</label>
+            <input id="district" type="text" placeholder="Quận / Huyện" />
+          </div>
+
+          <div class="col">
+            <label for="city">Tỉnh / Thành phố</label>
+            <input id="city" type="text" placeholder="Tỉnh / TP" />
+          </div>
+        </div>
+
+
+        <label for="note" style="margin-top:8px">Ghi chú (không bắt buộc)</label>
+        <textarea id="note" rows="2" placeholder="Ví dụ: nhà ngoài ngõ, gần cột điện..."></textarea>
+      </div>
+
+        <label>Phương thức thanh toán:</label>
+        <select id="payment">
+          <option value="cod">Thanh toán khi nhận hàng (bằng tiền mặt)</option>
+          <option value="bank">Thanh toán trực tuyến (bằng chuyển khoản)</option>
+        </select>
+
+      <button id="submit" class="btn primary">Xác nhận mua hàng</button>
+
+      <div class="card success" id="successCard">
+        <h2>🎉 Bạn đã mua hàng thành công!</h2>
+        <p>Cảm ơn bạn đã đặt hàng. Chúng tôi sẽ giao hàng trong thời gian sớm nhất.</p>
+        <button id="viewOrderBtn">Xem đơn hàng của bạn</button>
+        <div id="orderDetails" class="order-details hidden"></div>
+      </div>
     </form>
   </main>
 

@@ -495,3 +495,179 @@ async function init(){
 
 // safe init
 document.addEventListener('DOMContentLoaded', init);
+
+/* ---------- Checkout ---------- */
+// Hiển thị năm hiện tại
+document.getElementById('year6').textContent = new Date().getFullYear();
+
+// Lấy các elements
+const newAddressContainer = document.getElementById('newAddressContainer');
+const checkoutForm = document.getElementById('checkout-form');
+const successCard = document.getElementById('successCard');
+const viewOrderBtn = document.getElementById('viewOrderBtn');
+const orderDetails = document.getElementById('orderDetails');
+
+// Hiển thị form nhập địa chỉ ngay từ đầu
+newAddressContainer.classList.remove('hidden');
+newAddressContainer.setAttribute('aria-hidden', 'false');
+
+// Xử lý submit form
+checkoutForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const paymentMethod = document.getElementById('payment').value;
+  
+  // Validate địa chỉ - chỉ yêu cầu nhập địa chỉ mới
+  const fullname = document.getElementById('fullname').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const street = document.getElementById('street').value.trim();
+  const district = document.getElementById('district').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const note = document.getElementById('note').value.trim();
+  
+  if (!fullname || !phone || !street || !district || !city) {
+    alert('Vui lòng điền đầy đủ thông tin địa chỉ!');
+    return;
+  }
+  
+  // Validate số điện thoại (10-11 số)
+  const phoneRegex = /^0\d{9,10}$/;
+  if (!phoneRegex.test(phone)) {
+    alert('Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại bắt đầu bằng 0 và có 10-11 chữ số.');
+    return;
+  }
+  
+  const shippingAddress = {
+    fullname,
+    phone,
+    street,
+    district,
+    city,
+    note
+  };
+  
+  // Lấy giỏ hàng từ localStorage
+  const cartData = JSON.parse(localStorage.getItem('bs_cart') || '[]');
+  
+  if (cartData.length === 0) {
+    alert('Giỏ hàng của bạn đang trống!');
+    window.location.href = 'index.html';
+    return;
+  }
+  
+  // Load thông tin sách từ BOOKS và tạo cart items đầy đủ
+  const cart = cartData.map(item => {
+    const book = BOOKS.find(b => b.id === item.id);
+    return {
+      id: item.id,
+      title: book ? book.title : 'Sản phẩm',
+      price: book ? book.price : 0,
+      quantity: item.qty
+    };
+  });
+  
+  // Tính tổng tiền
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  // Tạo đơn hàng
+  const order = {
+    id: 'DH' + Date.now(),
+    date: new Date().toLocaleString('vi-VN'),
+    items: cart,
+    total: total,
+    shippingAddress: shippingAddress,
+    paymentMethod: paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Thanh toán trực tuyến',
+    status: 'Đang xử lý'
+  };
+  
+  // Lưu đơn hàng vào localStorage
+  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  orders.push(order);
+  localStorage.setItem('orders', JSON.stringify(orders));
+  
+  // Xóa giỏ hàng
+  localStorage.removeItem('bs_cart');
+  
+  // Hiển thị thông báo thành công
+  checkoutForm.querySelector('.checkout-form > *:not(.success)').style.display = 'none';
+  Array.from(checkoutForm.children).forEach(child => {
+    if (child.id !== 'successCard') {
+      child.style.display = 'none';
+    }
+  });
+  successCard.style.display = 'block';
+  
+  // Lưu order ID để hiển thị chi tiết
+  successCard.dataset.orderId = order.id;
+});
+
+// Xử lý nút "Xem đơn hàng"
+viewOrderBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  
+  const orderId = successCard.dataset.orderId;
+  const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+  const order = orders.find(o => o.id === orderId);
+  
+  if (order) {
+    let itemsHtml = '';
+    order.items.forEach(item => {
+      itemsHtml += `
+        <div class="order-item">
+          <div class="order-item-info">
+            <strong>${item.title}</strong><br>
+            <span class="order-item-quantity">Số lượng: ${item.quantity}</span>
+          </div>
+          <div class="order-item-price">
+            <strong>${(item.price * item.quantity).toLocaleString('vi-VN')}đ</strong><br>
+            <span class="order-item-unit-price">${item.price.toLocaleString('vi-VN')}đ/cuốn</span>
+          </div>
+        </div>
+      `;
+    });
+    
+    orderDetails.innerHTML = `
+      <h3>Chi tiết đơn hàng #${order.id}</h3>
+      <p><strong>Ngày đặt:</strong> ${order.date}</p>
+      <p><strong>Trạng thái:</strong> <span class="status-pending">${order.status}</span></p>
+      
+      <h4>Địa chỉ giao hàng:</h4>
+      <p class="shipping-address">
+        ${order.shippingAddress.fullname}<br>
+        ${order.shippingAddress.phone}<br>
+        ${order.shippingAddress.street}, ${order.shippingAddress.district}, ${order.shippingAddress.city}
+        ${order.shippingAddress.note ? '<br><em>Ghi chú: ' + order.shippingAddress.note + '</em>' : ''}
+      </p>
+      
+      <h4>Phương thức thanh toán:</h4>
+      <p>${order.paymentMethod}</p>
+      
+      <h4>Sản phẩm:</h4>
+      <div class="order-items-list">
+        ${itemsHtml}
+      </div>
+      
+      <div class="order-total">
+        <strong>Tổng cộng: ${order.total.toLocaleString('vi-VN')}đ</strong>
+      </div>
+      
+      <button onclick="window.location.href='index.html'" class="btn-continue-shopping">
+        Tiếp tục mua sắm
+      </button>
+    `;
+    
+    orderDetails.classList.remove('hidden');
+    viewOrderBtn.style.display = 'none';
+  }
+});
+
+// Kiểm tra giỏ hàng khi load trang
+window.addEventListener('DOMContentLoaded', function() {
+  const cart = JSON.parse(localStorage.getItem('bs_cart') || '[]');
+  
+  if (cart.length === 0) {
+    if (confirm('Giỏ hàng của bạn đang trống! Bạn có muốn quay lại trang chủ không?')) {
+      window.location.href = 'index.html';
+    }
+  }
+});
