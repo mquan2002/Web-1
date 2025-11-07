@@ -1,0 +1,43 @@
+[
+    {
+        "username": "admin",
+        "password": "admin",
+        "role": "admin",
+        "locked": false
+    },
+    {
+        "username": "user1@example.com",
+        "password": "password123",
+        "locked": false
+    },
+    {
+        "username": "user2@example.com",
+        "password": "mypassword",
+        "locked": false
+    },
+    {
+        "username": "test@gmail.com",
+        "password": "test123",
+        "locked": true
+    },
+    {
+        "username": "john.doe@email.com",
+        "password": "john123",
+        "locked": false
+    },
+    {
+        "username": "jane.smith@email.com",
+        "password": "jane456",
+        "locked": false
+    },
+    {
+        "username": "blocked_user@test.com",
+        "password": "blocked123",
+        "locked": true
+    },
+    {
+        "username": "demo@demo.com",
+        "password": "demo123",
+        "locked": false
+    }
+]

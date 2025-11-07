@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quản lý Sản phẩm - Admin</title>
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/users.css" />
+        <link rel="stylesheet" href="../css/toast.css" />
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script defer src="../js/toast.js"></script>
+        <script defer src="../js/admin/products.js"></script>
+    </head>
+    <body>
+        <header class="admin-header">
+            <h1><i data-lucide="package"></i> Quản lý Sản phẩm</h1>
+            <nav>
+                <a href="../index.html"><i data-lucide="home"></i> Trang chủ</a>
+                <a href="products.html" class="active"
+                    ><i data-lucide="package"></i> Quản lý sản phẩm</a
+                >
+                <a href="categories.html"
+                    ><i data-lucide="layers"></i> Loại sản phẩm</a
+                >
+                <a href="users.html"
+                    ><i data-lucide="users"></i> Quản lý người dùng</a
+                >
+                <a href="#" id="logoutBtn"
+                    ><i data-lucide="log-out"></i> Đăng xuất</a
+                >
+            </nav>
+        </header>
+
+        <main class="admin-container">
+            <section class="admin-list" style="grid-column: 1 / -1">
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 16px;
+                    "
+                >
+                    <h2>Danh sách Sản phẩm</h2>
+                    <button
+                        id="addProductBtn"
+                        class="btn-action"
+                        style="background: #10b981"
+                    >
+                        <i data-lucide="plus"></i>
+                        Thêm sản phẩm
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 16px">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="🔍 Tìm kiếm theo mã, tên, loại sản phẩm..."
+                        style="
+                            width: 100%;
+                            padding: 10px;
+                            border: 1px solid #ddd;
+                            border-radius: 6px;
+                        "
+                    />
+                </div>
+
+                <div class="users-table-wrapper">
+                    <table id="bookTable">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã SP</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Loại</th>
+                                <th>Tác giả</th>
+                                <th>Giá</th>
+                                <th>Tồn kho</th>
+                                <th>Hình</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookTableBody"></tbody>
+                    </table>
+                </div>
+                <p
+                    id="noBooks"
+                    style="
+                        display: none;
+                        text-align: center;
+                        padding: 2rem;
+                        color: var(--muted);
+                    "
+                >
+                    Chưa có sản phẩm nào.
+                </p>
+            </section>
+        </main>
+
+        <!-- Modal Form -->
+        <div id="productModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Thêm Sản phẩm</h2>
+                    <button class="modal-close" id="closeModal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <form id="bookForm">
+                    <input type="hidden" id="bookId" />
+
+                    <label>Mã sản phẩm:</label>
+                    <input
+                        type="text"
+                        id="productCode"
+                        required
+                        placeholder="VD: SP001"
+                    />
+
+                    <label>Tên sản phẩm:</label>
+                    <input
+                        type="text"
+                        id="title"
+                        required
+                        placeholder="Tên sản phẩm"
+                    />
+
+                    <label>Loại sản phẩm:</label>
+                    <select id="category" required>
+                        <option value="">-- Chọn loại --</option>
+                    </select>
+
+                    <label>Tác giả/Thương hiệu:</label>
+                    <input type="text" id="author" required />
+
+                    <label>Giá (VNĐ):</label>
+                    <input
+                        type="number"
+                        id="price"
+                        required
+                        min="0"
+                        placeholder="0"
+                    />
+
+                    <label>Số lượng tồn:</label>
+                    <input
+                        type="number"
+                        id="stock"
+                        required
+                        min="0"
+                        placeholder="0"
+                    />
+
+                    <label>Hình ảnh (URL):</label>
+                    <input type="text" id="image" placeholder="https://..." />
+
+                    <label>Mô tả:</label>
+                    <textarea
+                        id="description"
+                        rows="4"
+                        placeholder="Mô tả chi tiết sản phẩm..."
+                    ></textarea>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn-save">
+                            <i data-lucide="save"></i> Lưu
+                        </button>
+                        <button type="button" class="btn-clear" id="cancelBtn">
+                            <i data-lucide="x"></i> Hủy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

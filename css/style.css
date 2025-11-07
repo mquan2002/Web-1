@@ -77,11 +77,28 @@ body{
   justify-content: space-between;
   align-items: center;
 }
+.admin-header h1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.admin-header h1 svg {
+  width: 24px;
+  height: 24px;
+}
 .admin-header nav a {
   color: white;
   margin: 0 10px;
   text-decoration: none;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-header nav a svg {
+  width: 18px;
+  height: 18px;
 }
 .admin-header nav a.active {
   text-decoration: underline;

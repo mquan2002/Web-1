@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quản lý Loại Sản phẩm - Admin</title>
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/users.css" />
+        <link rel="stylesheet" href="../css/toast.css" />
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script defer src="../js/toast.js"></script>
+        <script defer src="../js/admin/categories.js"></script>
+    </head>
+    <body>
+        <header class="admin-header">
+            <h1><i data-lucide="layers"></i> Quản lý Loại Sản phẩm</h1>
+            <nav>
+                <a href="../index.html"><i data-lucide="home"></i> Trang chủ</a>
+                <a href="products.html"
+                    ><i data-lucide="package"></i> Quản lý sản phẩm</a
+                >
+                <a href="categories.html" class="active"
+                    ><i data-lucide="layers"></i> Loại sản phẩm</a
+                >
+                <a href="users.html"
+                    ><i data-lucide="users"></i> Quản lý người dùng</a
+                >
+                <a href="#" id="logoutBtn"
+                    ><i data-lucide="log-out"></i> Đăng xuất</a
+                >
+            </nav>
+        </header>
+
+        <main class="admin-container">
+            <section class="admin-list" style="grid-column: 1 / -1">
+                <div
+                    style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 16px;
+                    "
+                >
+                    <h2>Danh sách Loại Sản phẩm</h2>
+                    <button
+                        id="addCategoryBtn"
+                        class="btn-action"
+                        style="background: #10b981"
+                    >
+                        <i data-lucide="plus"></i>
+                        Thêm loại
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 16px">
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="🔍 Tìm kiếm theo mã, tên loại..."
+                        style="
+                            width: 100%;
+                            padding: 10px;
+                            border: 1px solid #ddd;
+                            border-radius: 6px;
+                        "
+                    />
+                </div>
+
+                <div class="users-table-wrapper">
+                    <table id="categoryTable">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã loại</th>
+                                <th>Tên loại</th>
+                                <th>Mô tả</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryTableBody"></tbody>
+                    </table>
+                </div>
+                <p
+                    id="noCategories"
+                    style="
+                        display: none;
+                        text-align: center;
+                        padding: 2rem;
+                        color: var(--muted);
+                    "
+                >
+                    Chưa có loại sản phẩm nào.
+                </p>
+            </section>
+        </main>
+
+        <!-- Modal Form -->
+        <div id="categoryModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Thêm Loại Sản phẩm</h2>
+                    <button class="modal-close" id="closeModal">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId" />
+
+                    <label>Mã loại:</label>
+                    <input
+                        type="text"
+                        id="categoryCode"
+                        required
+                        placeholder="VD: ELEC"
+                    />
+
+                    <label>Tên loại:</label>
+                    <input
+                        type="text"
+                        id="categoryName"
+                        required
+                        placeholder="VD: Điện tử"
+                    />
+
+                    <label>Mô tả:</label>
+                    <textarea
+                        id="categoryDescription"
+                        rows="3"
+                        placeholder="Mô tả về loại sản phẩm..."
+                    ></textarea>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn-save">
+                            <i data-lucide="save"></i> Lưu
+                        </button>
+                        <button type="button" class="btn-clear" id="cancelBtn">
+                            <i data-lucide="x"></i> Hủy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,254 @@
+/* --- USERS MANAGEMENT PAGE --- */
+.users-table-wrapper {
+    overflow-x: auto;
+}
+#usersTable,
+#bookTable,
+#categoryTable,
+#productTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+#usersTable th,
+#bookTable th,
+#categoryTable th,
+#productTable th {
+    background: #007b83;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+}
+#usersTable td,
+#bookTable td,
+#categoryTable td,
+#productTable td {
+    padding: 12px;
+    border-bottom: 1px solid #e6eef2;
+}
+#usersTable tr:hover,
+#bookTable tr:hover,
+#categoryTable tr:hover,
+#productTable tr:hover {
+    background: #f6fbfd;
+}
+.user-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.user-status svg {
+    width: 16px;
+    height: 16px;
+}
+.status-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+.status-locked {
+    background: #fee2e2;
+    color: #991b1b;
+}
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.btn-action svg {
+    width: 16px;
+    height: 16px;
+}
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.btn-reset {
+    background: #3b82f6;
+    color: white;
+}
+.btn-lock {
+    background: #f59e0b;
+    color: white;
+}
+.btn-unlock {
+    background: #10b981;
+    color: white;
+}
+.password-mask {
+    font-family: monospace;
+    color: var(--muted);
+}
+
+/* --- MODAL --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation: fadeIn 0.2s;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e6eef2;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #007b83;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.modal-close:hover {
+    background: #f6fbfd;
+}
+
+.modal-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+.modal-content form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-content label {
+    font-weight: 500;
+    margin-bottom: -8px;
+    color: #0b2540;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    padding: 10px;
+    border: 1px solid #e6eef2;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    outline: none;
+    border-color: #007b83;
+    box-shadow: 0 0 0 3px rgba(0, 123, 131, 0.1);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.modal-footer button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.modal-footer button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.modal-footer button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-save {
+    background: #10b981;
+    color: white;
+}
+
+.btn-clear {
+    background: #6b7280;
+    color: white;
+}

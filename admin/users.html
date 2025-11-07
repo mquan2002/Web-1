@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quản lý Người dùng - Admin</title>
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/users.css" />
+        <link rel="stylesheet" href="../css/toast.css" />
+        <script src="https://unpkg.com/lucide@latest"></script>
+        <script defer src="../js/toast.js"></script>
+        <script defer src="../js/admin/users.js"></script>
+    </head>
+    <body>
+        <header class="admin-header">
+            <h1><i data-lucide="users"></i> Quản lý Người dùng</h1>
+            <nav>
+                <a href="../index.html"><i data-lucide="home"></i> Trang chủ</a>
+                <a href="products.html"
+                    ><i data-lucide="package"></i> Quản lý sản phẩm</a
+                >
+                <a href="categories.html"
+                    ><i data-lucide="layers"></i> Loại sản phẩm</a
+                >
+                <a href="users.html" class="active"
+                    ><i data-lucide="users"></i> Quản lý người dùng</a
+                >
+                <a href="#" id="logoutBtn"
+                    ><i data-lucide="log-out"></i> Đăng xuất</a
+                >
+            </nav>
+        </header>
+
+        <main class="admin-container">
+            <section class="admin-list" style="grid-column: 1 / -1">
+                <!-- <div style="display: flex; gap: 8px; margin-bottom: 16px">
+                    <button
+                        onclick="toast.success('Test success!')"
+                        style="
+                            padding: 8px 16px;
+                            background: #10b981;
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                        "
+                    >
+                        Test Success
+                    </button>
+                    <button
+                        onclick="toast.error('Test error!')"
+                        style="
+                            padding: 8px 16px;
+                            background: #ef4444;
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                        "
+                    >
+                        Test Error
+                    </button>
+                </div> -->
+                <h2>Danh sách Người dùng</h2>
+                <div class="users-table-wrapper">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên đăng nhập</th>
+                                <th>Mật khẩu</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody"></tbody>
+                    </table>
+                </div>
+                <p
+                    id="noUsers"
+                    style="
+                        display: none;
+                        text-align: center;
+                        padding: 2rem;
+                        color: var(--muted);
+                    "
+                >
+                    Chưa có người dùng nào.
+                </p>
+            </section>
+        </main>
+    </body>
+</html>
