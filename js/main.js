@@ -143,7 +143,6 @@ function createProductCard(book) {
   `
     return div
 }
-
 /* ---------- Home page ---------- */
 async function initHome() {
     document.getElementById('year').textContent = new Date().getFullYear()
@@ -293,7 +292,7 @@ function renderCart() {
     <div class="cart-summary">
       <div class="cart-row"><div>Tạm tính</div><div>${money(total)}</div></div>
       <div style="padding-top:10px;text-align:right">
-        <button id="checkout" class="btn primary">Thanh toán (mô phỏng)</button>
+        <button id="checkout" class="btn primary">Thanh toán</button>
       </div>
     </div>
   `

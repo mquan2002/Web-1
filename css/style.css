@@ -24,6 +24,7 @@ body{
 .header-actions{display:flex;align-items:center;gap:10px}
 .icon-btn{background:transparent;border:0;font-size:1rem;cursor:pointer;text-decoration:none;color:var(--muted)}
 .btn-auth{background:transparent;border:1px solid var(--primary);padding:6px 10px;border-radius:8px;color:var(--primary);text-decoration:none}
+.btn-auth:hover{background:var(--primary);color:white;}
 .search-input{padding:8px;border-radius:8px;border:1px solid #e6eef2;width:200px}
 
 .hero{padding:36px 0}
@@ -31,7 +32,7 @@ body{
 .hero-text h1{margin:0 0 10px;font-size:2rem;color:var(--primary)}
 .hero-text p{margin:0 0 16px;color:var(--muted)}
 .btn{display:inline-block;padding:10px 16px;border-radius:10px;border:0;cursor:pointer}
-.btn.primary{background:var(--primary);color:white}
+.btn.primary{background:var(--primary);color:white;text-decoration: none;transform: translateY(0);transition: transform 0.4s ease;}
 .hero-image img{max-width:420px;border-radius:12px;box-shadow:0 6px 18px rgba(11,127,171,0.08)}
 
 .section{padding:24px 0}
@@ -48,10 +49,10 @@ body{
 .filters input, .filters select{padding:8px;border-radius:8px;border:1px solid #e6eef2}
 
 .detail-container{padding:24px 0}
-.detail-card{display:flex;gap:20px;align-items:flex-start}
+.detail-card{display:flex;gap:20px;align-items:flex-start;}
 .detail-card img{width:320px;height:420px;object-fit:cover;border-radius:12px}
 .detail-content{max-width:600px}
-.detail-content h2{margin:0 0 8px}
+.detail-content h2{margin:4px 0 8px;}
 .detail-content p{color:var(--muted)}
 .qty{display:flex;gap:8px;align-items:center;margin-top:12px}
 .qty input{width:60px;padding:8px;border-radius:8px;border:1px solid #e6eef2}
@@ -154,3 +155,42 @@ body{
 }
 .btn-edit { background-color: #2d89ef; }
 .btn-delete { background-color: #e81123; }
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 20px 0;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: 1px solid #e6eef2;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination .page-info {
+  color: var(--muted);
+  font-size: 0.9rem;
+  min-width: 100px;
+  text-align: center;
+}
