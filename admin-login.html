@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Đăng nhập Admin - BookStore</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0b7fab;
+      --primary-dark: #085a7d;
+      --accent: #ff6b6b;
+      --dark: #0b2540;
+      --border: #e6eef2;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-wrapper {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-header h1 {
+      font-size: 2rem;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    .login-header p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(11, 127, 171, 0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn-login:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(11, 127, 171, 0.3);
+    }
+
+    .btn-back {
+      display: block;
+      text-align: center;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+
+    .btn-back:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-error {
+      background: #ffe5e5;
+      color: #d63031;
+      border-left: 4px solid var(--accent);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #dbeafe;
+      color: #0c4a6e;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .demo-info {
+      background: #f0f9ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #0c4a6e;
+    }
+
+    .demo-info strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-header">
+      <h1>🔐 Admin</h1>
+      <p>Đăng nhập vào bảng quản trị</p>
+    </div>
+
+    <div class="alert alert-error" id="errorMsg"></div>
+
+    <div class="demo-info">
+      <strong>👤 Demo Credentials:</strong>
+      Email: admin@bookstore.com<br>
+      Password: admin123
+    </div>
+
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label for="adminEmail">Email:</label>
+        <input 
+          type="email" 
+          id="adminEmail" 
+          placeholder="admin@bookstore.com" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword">Mật khẩu:</label>
+        <input 
+          type="password" 
+          id="adminPassword" 
+          placeholder="Nhập mật khẩu" 
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn-login">Đăng nhập</button>
+    </form>
+
+    <a href="index.html" class="btn-back">← Quay lại trang chủ</a>
+  </div>
+
+  <script>
+    // Admin credentials (in production, use proper authentication)
+    const ADMIN_CREDENTIALS = {
+      email: 'admin@bookstore.com',
+      password: 'admin123'
+    };
+
+    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+        // Store admin session
+        const adminAuth = {
+          username: 'Admin',
+          email: email,
+          role: 'admin',
+          loginTime: new Date().toISOString()
+        };
+        localStorage.setItem('bs_auth', JSON.stringify(adminAuth));
+        localStorage.setItem('bs_admin_session', JSON.stringify(adminAuth));
+        
+        // Redirect to admin panel
+        window.location.href = 'admin.html';
+      } else {
+        errorMsg.textContent = '❌ Email hoặc mật khẩu không đúng!';
+        errorMsg.classList.add('show');
+        setTimeout(() => {
+          errorMsg.classList.remove('show');
+        }, 3000);
+      }
+    });
+  </script>
+</body>
+</html>

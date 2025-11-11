@@ -1,67 +1,163 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quản lý sách - Admin</title>
+  <title>Bảng quản trị - Admin</title>
   <link rel="stylesheet" href="css/style.css" />
-  <script defer src="js/admin.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --primary: #0b7fab; --primary-dark: #085a7d; --accent: #ff6b6b; --success: #51cf66; --dark: #0b2540; --border: #e6eef2; --bg: #f8fafc; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--dark); }
+    .admin-header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .admin-header h1 { font-size: 1.5rem; }
+    .admin-header nav { display: flex; gap: 20px; align-items: center; }
+    .admin-header a, .admin-header button { color: white; text-decoration: none; background: none; border: none; cursor: pointer; transition: opacity 0.3s; }
+    .admin-header #logoutBtn { background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; }
+    .admin-container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; }
+    .tab-btn { padding: 12px 20px; background: none; border: none; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; }
+    .tab-btn:hover { color: var(--primary); }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .admin-form { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .admin-form h2 { font-size: 1.2rem; margin-bottom: 20px; color: var(--dark); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--dark); }
+    .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: inherit; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.3s; flex: 1; }
+    .btn-save { background: var(--success); color: white; }
+    .btn-clear { background: var(--border); color: var(--dark); }
+    .btn-edit { background: #3b82f6; color: white; padding: 6px 12px; font-size: 0.85rem; flex: none; }
+    .btn-delete { background: var(--accent); color: white; padding: 6px 12px; font-size: 0.85rem; flex: none; }
+    .btn-primary { background: var(--primary); color: white; }
+    .admin-list { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    table thead { background: var(--bg); border-bottom: 2px solid var(--border); }
+    table th { padding: 12px; text-align: left; font-weight: 600; color: var(--dark); }
+    table td { padding: 12px; border-bottom: 1px solid var(--border); }
+    table img { max-width: 50px; height: auto; border-radius: 4px; }
+    .search-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+    .search-bar input, .search-bar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+    .search-bar input { flex: 1; min-width: 200px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); }
+    .stat-label { color: #6b7280; font-size: 0.85rem; margin-bottom: 5px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--dark); }
+    @media (max-width: 768px) { .admin-header { flex-direction: column; gap: 15px; } .form-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
   <header class="admin-header">
-    <h1>📘 Quản lý Sách</h1>
+    <h1> Bảng Quản Trị</h1>
     <nav>
-      <a href="index.html">🏠 Trang chủ</a>
-      <a href="admin.html" class="active">⚙️ Quản lý sách</a>
-      <a href="#" id="logoutBtn">🚪 Đăng xuất</a>
+      <a href="index.html"> Trang chủ</a>
+      <button id="logoutBtn"> Đăng xuất</button>
     </nav>
   </header>
 
   <main class="admin-container">
-    <section class="admin-form">
-      <h2>Thêm / Sửa Sách</h2>
-      <form id="bookForm">
-        <input type="hidden" id="bookId" />
-        <label>Tiêu đề:</label>
-        <input type="text" id="title" required />
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('dashboard')"> Dashboard</button>
+      <button class="tab-btn" onclick="switchTab('products')"> Sản phẩm</button>
+      <button class="tab-btn" onclick="switchTab('categories')"> Danh mục</button>
+      <button class="tab-btn" onclick="switchTab('orders')"> Đơn hàng</button>
+      <button class="tab-btn" onclick="switchTab('users')"> Người dùng</button>
+      <button class="tab-btn" onclick="switchTab('import')"> Nhập sản phẩm</button>
+    </div>
 
-        <label>Tác giả:</label>
-        <input type="text" id="author" required />
+    <div id="dashboard" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label"> Doanh thu</div><div class="stat-value" id="totalRevenue">0 </div></div>
+        <div class="stat-card"><div class="stat-label"> Đơn hàng</div><div class="stat-value" id="totalOrders">0</div></div>
+        <div class="stat-card"><div class="stat-label"> Sản phẩm</div><div class="stat-value" id="totalProducts">0</div></div>
+        <div class="stat-card"><div class="stat-label"> Người dùng</div><div class="stat-value" id="totalUsers">0</div></div>
+      </div>
+    </div>
 
-        <label>Giá (VNĐ):</label>
-        <input type="number" id="price" required />
+    <div id="products" class="tab-content">
+      <section class="admin-form">
+        <h2>Thêm / Sửa Sản Phẩm</h2>
+        <form id="productForm">
+          <div class="form-grid">
+            <div class="form-group"><label>ID sản phẩm:</label><input type="text" id="productId" placeholder="b001 (tự động nếu để trống)" /></div>
+            <div class="form-group"><label>Tiêu đề:</label><input type="text" id="productTitle" placeholder="Nhập tên sách" required /></div>
+            <div class="form-group"><label>Tác giả:</label><input type="text" id="productAuthor" placeholder="Nhập tên tác giả" required /></div>
+            <div class="form-group"><label>Giá (VNĐ):</label><input type="number" id="productPrice" placeholder="0" required /></div>
+            <div class="form-group"><label>Thể loại:</label><select id="productCategory" required><option>-- Chọn thể loại --</option></select></div>
+            <div class="form-group"><label>Ảnh bìa (URL):</label><input type="url" id="productImage" placeholder="https://..." /></div>
+            <div class="form-group" style="grid-column: 1 / -1;"><label>Mô tả:</label><textarea id="productDesc" placeholder="Nhập mô tả sách..."></textarea></div>
+          </div>
+          <div class="btn-group"><button type="submit" class="btn btn-save"> Lưu sản phẩm</button><button type="reset" class="btn btn-clear"> Xóa form</button></div>
+        </form>
+      </section>
+      <section class="admin-list">
+        <h2>Danh sách Sản Phẩm</h2>
+        <div class="search-bar">
+          <input type="text" id="productSearch" placeholder="Tìm kiếm sản phẩm..." />
+          <select id="categoryFilter"><option value="">Tất cả</option></select>
+        </div>
+        <table id="productTable"><thead><tr><th>ID</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Thể loại</th><th>Ảnh</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+      </section>
+    </div>
 
-        <label>Thể loại:</label>
-        <input type="text" id="category" required />
+    <div id="categories" class="tab-content">
+      <section class="admin-form">
+        <h2>Thêm / Sửa Thể loại</h2>
+        <form id="categoryForm">
+          <input type="hidden" id="categoryId" />
+          <div class="form-grid">
+            <div class="form-group"><label>Tên:</label><input type="text" id="categoryName" required /></div>
+            <div class="form-group"><label>Mô tả:</label><input type="text" id="categoryDesc" /></div>
+          </div>
+          <div class="btn-group"><button type="submit" class="btn btn-save"> Lưu</button><button type="reset" class="btn btn-clear"> Xóa</button></div>
+        </form>
+      </section>
+      <section class="admin-list">
+        <h2>Danh sách Thể loại</h2>
+        <table id="categoryTable"><thead><tr><th>ID</th><th>Tên</th><th>Mô tả</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+      </section>
+    </div>
 
-        <label>Ảnh bìa (URL):</label>
-        <input type="text" id="image" />
+    <div id="orders" class="tab-content">
+      <section class="admin-list">
+        <h2>Danh sách Đơn hàng</h2>
+        <div class="search-bar">
+          <input type="text" id="orderSearch" placeholder="Tìm kiếm..." />
+          <select id="orderStatusFilter"><option value="">Tất cả</option><option value="Đang xử lý">Đang xử lý</option><option value="Đã gửi">Đã gửi</option><option value="Đã giao">Đã giao</option></select>
+        </div>
+        <table id="orderTable"><thead><tr><th>Mã</th><th>Ngày</th><th>Khách</th><th>Tổng</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+      </section>
+    </div>
 
-        <label>Mô tả:</label>
-        <textarea id="description"></textarea>
+    <div id="users" class="tab-content">
+      <section class="admin-list">
+        <h2>Danh sách Người dùng</h2>
+        <div class="search-bar"><input type="text" id="userSearch" placeholder="Tìm kiếm..." /></div>
+        <table id="userTable"><thead><tr><th>Email</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+      </section>
+    </div>
 
-        <button type="submit" class="btn-save">💾 Lưu</button>
-        <button type="reset" class="btn-clear">🧹 Xóa form</button>
-      </form>
-    </section>
-
-    <section class="admin-list">
-      <h2>Danh sách Sách</h2>
-      <table id="bookTable">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Tiêu đề</th>
-            <th>Tác giả</th>
-            <th>Giá</th>
-            <th>Thể loại</th>
-            <th>Ảnh</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+    <div id="import" class="tab-content">
+      <section class="admin-form">
+        <h2>Nhập Sản Phẩm Hàng Loạt</h2>
+        <p style="margin-bottom:15px;color:#666;font-size:0.9rem;">Dán JSON chứa danh sách sản phẩm. Mỗi sản phẩm phải có: id, title, author, price, category, cover (hoặc image), desc</p>
+        <div class="form-grid">
+          <div class="form-group" style="grid-column: 1 / -1;"><label>JSON (Sản phẩm):</label><textarea id="importJSON" placeholder='[{"id":"b001","title":"Sách Lập Trình","author":"Nguyễn Văn A","price":150000,"category":"Công nghệ","cover":"https://...","desc":"Mô tả sách"}]' style="min-height: 150px;font-size:0.85rem;font-family:monospace;"></textarea></div>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary" onclick="importProducts()"> Nhập (Thêm vào)</button>
+          <button type="button" class="btn btn-clear" onclick="exportProducts()"> Xuất JSON</button>
+        </div>
+      </section>
+    </div>
   </main>
+
+  <script defer src="js/main.js"></script>
+  <script defer src="js/admin.js"></script>
 </body>
 </html>

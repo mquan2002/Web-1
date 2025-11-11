@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookStore - Đơn hàng của tôi</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    #page-orders {
+      min-height: 100vh;
+    }
+    .orders-container {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+    .order-card {
+      background: white;
+      border: 1px solid #e6eef2;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .order-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e6eef2;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+    .order-id {
+      font-weight: 600;
+      color: #0b7fab;
+      font-size: 1.1rem;
+    }
+    .order-date {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+    .order-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .status-processing {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .status-shipped {
+      background: #dbeafe;
+      color: #0c4a6e;
+    }
+    .status-delivered {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    .order-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .order-items-count {
+      color: #6b7280;
+    }
+    .order-total {
+      font-weight: 600;
+      color: #0b7fab;
+      font-size: 1.1rem;
+    }
+    .order-details {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e6eef2;
+    }
+    .order-details.show {
+      display: block;
+    }
+    .detail-section {
+      margin-bottom: 20px;
+    }
+    .detail-section h4 {
+      font-size: 0.95rem;
+      color: #0b2540;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .order-item-detail {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      color: #6b7280;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .order-item-detail:last-child {
+      border-bottom: none;
+    }
+    .shipping-info {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+    .empty-state h3 {
+      color: #0b2540;
+      margin-bottom: 10px;
+    }
+    .empty-state p {
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+    .btn-back {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #0b7fab;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+    .btn-back:hover {
+      background: #085a7d;
+    }
+  </style>
+</head>
+<body id="page-orders">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">BookStore</a>
+      <nav class="main-nav">
+        <a href="products.html">Sản phẩm</a>
+        <a href="index.html#about">Giới thiệu</a>
+      </nav>
+      <div class="header-actions">
+        <a id="cart-link" href="cart.html" class="icon-btn">🛒 <span id="cart-count">0</span></a>
+        <a id="auth-link" href="login.html" class="btn-auth">Đăng nhập</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container orders-container">
+    <h2>📦 Đơn hàng của tôi</h2>
+    <div id="orders-list"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">© <span id="year-orders"></span> BookStore.</div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Render danh sách đơn hàng
+    function renderOrdersList() {
+      const auth = getAuth();
+      if (!auth) {
+        document.getElementById('orders-list').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🔐</div>
+            <h3>Vui lòng đăng nhập</h3>
+            <p>Bạn cần đăng nhập để xem đơn hàng của mình.</p>
+            <a href="login.html" class="btn primary" style="margin-top: 20px; display: inline-block;">Đăng nhập</a>
+          </div>
+        `;
+        return;
+      }
+      
+      const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      // Lọc chỉ lấy đơn hàng của người dùng hiện tại
+      const orders = allOrders.filter(order => order.userEmail === auth.email);
+      const container = document.getElementById('orders-list');
+      
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h3>Chưa có đơn hàng nào</h3>
+            <p>Hãy quay lại trang sản phẩm để mua sắm.</p>
+            <a href="products.html" class="btn-back">Xem sản phẩm</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map((order, idx) => `
+        <div class="order-card" onclick="toggleOrderDetails(${idx})">
+          <div class="order-header">
+            <div>
+              <div class="order-id">Đơn hàng #${order.id}</div>
+              <div class="order-date">Ngày đặt: ${order.date}</div>
+            </div>
+            <span class="order-status status-${order.status === 'Đang xử lý' ? 'processing' : order.status === 'Đã gửi' ? 'shipped' : 'delivered'}">
+              ${order.status}
+            </span>
+          </div>
+          
+          <div class="order-summary">
+            <span class="order-items-count">${order.items.length} sản phẩm</span>
+            <span class="order-total">${order.total.toLocaleString('vi-VN')}₫</span>
+          </div>
+
+          <div class="order-details" id="details-${idx}">
+            <div class="detail-section">
+              <h4>Sản phẩm</h4>
+              ${order.items.map(item => `
+                <div class="order-item-detail">
+                  <span>${item.title} (x${item.quantity})</span>
+                  <span>${(item.price * item.quantity).toLocaleString('vi-VN')}₫</span>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="detail-section">
+              <h4>Địa chỉ giao hàng</h4>
+              <div class="shipping-info">
+                <strong>${order.shippingAddress.fullname}</strong><br>
+                📱 ${order.shippingAddress.phone}<br>
+                📍 ${order.shippingAddress.street}, ${order.shippingAddress.district}, ${order.shippingAddress.city}
+                ${order.shippingAddress.note ? '<br><em>Ghi chú: ' + order.shippingAddress.note + '</em>' : ''}
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h4>Phương thức thanh toán</h4>
+              <div>${order.paymentMethod}</div>
+            </div>
+
+            <div class="detail-section" style="border-top: 2px solid #e6eef2; padding-top: 15px;">
+              <div class="order-item-detail" style="border: none;">
+                <strong>Tổng cộng:</strong>
+                <strong class="order-total">${order.total.toLocaleString('vi-VN')}₫</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleOrderDetails(idx) {
+      const auth = getAuth();
+      if (!auth) return;
+      const allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const orders = allOrders.filter(order => order.userEmail === auth.email);
+      const detailEl = document.getElementById(`details-${idx}`);
+      if (detailEl) detailEl.classList.toggle('show');
+    }
+
+    // Init page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      updateAuthUI();
+      document.getElementById('year-orders').textContent = new Date().getFullYear();
+      renderOrdersList();
+    });
+  </script>
+</body>
+</html>

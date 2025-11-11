@@ -11,6 +11,10 @@
   <header class="site-header">
     <div class="container header-inner">
       <a class="logo" href="index.html">BookStore</a>
+      <nav class="main-nav">
+        <a href="products.html">Sản phẩm</a>
+        <a href="orders.html">Đơn hàng của tôi</a>
+      </nav>
     </div>
   </header>
 
@@ -51,6 +55,13 @@
 
         <label for="note" style="margin-top:8px">Ghi chú (không bắt buộc)</label>
         <textarea id="note" rows="2" placeholder="Ví dụ: nhà ngoài ngõ, gần cột điện..."></textarea>
+        
+        <div style="margin-top:12px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+            <input id="saveAddress" type="checkbox" checked />
+            <span>Lưu địa chỉ này để lần tới</span>
+          </label>
+        </div>
       </div>
 
         <label>Phương thức thanh toán:</label>
@@ -75,5 +86,19 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+    // Kiểm tra xác thực trước khi cho phép checkout
+    document.addEventListener('DOMContentLoaded', () => {
+      const auth = getAuth();
+      if (!auth) {
+        document.querySelector('main').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #6b7280;">
+            <h3>Vui lòng đăng nhập để tiếp tục thanh toán</h3>
+            <a href="login.html" class="btn primary" style="margin-top: 20px; display: inline-block;">Đăng nhập</a>
+          </div>
+        `;
+      }
+    });
+  </script>
 </body>
 </html>

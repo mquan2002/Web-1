@@ -12,6 +12,7 @@
       <a class="logo" href="index.html">BookStore</a>
       <nav class="main-nav">
         <a href="products.html">Sản phẩm</a>
+        <a href="orders.html">Đơn hàng của tôi</a>
       </nav>
       <div class="header-actions">
         <a id="auth-link" href="login.html" class="btn-auth">Đăng nhập</a>
@@ -30,5 +31,26 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Kiểm tra xác thực
+      const auth = getAuth();
+      if (!auth) {
+        document.getElementById('cart-list').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: #6b7280;">
+            <h3>Vui lòng đăng nhập để xem giỏ hàng</h3>
+            <a href="login.html" class="btn primary" style="margin-top: 20px; display: inline-block;">Đăng nhập</a>
+          </div>
+        `;
+        document.getElementById('cart-summary').innerHTML = '';
+        return;
+      }
+      
+      updateCartCount();
+      updateAuthUI();
+      document.getElementById('year4').textContent = new Date().getFullYear();
+      renderCart();
+    });
+  </script>
 </body>
 </html>

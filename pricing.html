@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý giá bán</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="js/pricing.js"></script>
+</head>
+
+<body>
+  <header class="admin-header">
+    <h1>💲 Quản lý Giá Bán</h1>
+    <nav>
+      <a href="index.html">🏠 Trang chủ</a>
+      <a href="admin.html">📘 Sách</a>
+      <a class="active" href="pricing.html">💲 Giá bán</a>
+    </nav>
+  </header>
+
+  <main class="admin-container">
+
+    <!-- QUẢN LÝ % LỢI NHUẬN -->
+    <section class="admin-form">
+      <h2>Thiết lập % Lợi nhuận theo thể loại</h2>
+      <form id="profitForm">
+        <label>Thể loại:</label>
+        <input type="text" id="category" required>
+
+        <label>% lợi nhuận:</label>
+        <input type="number" id="percent" min="0" required>
+
+        <button type="submit" class="btn-save">💾 Lưu</button>
+        <button type="reset" class="btn-clear">🧹 Xóa</button>
+      </form>
+    </section>
+
+    <section class="admin-list">
+      <h2>Bảng % lợi nhuận</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Thể loại</th>
+            <th>% lợi nhuận</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody id="profitTable"></tbody>
+      </table>
+    </section>
+
+    <!-- BẢNG GIÁ BÁN -->
+    <section class="admin-list">
+      <h2>Giá vốn – % – Giá bán</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên sách</th>
+            <th>Thể loại</th>
+            <th>Giá vốn</th>
+            <th>% lợi nhuận</th>
+            <th>Giá bán</th>
+          </tr>
+        </thead>
+        <tbody id="priceTable"></tbody>
+      </table>
+    </section>
+
+  </main>
+</body>
+</html>

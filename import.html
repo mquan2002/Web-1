@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quản lý Phiếu Nhập</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script defer src="js/import.js"></script>
+</head>
+
+<body>
+  <header class="admin-header">
+    <h1>📦 Quản lý Phiếu Nhập</h1>
+    <nav>
+      <a href="index.html">🏠 Trang chủ</a>
+      <a href="admin.html">⚙️ Quản lý sách</a>
+      <a href="import.html" class="active">📥 Phiếu nhập</a>
+    </nav>
+  </header>
+
+  <main class="admin-container">
+    <section class="admin-form">
+      <h2>Thêm / Sửa Phiếu Nhập</h2>
+      <form id="importForm">
+
+        <input type="hidden" id="importId">
+
+        <label>Ngày nhập:</label>
+        <input type="date" id="importDate" required>
+
+        <label>ID Sản phẩm:</label>
+        <input type="number" id="productId" required>
+
+        <label>Số lượng nhập:</label>
+        <input type="number" id="quantity" min="1" required>
+
+        <label>Giá nhập (VNĐ) / 1 sản phẩm:</label>
+        <input type="number" id="importPrice" min="0" required>
+
+        <button type="submit" class="btn-save">💾 Lưu</button>
+        <button type="reset" class="btn-clear">🧹 Xóa form</button>
+      </form>
+    </section>
+
+    <section class="admin-list">
+      <h2>Danh sách Phiếu Nhập</h2>
+
+      <table id="importTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ngày nhập</th>
+            <th>ID Sản phẩm</th>
+            <th>Số lượng</th>
+            <th>Giá nhập</th>
+            <th>Tổng tiền</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+    </section>
+  </main>
+</body>
+</html>
