@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BookStore - Giỏ hàng</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/cart-preview.css" />
 </head>
 <body id="page-cart">
   <header class="site-header">
@@ -14,6 +15,9 @@
         <a href="products.html">Sản phẩm</a>
       </nav>
       <div class="header-actions">
+        <a id="cart-link" href="cart.html" class="icon-btn">
+    🛒 <span id="cart-count">0</span>
+        </a>
         <a id="auth-link" href="login.html" class="btn-auth">Đăng nhập</a>
       </div>
     </div>
@@ -30,5 +34,6 @@
   </footer>
 
   <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
 </body>
 </html>
