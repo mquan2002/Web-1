@@ -1,0 +1,272 @@
+[
+  {
+    "id": "b001",
+    "title": "Những người khốn khổ",
+    "author": "Victor Hugo",
+    "category": "Văn học",
+    "price": 120000,
+    "cover": "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tác phẩm kinh điển về số phận con người và xã hội."
+  },
+  {
+    "id": "b002",
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "category": "Phát triển bản thân",
+    "price": 195000,
+    "cover": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=60&auto=format&fit=crop",
+    "desc": "Cẩm nang thay đổi thói quen từng bước, hiệu quả."
+  },
+  {
+    "id": "b003",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "category": "Công nghệ",
+    "price": 250000,
+    "cover": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=60&auto=format&fit=crop",
+    "desc": "Nguyên tắc viết mã sạch, dễ bảo trì."
+  },
+  {
+    "id": "b004",
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "category": "Lịch sử",
+    "price": 180000,
+    "cover": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&q=60&auto=format&fit=crop",
+    "desc": "Lược sử loài người từ thời kỳ đồ đá đến hiện đại."
+  },
+  {
+    "id": "b005",
+    "title": "The Psychology of Money",
+    "author": "Morgan Housel",
+    "category": "Tài chính",
+    "price": 165000,
+    "cover": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hiểu về tiền bạc qua góc nhìn tâm lý học."
+  },
+  {
+    "id": "b006",
+    "title": "Nhà giả kim",
+    "author": "Paulo Coelho",
+    "category": "Văn học",
+    "price": 95000,
+    "cover": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hành trình tìm kiếm kho báu và ý nghĩa cuộc sống."
+  },
+  {
+    "id": "b007",
+    "title": "Thinking, Fast and Slow",
+    "author": "Daniel Kahneman",
+    "category": "Tâm lý học",
+    "price": 210000,
+    "cover": "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hai hệ thống tư duy chi phối quyết định của chúng ta."
+  },
+  {
+    "id": "b008",
+    "title": "The Lean Startup",
+    "author": "Eric Ries",
+    "category": "Kinh doanh",
+    "price": 175000,
+    "cover": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=60&auto=format&fit=crop",
+    "desc": "Phương pháp khởi nghiệp tinh gọn và hiệu quả."
+  },
+  {
+    "id": "b009",
+    "title": "1984",
+    "author": "George Orwell",
+    "category": "Văn học",
+    "price": 110000,
+    "cover": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tiểu thuyết dystopia kinh điển về chế độ toàn trị."
+  },
+  {
+    "id": "b010",
+    "title": "Deep Work",
+    "author": "Cal Newport",
+    "category": "Phát triển bản thân",
+    "price": 185000,
+    "cover": "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=60&auto=format&fit=crop",
+    "desc": "Kỹ năng tập trung sâu trong thời đại phân tâm."
+  },
+  {
+    "id": "b011",
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "category": "Công nghệ",
+    "price": 280000,
+    "cover": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hướng dẫn trở thành lập trình viên chuyên nghiệp."
+  },
+  {
+    "id": "b012",
+    "title": "Educated",
+    "author": "Tara Westover",
+    "category": "Hồi ký",
+    "price": 155000,
+    "cover": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hành trình tự học và thoát khỏi quá khứ của một cô gái."
+  },
+  {
+    "id": "b013",
+    "title": "Zero to One",
+    "author": "Peter Thiel",
+    "category": "Kinh doanh",
+    "price": 190000,
+    "cover": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=60&auto=format&fit=crop",
+    "desc": "Ghi chú về khởi nghiệp và xây dựng tương lai."
+  },
+  {
+    "id": "b014",
+    "title": "Homo Deus",
+    "author": "Yuval Noah Harari",
+    "category": "Lịch sử",
+    "price": 195000,
+    "cover": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&q=60&auto=format&fit=crop",
+    "desc": "Lịch sử của tương lai - con người sẽ đi về đâu?"
+  },
+  {
+    "id": "b015",
+    "title": "Rich Dad Poor Dad",
+    "author": "Robert Kiyosaki",
+    "category": "Tài chính",
+    "price": 140000,
+    "cover": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=60&auto=format&fit=crop",
+    "desc": "Bài học về tiền bạc từ hai người cha."
+  },
+  {
+    "id": "b016",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "category": "Văn học",
+    "price": 125000,
+    "cover": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=60&auto=format&fit=crop",
+    "desc": "Câu chuyện về công lý và sự trưởng thành."
+  },
+  {
+    "id": "b017",
+    "title": "The Power of Habit",
+    "author": "Charles Duhigg",
+    "category": "Tâm lý học",
+    "price": 170000,
+    "cover": "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tại sao chúng ta làm những gì chúng ta làm trong cuộc sống."
+  },
+  {
+    "id": "b018",
+    "title": "Design Patterns",
+    "author": "Gang of Four",
+    "category": "Công nghệ",
+    "price": 295000,
+    "cover": "https://images.unsplash.com/photo-1550439062-609e1531270e?w=800&q=60&auto=format&fit=crop",
+    "desc": "Các mẫu thiết kế phần mềm có thể tái sử dụng."
+  },
+  {
+    "id": "b019",
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "category": "Văn học",
+    "price": 98000,
+    "cover": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=800&q=60&auto=format&fit=crop",
+    "desc": "Phiên bản tiếng Anh của Nhà giả kim."
+  },
+  {
+    "id": "b020",
+    "title": "Start With Why",
+    "author": "Simon Sinek",
+    "category": "Kinh doanh",
+    "price": 160000,
+    "cover": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=800&q=60&auto=format&fit=crop",
+    "desc": "Lãnh đạo vĩ đại truyền cảm hứng như thế nào."
+  },
+  {
+    "id": "b021",
+    "title": "The 7 Habits",
+    "author": "Stephen Covey",
+    "category": "Phát triển bản thân",
+    "price": 178000,
+    "cover": "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=60&auto=format&fit=crop",
+    "desc": "Bảy thói quen của người thành đạt."
+  },
+  {
+    "id": "b022",
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "category": "Công nghệ",
+    "price": 320000,
+    "cover": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&q=60&auto=format&fit=crop",
+    "desc": "Giáo trình thuật toán kinh điển."
+  },
+  {
+    "id": "b023",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "category": "Văn học",
+    "price": 105000,
+    "cover": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800&q=60&auto=format&fit=crop",
+    "desc": "Bi kịch về giấc mơ Mỹ thập niên 1920."
+  },
+  {
+    "id": "b024",
+    "title": "Principles",
+    "author": "Ray Dalio",
+    "category": "Kinh doanh",
+    "price": 225000,
+    "cover": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=60&auto=format&fit=crop",
+    "desc": "Nguyên tắc sống và làm việc từ nhà đầu tư huyền thoại."
+  },
+  {
+    "id": "b025",
+    "title": "Dune",
+    "author": "Frank Herbert",
+    "category": "Khoa học viễn tưởng",
+    "price": 215000,
+    "cover": "https://images.unsplash.com/photo-1589998059171-988d887df646?w=800&q=60&auto=format&fit=crop",
+    "desc": "Sử thi khoa học viễn tưởng kinh điển về hành tinh sa mạc."
+  },
+  {
+    "id": "b026",
+    "title": "Becoming",
+    "author": "Michelle Obama",
+    "category": "Hồi ký",
+    "price": 198000,
+    "cover": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hồi ký truyền cảm hứng của cựu Đệ nhất phu nhân Mỹ."
+  },
+  {
+    "id": "b027",
+    "title": "The Intelligent Investor",
+    "author": "Benjamin Graham",
+    "category": "Tài chính",
+    "price": 235000,
+    "cover": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=60&auto=format&fit=crop",
+    "desc": "Kinh thánh đầu tư giá trị của Warren Buffett."
+  },
+  {
+    "id": "b028",
+    "title": "Influence",
+    "author": "Robert Cialdini",
+    "category": "Tâm lý học",
+    "price": 182000,
+    "cover": "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tâm lý thuyết phục - sức mạnh ảnh hưởng người khác."
+  },
+  {
+    "id": "b029",
+    "title": "The DevOps Handbook",
+    "author": "Gene Kim",
+    "category": "Công nghệ",
+    "price": 265000,
+    "cover": "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=800&q=60&auto=format&fit=crop",
+    "desc": "Hướng dẫn thực hành DevOps trong tổ chức."
+  },
+  {
+    "id": "b030",
+    "title": "Man's Search for Meaning",
+    "author": "Viktor Frankl",
+    "category": "Phát triển bản thân",
+    "price": 135000,
+    "cover": "https://images.unsplash.com/photo-1513001900722-370f803f498d?w=800&q=60&auto=format&fit=crop",
+    "desc": "Tìm kiếm ý nghĩa cuộc sống qua trải nghiệm trại tập trung."
+  }
+]

@@ -1,0 +1,209 @@
+:root {
+  --primary: #0b7fab;
+  --muted: #6b7280;
+  --bg: #f6fbfd;
+  --card: #ffffff;
+  --radius: 12px;
+  --max-width: 1100px;
+  --container-padding: 16px;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: #0b2540;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--container-padding);
+}
+
+.container{max-width:var(--max-width);margin:0 auto;padding:var(--container-padding);}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.site-header{background:linear-gradient(90deg, rgba(11,127,171,0.06), rgba(11,127,171,0.03));box-shadow:0 1px 0 rgba(0,0,0,0.04)}
+.logo{font-weight:700;color:var(--primary);text-decoration:none;font-size:1.2rem}
+main.container {padding: 24px 16px;}
+
+main.container h2 {
+  color: var(--primary);
+  font-size: 1.75rem;
+  margin: 0 auto 24px auto;
+  font-weight: 700;
+  text-align: center;
+  max-width: 700px;
+}
+
+/* --- Form Styling --- */
+.checkout-form {
+  max-width: 700px;
+  margin: 0 auto;
+  background: var(--card);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(11,127,171,0.08);
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #0b2540;
+  font-size: 0.95rem;
+}
+
+select, input, textarea { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #e6eef2; font-size: 14px;  font-family: inherit; margin-bottom: 16px; transition: border-color 0.2s;}
+select:focus, input:focus, textarea:focus {outline: none; border-color: var(--primary);}
+select {cursor: pointer; background-color: white;}
+
+/* New address container */
+.new-address {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px dashed #e6eef2;
+  background: #f9fcfd;
+}
+
+.new-address input,
+.new-address textarea {
+  margin-bottom: 0;
+}
+
+.new-address label {
+  margin-top: 12px;
+}
+
+.new-address label:first-child {
+  margin-top: 0;
+}
+
+/* Row layout */
+.row {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.col {
+  flex: 1;
+}
+
+.col input {
+  width: 100%;
+}
+
+/* Button styles */
+button.btn.primary {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 0;
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button.btn.primary:hover {
+  background: #096a94;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(11,127,171,0.3);
+}
+
+button.btn.primary:active {
+  transform: translateY(0);
+}
+
+/* Success card */
+.card.success {
+  display: none;
+  margin-top: 24px;
+  padding: 24px;
+  text-align: center;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: 0 6px 18px rgba(11,127,171,0.08);
+  border: 2px solid #16a34a;
+}
+
+.card.success h2 {
+  color: #16a34a;
+  font-size: 1.5rem;
+  margin: 0 0 12px 0;
+}
+
+.card.success p {
+  color: var(--muted);
+  margin: 0 0 16px 0;
+}
+
+#viewOrderBtn {
+  width: auto;
+  display: inline-block;
+  margin: 8px auto;
+  padding: 10px 20px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#viewOrderBtn:hover {
+  background: #096a94;
+}
+
+.order-details {
+  margin-top: 20px;
+  text-align: left;
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid #e6eef2;
+}
+
+.order-details.hidden {
+  display: none;
+}
+
+/* Footer */
+.site-footer {
+  padding: 18px 0;
+  text-align: center;
+  color: var(--muted);
+  margin-top: 40px;
+  font-size: 0.9rem;
+}
+
+/* Media */
+@media (max-width: 768px) {
+  .checkout-form {
+    padding: 16px;
+  }
+  
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+  
+  main.container h2 {
+    font-size: 1.5rem;
+  }
+}
+.hidden {display: none !important;}
+textarea {resize: vertical; min-height: 60px;}
+select option {padding: 8px;}
