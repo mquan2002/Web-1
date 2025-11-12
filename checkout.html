@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Thanh toán - BookStore</title>
   <link rel="stylesheet" href="css/checkout.css">
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/cart-preview.css" />
 
 </head>
@@ -58,12 +59,34 @@
         <label for="note" style="margin-top:8px">Ghi chú (không bắt buộc)</label>
         <textarea id="note" rows="2" placeholder="Ví dụ: nhà ngoài ngõ, gần cột điện..."></textarea>
         
-        <div style="margin-top:12px">
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input id="saveAddress" type="checkbox" checked />
-            <span>Lưu địa chỉ này để lần tới</span>
-          </label>
-        </div>
+        <div style="margin-top: 12px;">
+  <label 
+    for="saveAddress" 
+    style="
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      cursor: pointer; 
+      font-family: 'Segoe UI', sans-serif; 
+      font-size: 14px; 
+      color: #1a1a1a;
+    "
+  >
+    <input 
+      id="saveAddress" 
+      type="checkbox" 
+      checked 
+      style="
+        width: 16px; 
+        height: 16px; 
+        accent-color: #007b83; /* màu chủ đạo */
+        cursor: pointer;
+      "
+    />
+    <span>Lưu địa chỉ này cho lần tới</span>
+  </label>
+</div>
+
       </div>
 
         <label>Phương thức thanh toán:</label>
