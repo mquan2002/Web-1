@@ -256,6 +256,8 @@ function addToCart(id, qty=1){
   else cart.push({id:id, qty: qty});
   saveCart(cart);
   updateCartCount();
+
+  window.dispatchEvent(new Event('cartUpdated'));
   alert('Đã thêm vào giỏ hàng.');
   // if on cart page, refresh
   if(document.body.id === 'page-cart') renderCart();
@@ -264,7 +266,7 @@ function renderCart(){
   const list = getCart();
   const container = $('#cart-list');
   container.innerHTML = '';
-  if(list.length === 0){ container.innerHTML = '<p>Giỏ hàng trống.</p>'; $('#cart-summary').innerHTML=''; return; }
+  if(list.length === 0){ container.innerHTML = '<p>Giỏ hàng trống.</p>'; $('#cart-summary').innerHTML=''; return; window.dispatchEvent(new Event('cartUpdated'));}
   const rows = list.map(item => {
     const book = BOOKS.find(b=>b.id===item.id);
     return { ...book, qty: item.qty };
@@ -308,14 +310,14 @@ function renderCart(){
       const val = parseInt(el.value) || 1;
       const cart = getCart();
       const it = cart.find(i=>i.id===id);
-      if(it){ it.qty = val; saveCart(cart); renderCart(); updateCartCount(); }
+      if(it){ it.qty = val; saveCart(cart); renderCart(); updateCartCount(); window.dispatchEvent(new Event('cartUpdated')); }
     });
   });
   // remove
   $$('[data-remove]').forEach(b=>{
     b.addEventListener('click', e=>{
       const id = b.getAttribute('data-remove');
-      let cart = getCart(); cart = cart.filter(i=>i.id!==id); saveCart(cart); renderCart(); updateCartCount();
+      let cart = getCart(); cart = cart.filter(i=>i.id!==id); saveCart(cart); renderCart(); updateCartCount(); window.dispatchEvent(new Event('cartUpdated'));
     });
   });
   // checkout
@@ -574,6 +576,7 @@ const saveAddresses = (addr) => {
 };
 
 /* ---------- Checkout ---------- */
+/* ---------- Checkout với địa chỉ đã lưu ---------- */
 document.addEventListener('DOMContentLoaded', function() {
   const yearEl6 = document.getElementById('year6');
   if(yearEl6) yearEl6.textContent = new Date().getFullYear();
@@ -583,16 +586,97 @@ document.addEventListener('DOMContentLoaded', function() {
   const successCard = document.getElementById('successCard');
   const viewOrderBtn = document.getElementById('viewOrderBtn');
   const orderDetails = document.getElementById('orderDetails');
+  const addressSelect = document.getElementById('addressSelect');
 
   if(!checkoutForm) return;
 
-  if(newAddressContainer) {
-    newAddressContainer.classList.remove('hidden');
-    newAddressContainer.setAttribute('aria-hidden', 'false');
+  // Load và hiển thị địa chỉ đã lưu vào dropdown
+  function loadSavedAddresses() {
+    const addresses = getSavedAddresses();
+    
+    // Xóa các option cũ (giữ lại 2 option đầu)
+    while(addressSelect.options.length > 2) {
+      addressSelect.remove(2);
+    }
+    
+    // Thêm địa chỉ đã lưu vào dropdown
+    addresses.forEach((addr, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = `${addr.fullname} - ${addr.phone} - ${addr.street}, ${addr.district}, ${addr.city}`;
+      addressSelect.appendChild(option);
+    });
   }
 
+  // Xử lý khi chọn địa chỉ
+  addressSelect.addEventListener('change', function() {
+    const selectedValue = this.value;
+    
+    if(selectedValue === '') {
+      // Chưa chọn gì - ẩn form
+      newAddressContainer.classList.add('hidden');
+      newAddressContainer.setAttribute('aria-hidden', 'true');
+      clearAddressForm();
+    } else if(selectedValue === 'new') {
+      // Chọn "Nhập địa chỉ mới" - hiện form trống
+      newAddressContainer.classList.remove('hidden');
+      newAddressContainer.setAttribute('aria-hidden', 'false');
+      clearAddressForm();
+    } else {
+      // Chọn địa chỉ đã lưu - điền thông tin vào form
+      const addresses = getSavedAddresses();
+      const selectedAddress = addresses[parseInt(selectedValue)];
+      
+      if(selectedAddress) {
+        document.getElementById('fullname').value = selectedAddress.fullname;
+        document.getElementById('phone').value = selectedAddress.phone;
+        document.getElementById('street').value = selectedAddress.street;
+        document.getElementById('district').value = selectedAddress.district;
+        document.getElementById('city').value = selectedAddress.city;
+        document.getElementById('note').value = selectedAddress.note || '';
+        
+        // Hiện form với thông tin đã điền
+        newAddressContainer.classList.remove('hidden');
+        newAddressContainer.setAttribute('aria-hidden', 'false');
+        
+        // Bỏ check "Lưu địa chỉ" vì đã là địa chỉ cũ
+        document.getElementById('saveAddress').checked = false;
+      }
+    }
+  });
+
+  // Hàm xóa form địa chỉ
+  function clearAddressForm() {
+    document.getElementById('fullname').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('street').value = '';
+    document.getElementById('district').value = '';
+    document.getElementById('city').value = '';
+    document.getElementById('note').value = '';
+    document.getElementById('saveAddress').checked = true;
+  }
+
+  // Load địa chỉ đã lưu khi trang load
+  loadSavedAddresses();
+
+  // Mặc định ẩn form địa chỉ
+  if(newAddressContainer) {
+    newAddressContainer.classList.add('hidden');
+    newAddressContainer.setAttribute('aria-hidden', 'true');
+  }
+
+  // Xử lý submit form
   checkoutForm.addEventListener('submit', function(e) {
     e.preventDefault();
+    
+    const selectedAddressValue = addressSelect.value;
+    
+    // Kiểm tra đã chọn địa chỉ chưa
+    if(selectedAddressValue === '') {
+      alert('Vui lòng chọn địa chỉ giao hàng!');
+      return;
+    }
+    
     const paymentMethod = document.getElementById('payment').value;
     const fullname = document.getElementById('fullname').value.trim();
     const phone = document.getElementById('phone').value.trim();
@@ -614,11 +698,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const shippingAddress = { fullname, phone, street, district, city, note };
     
+    // Lưu địa chỉ nếu là địa chỉ mới và user check vào ô "Lưu địa chỉ"
     const saveAddressCheckbox = document.getElementById('saveAddress');
-    if(saveAddressCheckbox && saveAddressCheckbox.checked) {
+    if(selectedAddressValue === 'new' && saveAddressCheckbox && saveAddressCheckbox.checked) {
       const addresses = getSavedAddresses();
-      addresses.push(shippingAddress);
-      saveAddresses(addresses);
+      
+      // Kiểm tra xem địa chỉ đã tồn tại chưa (tránh trùng lặp)
+      const isDuplicate = addresses.some(addr => 
+        addr.fullname === fullname && 
+        addr.phone === phone && 
+        addr.street === street &&
+        addr.district === district &&
+        addr.city === city
+      );
+      
+      if(!isDuplicate) {
+        addresses.push(shippingAddress);
+        saveAddresses(addresses);
+      }
     }
     
     const auth = getAuth();
@@ -663,6 +760,7 @@ document.addEventListener('DOMContentLoaded', function() {
     localStorage.removeItem(cartKey);
     updateCartCount();
     
+    // Ẩn form và hiện thông báo thành công
     Array.from(checkoutForm.children).forEach(child => {
       if (child.id !== 'successCard') child.style.display = 'none';
     });
