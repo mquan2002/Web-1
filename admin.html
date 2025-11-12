@@ -1,5 +1,4 @@
-﻿<!-- admin.html -->
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
@@ -28,10 +27,12 @@
       display:flex;align-items:center;justify-content:center;color:#053047;font-weight:800;font-size:18px;box-shadow:0 4px 10px rgba(7,52,64,0.15)
     }
     .navlist{display:flex;gap:14px;align-items:center}
-    .nav-item{background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:10px;display:flex;gap:8px;align-items:center;cursor:pointer}
+    .nav-item{background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:10px;display:flex;gap:8px;align-items:center;cursor:pointer;transition:all 0.3s}
+    .nav-item:hover{background:rgba(255,255,255,0.15)}
     .nav-item.active{background:rgba(255,255,255,0.18);box-shadow:inset 0 -2px 0 rgba(255,255,255,0.03)}
     .top-actions{display:flex;gap:10px;align-items:center}
-    .btn-pill{background:rgba(255,255,255,0.12);color:white;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer}
+    .btn-pill{background:rgba(255,255,255,0.12);color:white;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;transition:all 0.3s}
+    .btn-pill:hover{background:rgba(255,255,255,0.2)}
 
     /* ===== container ===== */
     .container{max-width:1200px;margin:26px auto;padding:0 20px}
@@ -48,18 +49,30 @@
     /* ===== quick actions ===== */
     .panel{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(9,40,58,0.05);margin-bottom:20px}
     .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
-    .quick{border:1px dashed #e6eef2;padding:18px;border-radius:12px;text-align:center;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.9))}
+    .quick{border:1px dashed #e6eef2;padding:18px;border-radius:12px;text-align:center;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.9));transition:all 0.3s}
+    .quick:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
     .quick .big{font-size:28px;margin-bottom:8px;color:#6b21a8}
 
     /* ===== table styles ===== */
     .section-title{font-weight:700;margin-bottom:12px;color:#072034}
     .table{width:100%;border-collapse:collapse}
-    .table thead th{background:transparent;padding:14px 12px;text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid #eef3f6}
+    .table thead th{background:transparent;padding:14px 12px;text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid #eef3f6;font-size:0.9rem}
     .table tbody td{padding:14px 12px;border-bottom:1px solid #f0f4f6;color:#072034}
     .badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#fff3e0;color:#a65a00;font-weight:600;font-size:13px;border:1px solid rgba(166,90,0,0.06)}
 
+    /* ===== buttons ===== */
+    button{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:0.9rem;transition:all 0.3s}
+    button:hover{transform:translateY(-1px);opacity:0.9}
+
     /* ===== empty state ===== */
     .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;color:var(--muted)}
+
+    /* ===== form styles ===== */
+    input, select, textarea{padding:10px 12px;border:1px solid #e6eef2;border-radius:8px;font-size:0.95rem;width:100%}
+    input:focus, select:focus, textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(15,123,138,0.1)}
+    label{display:block;margin-bottom:6px;font-weight:600;color:#072034;font-size:0.9rem}
+    .form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+    .form-group{margin-bottom:16px}
 
     /* ===== responsive ===== */
     @media (max-width:880px){
@@ -81,10 +94,11 @@
       <div class="nav-item" data-tab="products" onclick="switchTab('products', this)">📚 Sản phẩm</div>
       <div class="nav-item" data-tab="orders" onclick="switchTab('orders', this)">🧾 Đơn hàng</div>
       <div class="nav-item" data-tab="users" onclick="switchTab('users', this)">👥 Người dùng</div>
+      <div class="nav-item" data-tab="import" onclick="switchTab('import', this)"> Nhập hàng</div>
     </nav>
 
     <div class="top-actions">
-      <div class="btn-pill" onclick="alert('Profile')">Admin</div>
+      <div class="btn-pill">Admin</div>
       <div class="btn-pill" onclick="logout()">Đăng xuất</div>
     </div>
   </header>
@@ -92,7 +106,7 @@
   <main class="container">
     <!-- DASHBOARD -->
     <section id="dashboard" class="tab">
-      <h1 class="page-title">Dashboard</h1>
+      <h1 class="page-title">📊 Dashboard</h1>
 
       <div class="stats-grid" id="statsGrid">
         <div class="card">
@@ -130,7 +144,7 @@
 
       <div class="panel" style="margin-bottom:22px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Thao tác nhanh</div>
+          <div class="section-title">⚡ Thao tác nhanh</div>
           <div style="color:var(--muted);font-size:14px">Thêm, xem hoặc báo cáo nhanh</div>
         </div>
         <div class="quick-grid">
@@ -146,21 +160,21 @@
             <div class="big">👥</div>
             <div>Quản lý người dùng</div>
           </div>
-          <div class="quick" onclick="alert('Báo cáo (coming soon)')">
+          <div class="quick" onclick="exportData()">
             <div class="big">📈</div>
-            <div>Báo cáo</div>
+            <div>Xuất dữ liệu</div>
           </div>
         </div>
       </div>
 
       <div class="panel" style="margin-bottom:18px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Đơn hàng gần đây</div>
+          <div class="section-title">🛒 Đơn hàng gần đây</div>
           <div style="color:teal;cursor:pointer" onclick="switchTab('orders', document.querySelector('[data-tab=orders]'))">Xem tất cả →</div>
         </div>
         <table class="table" id="recentOrdersTable">
           <thead>
-            <tr><th>Mã đơn</th><th>Khách</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th></tr>
+            <tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th></tr>
           </thead>
           <tbody id="recentOrdersBody"></tbody>
         </table>
@@ -168,40 +182,75 @@
 
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Sản phẩm bán chạy</div>
+          <div class="section-title">🔥 Sản phẩm bán chạy</div>
           <div style="color:teal;cursor:pointer" onclick="switchTab('products', document.querySelector('[data-tab=products]'))">Xem tất cả →</div>
         </div>
-
         <div id="topProducts" style="min-height:120px"></div>
       </div>
     </section>
 
     <!-- PRODUCTS -->
     <section id="products" class="tab" style="display:none">
-      <h1 class="page-title">Sản phẩm</h1>
+      <h1 class="page-title">📚 Quản lý sản phẩm</h1>
+      
       <div class="panel" style="margin-bottom:18px">
+        <div class="section-title">➕ Thêm/Sửa sản phẩm</div>
         <form id="productForm" onsubmit="return false">
-          <div style="display:flex;gap:12px;flex-wrap:wrap">
-            <input id="pTitle" placeholder="Tiêu đề" style="flex:2;padding:10px;border-radius:8px;border:1px solid #e6eef2" required>
-            <input id="pAuthor" placeholder="Tác giả" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eef2">
-            <input id="pPrice" type="number" placeholder="Giá (VNĐ)" style="width:160px;padding:10px;border-radius:8px;border:1px solid #e6eef2">
-            <input id="pImage" placeholder="URL ảnh bìa" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eef2">
-            <button class="btn-pill" onclick="addProduct()">Lưu</button>
-            <button class="btn-pill" onclick="clearProductForm()">Xóa</button>
+          <input type="hidden" id="productId">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tiêu đề *</label>
+              <input id="productTitle" placeholder="Nhập tên sách" required>
+            </div>
+            <div class="form-group">
+              <label>Tác giả</label>
+              <input id="productAuthor" placeholder="Tên tác giả">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Giá (VNĐ) *</label>
+              <input id="productPrice" type="number" placeholder="0" required>
+            </div>
+            <div class="form-group">
+              <label>Số lượng tồn kho *</label>
+              <input id="productStock" type="number" placeholder="0" min="0" required>
+            </div>
+            <div class="form-group">
+              <label>Thể loại</label>
+              <input id="productCategory" placeholder="VD: Văn học, Công nghệ...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>URL ảnh bìa</label>
+            <input id="productImage" placeholder="https://example.com/image.jpg">
+          </div>
+
+          <div class="form-group">
+            <label>Mô tả</label>
+            <textarea id="productDesc" rows="3" placeholder="Mô tả ngắn về sách..."></textarea>
+          </div>
+
+          <div style="display:flex;gap:10px">
+            <button style="background:var(--primary);color:white;flex:1" onclick="saveProduct()">💾 Lưu sản phẩm</button>
+            <button style="background:#e5e7eb;color:#374151" onclick="clearProductForm()">🔄 Xóa form</button>
           </div>
         </form>
       </div>
 
       <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Danh sách sản phẩm</div>
-          <div>
-            <input id="searchProd" placeholder="Tìm kiếm..." style="padding:8px;border:1px solid #eef3f6;border-radius:8px" oninput="renderProductsList()">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:12px">
+          <div class="section-title">📋 Danh sách sản phẩm</div>
+          <div style="display:flex;gap:8px">
+            <input id="searchProd" placeholder="🔍 Tìm kiếm (ID, tên, tác giả)..." style="width:300px;padding:8px;border:1px solid #eef3f6;border-radius:8px" oninput="renderProductsList()">
           </div>
         </div>
 
         <table class="table" id="productsTable">
-          <thead><tr><th>ID</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Hành động</th></tr></thead>
+          <thead><tr><th>ID</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Số lượng</th><th>Thể loại</th><th>Hành động</th></tr></thead>
           <tbody id="productsBody"></tbody>
         </table>
       </div>
@@ -209,15 +258,17 @@
 
     <!-- ORDERS -->
     <section id="orders" class="tab" style="display:none">
-      <h1 class="page-title">Đơn hàng</h1>
+      <h1 class="page-title">🧾 Quản lý đơn hàng</h1>
       <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Danh sách đơn hàng</div>
-          <div><input id="searchOrder" placeholder="Tìm kiếm mã/khách" style="padding:8px;border:1px solid #eef3f6;border-radius:8px" oninput="renderOrdersList()"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:12px">
+          <div class="section-title">📦 Danh sách đơn hàng</div>
+          <div>
+            <input id="searchOrder" placeholder="🔍 Tìm mã đơn/khách" style="padding:8px;border:1px solid #eef3f6;border-radius:8px;width:200px" oninput="renderOrdersList()">
+          </div>
         </div>
 
         <table class="table">
-          <thead><tr><th>Mã</th><th>Khách</th><th>Ngày</th><th>Tổng</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày</th><th>Tổng tiền</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
           <tbody id="ordersBody"></tbody>
         </table>
       </div>
@@ -225,14 +276,14 @@
 
     <!-- USERS -->
     <section id="users" class="tab" style="display:none">
-      <h1 class="page-title">Người dùng</h1>
+      <h1 class="page-title">👥 Quản lý người dùng</h1>
       <div class="panel">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div class="section-title">Danh sách người dùng</div>
+          <div class="section-title">👤 Danh sách người dùng</div>
         </div>
 
         <table class="table">
-          <thead><tr><th>Email</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <thead><tr><th>Email/Username</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
           <tbody id="usersBody"></tbody>
         </table>
       </div>
@@ -241,23 +292,50 @@
   </main>
 
   <script>
-  
-    /* ===== helpers ===== */
+    /* ===== STORAGE HELPERS ===== */
     const getProducts = () => JSON.parse(localStorage.getItem('bs_products') || '[]');
     const saveProducts = (arr) => localStorage.setItem('bs_products', JSON.stringify(arr));
-    const getOrders = () => JSON.parse(localStorage.getItem('bs_orders') || '[]');
-    const saveOrders = (arr) => localStorage.setItem('bs_orders', JSON.stringify(arr));
+    const getOrders = () => JSON.parse(localStorage.getItem('orders') || '[]');
+    const saveOrders = (arr) => localStorage.setItem('orders', JSON.stringify(arr));
     const getUsers = () => JSON.parse(localStorage.getItem('bs_users') || '[]');
     const saveUsers = (arr) => localStorage.setItem('bs_users', JSON.stringify(arr));
 
-    /* ===== main rendering ===== */
+    /* ===== SEED DATA ===== */
+    async function seedData(){
+      // Load products từ books.json nếu chưa có
+      if(getProducts().length === 0){
+        try {
+          const res = await fetch('data/books.json');
+          const books = await res.json();
+          // Thêm stock mặc định cho mỗi sản phẩm
+          books.forEach(book => {
+            if(book.stock === undefined) book.stock = 100;
+          });
+          saveProducts(books);
+          console.log('✅ Đã load', books.length, 'sản phẩm từ books.json');
+        } catch(e) {
+          console.warn('⚠️ Không load được books.json, sử dụng dữ liệu mẫu');
+          const sampleProducts = [
+            {id:'b001',title:'Atomic Habits',author:'James Clear',price:195000,stock:100,category:'Phát triển bản thân',cover:'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800',desc:'Cẩm nang thay đổi thói quen hiệu quả'},
+            {id:'b002',title:'Clean Code',author:'Robert C. Martin',price:250000,stock:50,category:'Công nghệ',cover:'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',desc:'Nguyên tắc viết code sạch'},
+            {id:'b003',title:'Sapiens',author:'Yuval Noah Harari',price:180000,stock:75,category:'Lịch sử',cover:'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800',desc:'Lược sử loài người'}
+          ];
+          saveProducts(sampleProducts);
+        }
+      }
+    }
+
+    /* ===== DASHBOARD ===== */
     function updateStats(){
       const products = getProducts();
       const orders = getOrders();
       const users = getUsers();
+      
       document.getElementById('statProducts').textContent = products.length;
+      
       const revenue = orders.reduce((s,o)=>s+(o.total||0),0);
       document.getElementById('statRevenue').textContent = revenue.toLocaleString('vi-VN') + ' ₫';
+      
       document.getElementById('statOrders').textContent = orders.length;
       document.getElementById('statUsers').textContent = users.length;
     }
@@ -265,16 +343,18 @@
     function renderRecentOrders(){
       const rows = document.getElementById('recentOrdersBody');
       const orders = getOrders().slice().reverse().slice(0,5);
+      
       if(orders.length===0){
-        rows.innerHTML = '<tr><td colspan="5" class="empty">Chưa có đơn hàng nào</td></tr>';
+        rows.innerHTML = '<tr><td colspan="5" class="empty" style="text-align:center;padding:40px">📭 Chưa có đơn hàng nào</td></tr>';
         return;
       }
+      
       rows.innerHTML = orders.map(o=>`
         <tr>
-          <td>${o.id}</td>
-          <td>${o.customer}</td>
+          <td><strong>${o.id}</strong></td>
+          <td>${o.shippingAddress?.fullname || o.customer || 'N/A'}</td>
           <td>${o.date}</td>
-          <td style="font-weight:700">${o.total.toLocaleString('vi-VN')}₫</td>
+          <td style="font-weight:700;color:var(--primary)">${o.total.toLocaleString('vi-VN')}₫</td>
           <td><span class="badge">${o.status}</span></td>
         </tr>
       `).join('');
@@ -283,159 +363,330 @@
     function renderTopProducts(){
       const el = document.getElementById('topProducts');
       const products = getProducts();
+      
       if(products.length===0){
-        el.innerHTML = '<div class="empty"><div style="font-size:40px">📚</div><div>Chưa có sản phẩm nào</div></div>';
+        el.innerHTML = '<div class="empty"><div style="font-size:50px">📚</div><div style="margin-top:12px">Chưa có sản phẩm nào</div></div>';
         return;
       }
-      // simple top: first 3
-      el.innerHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap">'+products.slice(0,4).map(p=>`
-        <div style="min-width:200px;flex:1;background:#fff;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(9,40,58,0.04)">
-          <div style="width:60px;height:80px;background:#f3f7fb;border-radius:8px;display:flex;align-items:center;justify-content:center">📘</div>
-          <div>
-            <div style="font-weight:700">${p.title}</div>
-            <div style="color:var(--muted);font-size:13px">${p.author}</div>
-            <div style="margin-top:8px;font-weight:700">${(p.price||0).toLocaleString('vi-VN')} ₫</div>
+      
+      el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px">'+products.slice(0,4).map(p=>`
+        <div style="background:#fff;border-radius:10px;padding:14px;display:flex;gap:12px;align-items:center;box-shadow:0 4px 12px rgba(9,40,58,0.04);border:1px solid #f0f4f6">
+          <img src="${p.cover || p.image}" alt="${p.title}" style="width:50px;height:70px;object-fit:cover;border-radius:6px" onerror="this.src='https://via.placeholder.com/50x70?text=📖'">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:0.95rem;margin-bottom:4px">${p.title}</div>
+            <div style="color:var(--muted);font-size:0.85rem;margin-bottom:6px">${p.author}</div>
+            <div style="font-weight:700;color:var(--primary)">${(p.price||0).toLocaleString('vi-VN')} ₫</div>
           </div>
         </div>
       `).join('')+'</div>';
     }
 
+    /* ===== PRODUCTS ===== */
     function renderProductsList(){
       const q = (document.getElementById('searchProd')?.value||'').toLowerCase();
       const body = document.getElementById('productsBody');
-      const products = getProducts().filter(p=>p.title.toLowerCase().includes(q) || (p.author||'').toLowerCase().includes(q));
-      if(products.length===0) body.innerHTML = '<tr><td colspan="5" class="empty">Không có sản phẩm</td></tr>';
-      else body.innerHTML = products.map(p=>`
-        <tr>
-          <td>${p.id}</td>
-          <td>${p.title}</td>
-          <td>${p.author||''}</td>
-          <td style="font-weight:700">${(p.price||0).toLocaleString('vi-VN')}₫</td>
-          <td>
-            <button onclick="editProduct('${p.id}')" style="margin-right:6px">Sửa</button>
-            <button onclick="removeProduct('${p.id}')">Xóa</button>
-          </td>
-        </tr>
-      `).join('');
+      const products = getProducts().filter(p=>
+        p.title.toLowerCase().includes(q) || 
+        (p.author||'').toLowerCase().includes(q) ||
+        (p.category||'').toLowerCase().includes(q) ||
+        (p.id||'').toLowerCase().includes(q)
+      );
+      
+      if(products.length===0) {
+        body.innerHTML = '<tr><td colspan="7" class="empty" style="text-align:center;padding:40px">📭 Không tìm thấy sản phẩm</td></tr>';
+      } else {
+        body.innerHTML = products.map(p=>{
+          const stock = p.stock !== undefined ? p.stock : 0;
+          const stockColor = stock === 0 ? 'color:#ef4444' : stock < 10 ? 'color:#f59e0b' : 'color:#10b981';
+          return `
+          <tr>
+            <td><strong>${p.id}</strong></td>
+            <td>${p.title}</td>
+            <td>${p.author||''}</td>
+            <td style="font-weight:700;color:var(--primary)">${(p.price||0).toLocaleString('vi-VN')}₫</td>
+            <td style="font-weight:700;${stockColor}">${stock}</td>
+            <td>${p.category||''}</td>
+            <td>
+              <button style="background:#3b82f6;color:white;margin-right:6px" onclick="editProduct('${p.id}')">✏️ Sửa</button>
+              <button style="background:#ef4444;color:white" onclick="removeProduct('${p.id}')">🗑️ Xóa</button>
+            </td>
+          </tr>
+        `}).join('');
+      }
       updateStats();
     }
 
-    function renderOrdersList(){
-      const q = (document.getElementById('searchOrder')?.value||'').toLowerCase();
-      const body = document.getElementById('ordersBody');
-      const orders = getOrders().filter(o=>o.id.toLowerCase().includes(q) || (o.customer||'').toLowerCase().includes(q));
-      if(orders.length===0) body.innerHTML = '<tr><td colspan="6" class="empty">Không có đơn hàng</td></tr>';
-      else body.innerHTML = orders.map(o=>`
-        <tr>
-          <td>${o.id}</td>
-          <td>${o.customer}</td>
-          <td>${o.date}</td>
-          <td style="font-weight:700">${(o.total||0).toLocaleString('vi-VN')}₫</td>
-          <td>${o.status}</td>
-          <td><button onclick="viewOrder('${o.id}')">Xem</button></td>
-        </tr>
-      `).join('');
-    }
-
-    function renderUsersList(){
-      const body = document.getElementById('usersBody');
-      const users = getUsers();
-      if(users.length===0) body.innerHTML = '<tr><td colspan="3" class="empty">Không có người dùng</td></tr>';
-      else body.innerHTML = users.map(u=>`
-        <tr>
-          <td>${u.email}</td>
-          <td>${u.locked? '🔒 Đã khóa' : '✅ Hoạt động'}</td>
-          <td>
-            <button onclick="toggleLock('${u.email}')">${u.locked? 'Mở khóa':'Khóa'}</button>
-            <button onclick="deleteUser('${u.email}')">Xóa</button>
-          </td>
-        </tr>
-      `).join('');
-      updateStats();
-    }
-
-    /* ===== actions ===== */
-    function addProduct(){
-      const title = document.getElementById('pTitle').value.trim();
-      if(!title){ alert('Nhập tiêu đề'); return; }
-      const author = document.getElementById('pAuthor').value.trim();
-      const price = Number(document.getElementById('pPrice').value) || 0;
-      const img = document.getElementById('pImage').value.trim();
-      const products = getProducts();
-      const id = 'B' + Math.floor(Math.random()*900000 + 100000);
-      products.push({id,title,author,price,image:img});
+    function saveProduct(){
+      const id = document.getElementById('productId').value || 'b' + Date.now();
+      const title = document.getElementById('productTitle').value.trim();
+      
+      if(!title){ 
+        alert('❌ Vui lòng nhập tiêu đề sản phẩm!'); 
+        return; 
+      }
+      
+      const stock = parseInt(document.getElementById('productStock').value);
+      if(isNaN(stock) || stock < 0){
+        alert('❌ Vui lòng nhập số lượng tồn kho hợp lệ (>= 0)!');
+        return;
+      }
+      
+      const product = {
+        id: id,
+        title: title,
+        author: document.getElementById('productAuthor').value.trim(),
+        price: parseInt(document.getElementById('productPrice').value) || 0,
+        stock: stock,
+        category: document.getElementById('productCategory').value.trim(),
+        cover: document.getElementById('productImage').value.trim() || 'https://via.placeholder.com/100x150?text=📖',
+        image: document.getElementById('productImage').value.trim() || 'https://via.placeholder.com/100x150?text=📖',
+        desc: document.getElementById('productDesc').value.trim()
+      };
+      
+      let products = getProducts();
+      const idx = products.findIndex(p=>p.id===id);
+      
+      if(idx >= 0){
+        products[idx] = product;
+        alert('✅ Cập nhật sản phẩm thành công!');
+      } else {
+        products.push(product);
+        alert('✅ Thêm sản phẩm thành công!');
+      }
+      
       saveProducts(products);
       clearProductForm();
+      
+      // Auto reload
       renderProductsList();
       renderTopProducts();
       updateStats();
-      alert('Đã thêm sản phẩm');
     }
+
     function clearProductForm(){
-      document.getElementById('pTitle').value=''; document.getElementById('pAuthor').value=''; document.getElementById('pPrice').value=''; document.getElementById('pImage').value='';
+      document.getElementById('productForm').reset();
+      document.getElementById('productId').value = '';
+      document.getElementById('productStock').value = '0';
     }
-    function removeProduct(id){
-      if(!confirm('Xóa sản phẩm?')) return;
-      const arr = getProducts().filter(p=>p.id!==id);
-      saveProducts(arr); renderProductsList(); renderTopProducts(); updateStats();
-    }
+
     function editProduct(id){
       const p = getProducts().find(x=>x.id===id);
       if(!p) return;
-      document.getElementById('pTitle').value = p.title;
-      document.getElementById('pAuthor').value = p.author || '';
-      document.getElementById('pPrice').value = p.price || 0;
-      document.getElementById('pImage').value = p.image || '';
-      // when clicking Save, it will add new entry (simpler). You can extend to support update.
-      // For now remove old so save will create new with new id
-      removeProduct(id);
+      
+      document.getElementById('productId').value = p.id;
+      document.getElementById('productTitle').value = p.title;
+      document.getElementById('productAuthor').value = p.author || '';
+      document.getElementById('productPrice').value = p.price || 0;
+      document.getElementById('productStock').value = p.stock !== undefined ? p.stock : 0;
+      document.getElementById('productCategory').value = p.category || '';
+      document.getElementById('productImage').value = p.cover || p.image || '';
+      document.getElementById('productDesc').value = p.desc || '';
+      
+      document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function removeProduct(id){
+      if(!confirm('❓ Bạn có chắc muốn xóa sản phẩm này?')) return;
+      
+      const products = getProducts().filter(p=>p.id!==id);
+      saveProducts(products);
+      
+      // Auto reload
+      renderProductsList();
+      renderTopProducts();
+      updateStats();
+      
+      alert('✅ Đã xóa sản phẩm!');
+    }
+
+    /* ===== ORDERS ===== */
+    function renderOrdersList(){
+      const q = (document.getElementById('searchOrder')?.value||'').toLowerCase();
+      const body = document.getElementById('ordersBody');
+      const orders = getOrders().filter(o=>
+        o.id.toLowerCase().includes(q) || 
+        ((o.shippingAddress?.fullname || o.customer || '').toLowerCase().includes(q))
+      );
+      
+      if(orders.length===0) {
+        body.innerHTML = '<tr><td colspan="6" class="empty" style="text-align:center;padding:40px">📭 Không có đơn hàng</td></tr>';
+      } else {
+        body.innerHTML = orders.map(o=>`
+          <tr>
+            <td><strong>${o.id}</strong></td>
+            <td>${o.shippingAddress?.fullname || o.customer || 'N/A'}</td>
+            <td>${o.date}</td>
+            <td style="font-weight:700;color:var(--primary)">${(o.total||0).toLocaleString('vi-VN')}₫</td>
+            <td><span class="badge">${o.status}</span></td>
+            <td>
+              <button style="background:#3b82f6;color:white" onclick="viewOrder('${o.id}')">👁️Xem chi tiết</button>
+            </td>
+          </tr>
+        `).join('');
+      }
     }
 
     function viewOrder(id){
       const o = getOrders().find(x=>x.id===id);
-      if(!o) return alert('Không tìm thấy');
-      alert(`Đơn ${o.id}\nKhách: ${o.customer}\nTổng: ${(o.total||0).toLocaleString('vi-VN')}₫\nTrạng thái: ${o.status}`);
+      if(!o) return alert('❌ Không tìm thấy đơn hàng!');
+      
+      const customerName = o.shippingAddress?.fullname || o.customer || 'N/A';
+      const phone = o.shippingAddress?.phone || 'N/A';
+      const address = o.shippingAddress ? 
+        `${o.shippingAddress.street}, ${o.shippingAddress.district}, ${o.shippingAddress.city}` : 'N/A';
+      const items = o.items ? 
+        o.items.map(i=>`  • ${i.title} x${i.quantity} = ${(i.price*i.quantity).toLocaleString('vi-VN')}₫`).join('\n') : 
+        '  Không có sản phẩm';
+      
+      alert(`📦 CHI TIẾT ĐƠN HÀNG
+
+🆔 Mã đơn: ${o.id}
+📅 Ngày đặt: ${o.date}
+💰 Tổng tiền: ${(o.total||0).toLocaleString('vi-VN')}₫
+📊 Trạng thái: ${o.status}
+
+👤 THÔNG TIN KHÁCH HÀNG:
+  Họ tên: ${customerName}
+  SĐT: ${phone}
+  Địa chỉ: ${address}
+
+📦 SẢN PHẨM:
+${items}`);
     }
 
-    function toggleLock(email){
+    /* ===== USERS ===== */
+    function renderUsersList(){
+      const body = document.getElementById('usersBody');
       const users = getUsers();
-      const u = users.find(x=>x.email===email);
-      if(!u) return;
-      u.locked = !u.locked; saveUsers(users); renderUsersList();
-    }
-    function deleteUser(email){
-      if(!confirm('Xóa user?')) return;
-      const arr = getUsers().filter(u=>u.email!==email); saveUsers(arr); renderUsersList();
+      
+      if(users.length===0) {
+        body.innerHTML = '<tr><td colspan="3" class="empty" style="text-align:center;padding:40px">👤 Chưa có người dùng nào</td></tr>';
+      } else {
+        body.innerHTML = users.map(u=>`
+          <tr>
+            <td><strong>${u.email || u.username || 'N/A'}</strong></td>
+            <td>
+              <span class="badge" style="background:${u.locked?'#fee2e2':'#d1fae5'};color:${u.locked?'#991b1b':'#065f46'}">
+                ${u.locked ? '🔒 Đã khóa' : '✅ Hoạt động'}
+              </span>
+            </td>
+            <td>
+              <button style="background:${u.locked?'#10b981':'#f59e0b'};color:white;margin-right:6px" onclick="toggleLock('${u.email || u.username}')">
+                ${u.locked ? '🔓 Mở khóa':'🔒 Khóa'}
+              </button>
+              <button style="background:#ef4444;color:white" onclick="deleteUser('${u.email || u.username}')">🗑️ Xóa</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+      updateStats();
     }
 
-    function logout(){ alert('Đã đăng xuất (demo)'); /* remove session logic if any */ }
+    function toggleLock(identifier){
+      const users = getUsers();
+      const u = users.find(x=>x.email===identifier || x.username===identifier);
+      if(!u) return alert('❌ Không tìm thấy người dùng!');
+      
+      u.locked = !u.locked;
+      saveUsers(users);
+      renderUsersList();
+      alert(u.locked ? '🔒 Đã khóa tài khoản!' : '🔓 Đã mở khóa tài khoản!');
+    }
 
-    /* ===== tab switcher ===== */
+    function deleteUser(identifier){
+      if(!confirm('❓ Bạn có chắc muốn xóa người dùng này?')) return;
+      
+      const users = getUsers().filter(u=>u.email!==identifier && u.username!==identifier);
+      saveUsers(users);
+      renderUsersList();
+      alert('✅ Đã xóa người dùng!');
+    }
+
+    /* ===== TAB SWITCHING ===== */
     function switchTab(name, el){
       document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
       document.getElementById(name).style.display='block';
+      
       document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
       if(el) el.classList.add('active');
-      // render on demand
-      if(name==='dashboard'){ renderRecentOrders(); renderTopProducts(); updateStats(); }
-      if(name==='products'){ renderProductsList(); }
-      if(name==='orders'){ renderOrdersList(); }
-      if(name==='users'){ renderUsersList(); }
+      
+      // Render on demand
+      if(name==='dashboard'){ 
+        renderRecentOrders(); 
+        renderTopProducts(); 
+        updateStats(); 
+      }
+      if(name==='products'){ 
+        renderProductsList(); 
+      }
+      if(name==='orders'){ 
+        renderOrdersList(); 
+      }
+      if(name==='users'){ 
+        renderUsersList(); 
+      }
+      
       window.scrollTo({top:0,behavior:'smooth'});
     }
 
-    /* ===== init ===== */
-    (function init(){
-      seed();
-      // initial render
+    /* ===== LOGOUT ===== */
+    function logout(){
+      if(confirm('❓ Bạn có chắc muốn đăng xuất?')){
+        localStorage.removeItem('bs_admin_session');
+        localStorage.removeItem('bs_auth');
+        window.location.href = 'admin-login.html';
+      }
+    }
+
+    /* ===== EXPORT DATA ===== */
+    function exportData(){
+      const data = {
+        products: getProducts(),
+        orders: getOrders(),
+        users: getUsers().map(u=>({...u, password: '***'})), // Ẩn password
+        exportDate: new Date().toISOString()
+      };
+      
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bookstore-backup-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      alert('✅ Đã xuất dữ liệu thành công!');
+    }
+
+    /* ===== INIT ===== */
+    (async function init(){
+      // Check admin auth
+      const adminAuth = localStorage.getItem('bs_admin_session');
+      if (!adminAuth) {
+        alert('⚠️ Vui lòng đăng nhập với tài khoản admin!');
+        window.location.href = 'admin-login.html';
+        return;
+      }
+
+      // Seed data
+      await seedData();
+      
+      // Initial render
+      updateStats();
       renderRecentOrders();
       renderTopProducts();
       renderProductsList();
       renderOrdersList();
       renderUsersList();
-      updateStats();
+      
+      console.log('✅ Admin panel loaded successfully!');
+      console.log('📊 Stats:', {
+        products: getProducts().length,
+        orders: getOrders().length,
+        users: getUsers().length
+      });
     })();
-
   </script>
 </body>
 </html>

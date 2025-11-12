@@ -20,7 +20,7 @@
 
   <main class="admin-container">
     <section class="admin-form">
-      <h2>Thêm / Sửa Phiếu Nhập</h2>
+      <h2>Thêm / Hoàn thành Phiếu Nhập</h2>
       <form id="importForm">
 
         <input type="hidden" id="importId">
@@ -28,8 +28,8 @@
         <label>Ngày nhập:</label>
         <input type="date" id="importDate" required>
 
-        <label>ID Sản phẩm:</label>
-        <input type="number" id="productId" required>
+        <label>ID Sản phẩm (VD: b001, b002...):</label>
+        <input type="text" id="productId" placeholder="b001" required>
 
         <label>Số lượng nhập:</label>
         <input type="number" id="quantity" min="1" required>
@@ -37,9 +37,18 @@
         <label>Giá nhập (VNĐ) / 1 sản phẩm:</label>
         <input type="number" id="importPrice" min="0" required>
 
-        <button type="submit" class="btn-save">💾 Lưu</button>
+        <button type="submit" class="btn-save">💾 Lưu / Hoàn thành nhập kho</button>
         <button type="reset" class="btn-clear">🧹 Xóa form</button>
       </form>
+      
+      <div style="background:#e0f2fe;border:1px solid #0284c7;border-radius:8px;padding:12px;margin-top:16px">
+        <strong>💡 Hướng dẫn:</strong>
+        <ul style="margin:8px 0 0 20px;font-size:0.9rem">
+          <li>Bước 1: Điền thông tin và nhấn "Lưu" → Tạo phiếu nhập (chưa vào kho)</li>
+          <li>Bước 2: Nhấn "✏️ Sửa" → Kiểm tra lại → Nhấn "Lưu" → Số lượng tự động cộng vào kho</li>
+          <li>Lưu ý: Phiếu đã hoàn thành không thể sửa!</li>
+        </ul>
+      </div>
     </section>
 
     <section class="admin-list">
@@ -54,6 +63,7 @@
             <th>Số lượng</th>
             <th>Giá nhập</th>
             <th>Tổng tiền</th>
+            <th>Trạng thái</th>
             <th>Hành động</th>
           </tr>
         </thead>

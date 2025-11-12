@@ -468,7 +468,7 @@ function initAuthPage(){
     $('#reg-username').value=''; $('#reg-password').value='';
     clearError(regEmail); clearError(regPass);
   });
-  $('#btn-login').addEventListener('click', ()=>{
+$('#btn-login').addEventListener('click', ()=>{
     const email = $('#login-username').value.trim();
     const pass = $('#login-password').value;
 
@@ -478,14 +478,13 @@ function initAuthPage(){
     if(!email){
       showError(loginEmail, "Email không được để trống");
       hasError=true;
-      clearError(loginEmail); 
     }
     if(!pass){
       showError(loginPass, "Mật khẩu không được để trống");
       hasError=true;
-      clearError(loginPass);
     }
     if (hasError) return;
+    
     const users = getUsers();
     const u = users.find(x=>x.username===email && x.password===pass);
     if(!u){
@@ -493,6 +492,14 @@ function initAuthPage(){
       authMsg.style.color = '#e81123';
       return;
     }
+    
+    // ✅ CHECK TÀI KHOẢN BỊ KHÓA
+    if(u.locked === true){
+      authMsg.textContent = '🔒 Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.';
+      authMsg.style.color = '#e81123';
+      return;
+    }
+    
     setAuth({username: u.username, email: u.username});
     cleanupLegacyStorage();
     location.href = 'home.html';
@@ -643,6 +650,16 @@ document.addEventListener('DOMContentLoaded', function() {
       status: 'Đang xử lý',
       userEmail: auth.email
     };
+    const products = BOOKS; // hoặc getProducts() nếu có
+cart.forEach(item => {
+  const product = products.find(p => p.id === item.id);
+  if(product && product.stock !== undefined){
+    product.stock -= item.quantity;
+    if(product.stock < 0) product.stock = 0;
+  }
+});
+// Lưu lại vào localStorage
+localStorage.setItem('bs_products', JSON.stringify(products));
     
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.push(order);

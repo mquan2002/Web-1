@@ -1,4 +1,7 @@
-let books = JSON.parse(localStorage.getItem("books") || "[]");
+// Lấy dữ liệu từ bs_products thay vì books
+const getProducts = () => JSON.parse(localStorage.getItem('bs_products') || '[]');
+const saveProducts = (arr) => localStorage.setItem('bs_products', JSON.stringify(arr));
+
 let profits = JSON.parse(localStorage.getItem("profits") || "{}");
 
 const profitForm = document.getElementById("profitForm");
@@ -43,6 +46,7 @@ profitForm.addEventListener("submit", (e) => {
   renderPriceTable();
 
   profitForm.reset();
+  alert('✅ Đã lưu % lợi nhuận!');
 });
 
 // ---------------- SỬA ----------------
@@ -53,20 +57,29 @@ function editProfit(cat) {
 
 // ---------------- XÓA ----------------
 function deleteProfit(cat) {
+  if(!confirm(`Xóa % lợi nhuận cho thể loại "${cat}"?`)) return;
   delete profits[cat];
   saveProfits();
   renderProfitTable();
   renderPriceTable();
+  alert('✅ Đã xóa!');
 }
 
 // ---------------- HIỂN THỊ GIÁ BÁN ----------------
 function renderPriceTable() {
   priceTable.innerHTML = "";
+  
+  const products = getProducts();
+  
+  if(products.length === 0){
+    priceTable.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#666">Chưa có sản phẩm nào</td></tr>';
+    return;
+  }
 
-  books.forEach((b) => {
-    const cost = b.price; // ✅ giá vốn = giá gốc (đúng yêu cầu)
+  products.forEach((b) => {
+    const cost = b.price; // giá vốn
     const percent = profits[b.category] || 0;
-    const sellPrice = cost + cost * (percent / 100);
+    const sellPrice = Math.round(cost + cost * (percent / 100)); // làm tròn
 
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -75,7 +88,7 @@ function renderPriceTable() {
       <td>${b.category}</td>
       <td>${cost.toLocaleString()}</td>
       <td>${percent}%</td>
-      <td>${sellPrice.toLocaleString()}</td>
+      <td><strong style="color:#0f7b8a">${sellPrice.toLocaleString()}</strong></td>
     `;
     priceTable.appendChild(tr);
   });
