@@ -1,163 +1,441 @@
-﻿<!DOCTYPE html>
+﻿<!-- admin.html -->
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bảng quản trị - Admin</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookStore Admin</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --primary: #0b7fab; --primary-dark: #085a7d; --accent: #ff6b6b; --success: #51cf66; --dark: #0b2540; --border: #e6eef2; --bg: #f8fafc; }
-    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--dark); }
-    .admin-header { background: var(--primary); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .admin-header h1 { font-size: 1.5rem; }
-    .admin-header nav { display: flex; gap: 20px; align-items: center; }
-    .admin-header a, .admin-header button { color: white; text-decoration: none; background: none; border: none; cursor: pointer; transition: opacity 0.3s; }
-    .admin-header #logoutBtn { background: rgba(255,255,255,0.2); padding: 8px 12px; border-radius: 6px; }
-    .admin-container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
-    .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border); flex-wrap: wrap; }
-    .tab-btn { padding: 12px 20px; background: none; border: none; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.3s; }
-    .tab-btn:hover { color: var(--primary); }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .admin-form { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .admin-form h2 { font-size: 1.2rem; margin-bottom: 20px; color: var(--dark); }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 15px; }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group label { margin-bottom: 6px; font-weight: 500; font-size: 0.9rem; color: var(--dark); }
-    .form-group input, .form-group select, .form-group textarea { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; font-family: inherit; }
-    .form-group textarea { resize: vertical; min-height: 100px; }
-    .btn-group { display: flex; gap: 10px; margin-top: 15px; }
-    .btn { padding: 10px 20px; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: all 0.3s; flex: 1; }
-    .btn-save { background: var(--success); color: white; }
-    .btn-clear { background: var(--border); color: var(--dark); }
-    .btn-edit { background: #3b82f6; color: white; padding: 6px 12px; font-size: 0.85rem; flex: none; }
-    .btn-delete { background: var(--accent); color: white; padding: 6px 12px; font-size: 0.85rem; flex: none; }
-    .btn-primary { background: var(--primary); color: white; }
-    .admin-list { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    table thead { background: var(--bg); border-bottom: 2px solid var(--border); }
-    table th { padding: 12px; text-align: left; font-weight: 600; color: var(--dark); }
-    table td { padding: 12px; border-bottom: 1px solid var(--border); }
-    table img { max-width: 50px; height: auto; border-radius: 4px; }
-    .search-bar { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-    .search-bar input, .search-bar select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
-    .search-bar input { flex: 1; min-width: 200px; }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-    .stat-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); }
-    .stat-label { color: #6b7280; font-size: 0.85rem; margin-bottom: 5px; }
-    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--dark); }
-    @media (max-width: 768px) { .admin-header { flex-direction: column; gap: 15px; } .form-grid { grid-template-columns: 1fr; } }
+    /* ===== Reset & root ===== */
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --primary:#0f7b8a; --primary-dark:#0b5a6a; --accent:#ffb86b;
+      --bg:#f3f6f8; --card:#ffffff; --muted:#6b7280; --glass:rgba(255,255,255,0.7);
+      --radius:14px;
+    }
+    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;color:#0b2540;background:var(--bg);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+
+    /* ===== header ===== */
+    .topbar{
+      background:linear-gradient(90deg,var(--primary),#0a8899);
+      color:white;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 6px 18px rgba(9,40,58,0.12);
+      position:sticky;top:0;z-index:50
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:1.2rem}
+    .brand .logo{
+      width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#7dd3fc,#a78bfa);
+      display:flex;align-items:center;justify-content:center;color:#053047;font-weight:800;font-size:18px;box-shadow:0 4px 10px rgba(7,52,64,0.15)
+    }
+    .navlist{display:flex;gap:14px;align-items:center}
+    .nav-item{background:rgba(255,255,255,0.08);padding:8px 12px;border-radius:10px;display:flex;gap:8px;align-items:center;cursor:pointer}
+    .nav-item.active{background:rgba(255,255,255,0.18);box-shadow:inset 0 -2px 0 rgba(255,255,255,0.03)}
+    .top-actions{display:flex;gap:10px;align-items:center}
+    .btn-pill{background:rgba(255,255,255,0.12);color:white;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer}
+
+    /* ===== container ===== */
+    .container{max-width:1200px;margin:26px auto;padding:0 20px}
+    h1.page-title{font-size:28px;margin-bottom:18px;color:#072034}
+
+    /* ===== stats grid ===== */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:22px}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 20px rgba(9,40,58,0.06);display:flex;gap:14px;align-items:center}
+    .card .icon{width:54px;height:54px;border-radius:10px;background:linear-gradient(135deg,#eef7ff,#f6fff6);display:flex;align-items:center;justify-content:center;font-size:22px}
+    .card .meta{flex:1}
+    .card .meta .label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .card .meta .value{font-size:20px;font-weight:700;color:#062a3b}
+
+    /* ===== quick actions ===== */
+    .panel{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 20px rgba(9,40,58,0.05);margin-bottom:20px}
+    .quick-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+    .quick{border:1px dashed #e6eef2;padding:18px;border-radius:12px;text-align:center;cursor:pointer;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.9))}
+    .quick .big{font-size:28px;margin-bottom:8px;color:#6b21a8}
+
+    /* ===== table styles ===== */
+    .section-title{font-weight:700;margin-bottom:12px;color:#072034}
+    .table{width:100%;border-collapse:collapse}
+    .table thead th{background:transparent;padding:14px 12px;text-align:left;color:var(--muted);font-weight:600;border-bottom:1px solid #eef3f6}
+    .table tbody td{padding:14px 12px;border-bottom:1px solid #f0f4f6;color:#072034}
+    .badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#fff3e0;color:#a65a00;font-weight:600;font-size:13px;border:1px solid rgba(166,90,0,0.06)}
+
+    /* ===== empty state ===== */
+    .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;color:var(--muted)}
+
+    /* ===== responsive ===== */
+    @media (max-width:880px){
+      .navlist{display:none}
+      .stats-grid{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+      .brand{font-size:1rem}
+    }
   </style>
 </head>
 <body>
-  <header class="admin-header">
-    <h1> Bảng Quản Trị</h1>
-    <nav>
-      <a href="index.html"> Trang chủ</a>
-      <button id="logoutBtn"> Đăng xuất</button>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">B</div>
+      <div>BookStore Admin</div>
+    </div>
+
+    <nav class="navlist" aria-label="Main navigation">
+      <div class="nav-item active" data-tab="dashboard" onclick="switchTab('dashboard', this)">🏠 Dashboard</div>
+      <div class="nav-item" data-tab="products" onclick="switchTab('products', this)">📚 Sản phẩm</div>
+      <div class="nav-item" data-tab="orders" onclick="switchTab('orders', this)">🧾 Đơn hàng</div>
+      <div class="nav-item" data-tab="users" onclick="switchTab('users', this)">👥 Người dùng</div>
     </nav>
+
+    <div class="top-actions">
+      <div class="btn-pill" onclick="alert('Profile')">Admin</div>
+      <div class="btn-pill" onclick="logout()">Đăng xuất</div>
+    </div>
   </header>
 
-  <main class="admin-container">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('dashboard')"> Dashboard</button>
-      <button class="tab-btn" onclick="switchTab('products')"> Sản phẩm</button>
-      <button class="tab-btn" onclick="switchTab('categories')"> Danh mục</button>
-      <button class="tab-btn" onclick="switchTab('orders')"> Đơn hàng</button>
-      <button class="tab-btn" onclick="switchTab('users')"> Người dùng</button>
-      <button class="tab-btn" onclick="switchTab('import')"> Nhập sản phẩm</button>
-    </div>
+  <main class="container">
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="tab">
+      <h1 class="page-title">Dashboard</h1>
 
-    <div id="dashboard" class="tab-content active">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label"> Doanh thu</div><div class="stat-value" id="totalRevenue">0 </div></div>
-        <div class="stat-card"><div class="stat-label"> Đơn hàng</div><div class="stat-value" id="totalOrders">0</div></div>
-        <div class="stat-card"><div class="stat-label"> Sản phẩm</div><div class="stat-value" id="totalProducts">0</div></div>
-        <div class="stat-card"><div class="stat-label"> Người dùng</div><div class="stat-value" id="totalUsers">0</div></div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="card">
+          <div class="icon">📚</div>
+          <div class="meta">
+            <div class="label">Tổng sản phẩm</div>
+            <div class="value" id="statProducts">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">💰</div>
+          <div class="meta">
+            <div class="label">Doanh thu</div>
+            <div class="value" id="statRevenue">0 ₫</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🛒</div>
+          <div class="meta">
+            <div class="label">Đơn hàng</div>
+            <div class="value" id="statOrders">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="icon">👥</div>
+          <div class="meta">
+            <div class="label">Người dùng</div>
+            <div class="value" id="statUsers">0</div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div id="products" class="tab-content">
-      <section class="admin-form">
-        <h2>Thêm / Sửa Sản Phẩm</h2>
-        <form id="productForm">
-          <div class="form-grid">
-            <div class="form-group"><label>ID sản phẩm:</label><input type="text" id="productId" placeholder="b001 (tự động nếu để trống)" /></div>
-            <div class="form-group"><label>Tiêu đề:</label><input type="text" id="productTitle" placeholder="Nhập tên sách" required /></div>
-            <div class="form-group"><label>Tác giả:</label><input type="text" id="productAuthor" placeholder="Nhập tên tác giả" required /></div>
-            <div class="form-group"><label>Giá (VNĐ):</label><input type="number" id="productPrice" placeholder="0" required /></div>
-            <div class="form-group"><label>Thể loại:</label><select id="productCategory" required><option>-- Chọn thể loại --</option></select></div>
-            <div class="form-group"><label>Ảnh bìa (URL):</label><input type="url" id="productImage" placeholder="https://..." /></div>
-            <div class="form-group" style="grid-column: 1 / -1;"><label>Mô tả:</label><textarea id="productDesc" placeholder="Nhập mô tả sách..."></textarea></div>
+      <div class="panel" style="margin-bottom:22px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Thao tác nhanh</div>
+          <div style="color:var(--muted);font-size:14px">Thêm, xem hoặc báo cáo nhanh</div>
+        </div>
+        <div class="quick-grid">
+          <div class="quick" onclick="switchTab('products', document.querySelector('[data-tab=products]'))">
+            <div class="big">➕</div>
+            <div>Thêm sản phẩm</div>
           </div>
-          <div class="btn-group"><button type="submit" class="btn btn-save"> Lưu sản phẩm</button><button type="reset" class="btn btn-clear"> Xóa form</button></div>
-        </form>
-      </section>
-      <section class="admin-list">
-        <h2>Danh sách Sản Phẩm</h2>
-        <div class="search-bar">
-          <input type="text" id="productSearch" placeholder="Tìm kiếm sản phẩm..." />
-          <select id="categoryFilter"><option value="">Tất cả</option></select>
-        </div>
-        <table id="productTable"><thead><tr><th>ID</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Thể loại</th><th>Ảnh</th><th>Hành động</th></tr></thead><tbody></tbody></table>
-      </section>
-    </div>
-
-    <div id="categories" class="tab-content">
-      <section class="admin-form">
-        <h2>Thêm / Sửa Thể loại</h2>
-        <form id="categoryForm">
-          <input type="hidden" id="categoryId" />
-          <div class="form-grid">
-            <div class="form-group"><label>Tên:</label><input type="text" id="categoryName" required /></div>
-            <div class="form-group"><label>Mô tả:</label><input type="text" id="categoryDesc" /></div>
+          <div class="quick" onclick="switchTab('orders', document.querySelector('[data-tab=orders]'))">
+            <div class="big">📦</div>
+            <div>Xem đơn hàng</div>
           </div>
-          <div class="btn-group"><button type="submit" class="btn btn-save"> Lưu</button><button type="reset" class="btn btn-clear"> Xóa</button></div>
+          <div class="quick" onclick="switchTab('users', document.querySelector('[data-tab=users]'))">
+            <div class="big">👥</div>
+            <div>Quản lý người dùng</div>
+          </div>
+          <div class="quick" onclick="alert('Báo cáo (coming soon)')">
+            <div class="big">📈</div>
+            <div>Báo cáo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Đơn hàng gần đây</div>
+          <div style="color:teal;cursor:pointer" onclick="switchTab('orders', document.querySelector('[data-tab=orders]'))">Xem tất cả →</div>
+        </div>
+        <table class="table" id="recentOrdersTable">
+          <thead>
+            <tr><th>Mã đơn</th><th>Khách</th><th>Ngày đặt</th><th>Tổng tiền</th><th>Trạng thái</th></tr>
+          </thead>
+          <tbody id="recentOrdersBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Sản phẩm bán chạy</div>
+          <div style="color:teal;cursor:pointer" onclick="switchTab('products', document.querySelector('[data-tab=products]'))">Xem tất cả →</div>
+        </div>
+
+        <div id="topProducts" style="min-height:120px"></div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="tab" style="display:none">
+      <h1 class="page-title">Sản phẩm</h1>
+      <div class="panel" style="margin-bottom:18px">
+        <form id="productForm" onsubmit="return false">
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <input id="pTitle" placeholder="Tiêu đề" style="flex:2;padding:10px;border-radius:8px;border:1px solid #e6eef2" required>
+            <input id="pAuthor" placeholder="Tác giả" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eef2">
+            <input id="pPrice" type="number" placeholder="Giá (VNĐ)" style="width:160px;padding:10px;border-radius:8px;border:1px solid #e6eef2">
+            <input id="pImage" placeholder="URL ảnh bìa" style="flex:1;padding:10px;border-radius:8px;border:1px solid #e6eef2">
+            <button class="btn-pill" onclick="addProduct()">Lưu</button>
+            <button class="btn-pill" onclick="clearProductForm()">Xóa</button>
+          </div>
         </form>
-      </section>
-      <section class="admin-list">
-        <h2>Danh sách Thể loại</h2>
-        <table id="categoryTable"><thead><tr><th>ID</th><th>Tên</th><th>Mô tả</th><th>Hành động</th></tr></thead><tbody></tbody></table>
-      </section>
-    </div>
+      </div>
 
-    <div id="orders" class="tab-content">
-      <section class="admin-list">
-        <h2>Danh sách Đơn hàng</h2>
-        <div class="search-bar">
-          <input type="text" id="orderSearch" placeholder="Tìm kiếm..." />
-          <select id="orderStatusFilter"><option value="">Tất cả</option><option value="Đang xử lý">Đang xử lý</option><option value="Đã gửi">Đã gửi</option><option value="Đã giao">Đã giao</option></select>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Danh sách sản phẩm</div>
+          <div>
+            <input id="searchProd" placeholder="Tìm kiếm..." style="padding:8px;border:1px solid #eef3f6;border-radius:8px" oninput="renderProductsList()">
+          </div>
         </div>
-        <table id="orderTable"><thead><tr><th>Mã</th><th>Ngày</th><th>Khách</th><th>Tổng</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
-      </section>
-    </div>
 
-    <div id="users" class="tab-content">
-      <section class="admin-list">
-        <h2>Danh sách Người dùng</h2>
-        <div class="search-bar"><input type="text" id="userSearch" placeholder="Tìm kiếm..." /></div>
-        <table id="userTable"><thead><tr><th>Email</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody></tbody></table>
-      </section>
-    </div>
+        <table class="table" id="productsTable">
+          <thead><tr><th>ID</th><th>Tiêu đề</th><th>Tác giả</th><th>Giá</th><th>Hành động</th></tr></thead>
+          <tbody id="productsBody"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <div id="import" class="tab-content">
-      <section class="admin-form">
-        <h2>Nhập Sản Phẩm Hàng Loạt</h2>
-        <p style="margin-bottom:15px;color:#666;font-size:0.9rem;">Dán JSON chứa danh sách sản phẩm. Mỗi sản phẩm phải có: id, title, author, price, category, cover (hoặc image), desc</p>
-        <div class="form-grid">
-          <div class="form-group" style="grid-column: 1 / -1;"><label>JSON (Sản phẩm):</label><textarea id="importJSON" placeholder='[{"id":"b001","title":"Sách Lập Trình","author":"Nguyễn Văn A","price":150000,"category":"Công nghệ","cover":"https://...","desc":"Mô tả sách"}]' style="min-height: 150px;font-size:0.85rem;font-family:monospace;"></textarea></div>
+    <!-- ORDERS -->
+    <section id="orders" class="tab" style="display:none">
+      <h1 class="page-title">Đơn hàng</h1>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Danh sách đơn hàng</div>
+          <div><input id="searchOrder" placeholder="Tìm kiếm mã/khách" style="padding:8px;border:1px solid #eef3f6;border-radius:8px" oninput="renderOrdersList()"></div>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary" onclick="importProducts()"> Nhập (Thêm vào)</button>
-          <button type="button" class="btn btn-clear" onclick="exportProducts()"> Xuất JSON</button>
+
+        <table class="table">
+          <thead><tr><th>Mã</th><th>Khách</th><th>Ngày</th><th>Tổng</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="users" class="tab" style="display:none">
+      <h1 class="page-title">Người dùng</h1>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="section-title">Danh sách người dùng</div>
         </div>
-      </section>
-    </div>
+
+        <table class="table">
+          <thead><tr><th>Email</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+      </div>
+    </section>
+
   </main>
 
-  <script defer src="js/main.js"></script>
-  <script defer src="js/admin.js"></script>
+  <script>
+  
+    /* ===== helpers ===== */
+    const getProducts = () => JSON.parse(localStorage.getItem('bs_products') || '[]');
+    const saveProducts = (arr) => localStorage.setItem('bs_products', JSON.stringify(arr));
+    const getOrders = () => JSON.parse(localStorage.getItem('bs_orders') || '[]');
+    const saveOrders = (arr) => localStorage.setItem('bs_orders', JSON.stringify(arr));
+    const getUsers = () => JSON.parse(localStorage.getItem('bs_users') || '[]');
+    const saveUsers = (arr) => localStorage.setItem('bs_users', JSON.stringify(arr));
+
+    /* ===== main rendering ===== */
+    function updateStats(){
+      const products = getProducts();
+      const orders = getOrders();
+      const users = getUsers();
+      document.getElementById('statProducts').textContent = products.length;
+      const revenue = orders.reduce((s,o)=>s+(o.total||0),0);
+      document.getElementById('statRevenue').textContent = revenue.toLocaleString('vi-VN') + ' ₫';
+      document.getElementById('statOrders').textContent = orders.length;
+      document.getElementById('statUsers').textContent = users.length;
+    }
+
+    function renderRecentOrders(){
+      const rows = document.getElementById('recentOrdersBody');
+      const orders = getOrders().slice().reverse().slice(0,5);
+      if(orders.length===0){
+        rows.innerHTML = '<tr><td colspan="5" class="empty">Chưa có đơn hàng nào</td></tr>';
+        return;
+      }
+      rows.innerHTML = orders.map(o=>`
+        <tr>
+          <td>${o.id}</td>
+          <td>${o.customer}</td>
+          <td>${o.date}</td>
+          <td style="font-weight:700">${o.total.toLocaleString('vi-VN')}₫</td>
+          <td><span class="badge">${o.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTopProducts(){
+      const el = document.getElementById('topProducts');
+      const products = getProducts();
+      if(products.length===0){
+        el.innerHTML = '<div class="empty"><div style="font-size:40px">📚</div><div>Chưa có sản phẩm nào</div></div>';
+        return;
+      }
+      // simple top: first 3
+      el.innerHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap">'+products.slice(0,4).map(p=>`
+        <div style="min-width:200px;flex:1;background:#fff;border-radius:10px;padding:12px;display:flex;gap:12px;align-items:center;box-shadow:0 6px 18px rgba(9,40,58,0.04)">
+          <div style="width:60px;height:80px;background:#f3f7fb;border-radius:8px;display:flex;align-items:center;justify-content:center">📘</div>
+          <div>
+            <div style="font-weight:700">${p.title}</div>
+            <div style="color:var(--muted);font-size:13px">${p.author}</div>
+            <div style="margin-top:8px;font-weight:700">${(p.price||0).toLocaleString('vi-VN')} ₫</div>
+          </div>
+        </div>
+      `).join('')+'</div>';
+    }
+
+    function renderProductsList(){
+      const q = (document.getElementById('searchProd')?.value||'').toLowerCase();
+      const body = document.getElementById('productsBody');
+      const products = getProducts().filter(p=>p.title.toLowerCase().includes(q) || (p.author||'').toLowerCase().includes(q));
+      if(products.length===0) body.innerHTML = '<tr><td colspan="5" class="empty">Không có sản phẩm</td></tr>';
+      else body.innerHTML = products.map(p=>`
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.title}</td>
+          <td>${p.author||''}</td>
+          <td style="font-weight:700">${(p.price||0).toLocaleString('vi-VN')}₫</td>
+          <td>
+            <button onclick="editProduct('${p.id}')" style="margin-right:6px">Sửa</button>
+            <button onclick="removeProduct('${p.id}')">Xóa</button>
+          </td>
+        </tr>
+      `).join('');
+      updateStats();
+    }
+
+    function renderOrdersList(){
+      const q = (document.getElementById('searchOrder')?.value||'').toLowerCase();
+      const body = document.getElementById('ordersBody');
+      const orders = getOrders().filter(o=>o.id.toLowerCase().includes(q) || (o.customer||'').toLowerCase().includes(q));
+      if(orders.length===0) body.innerHTML = '<tr><td colspan="6" class="empty">Không có đơn hàng</td></tr>';
+      else body.innerHTML = orders.map(o=>`
+        <tr>
+          <td>${o.id}</td>
+          <td>${o.customer}</td>
+          <td>${o.date}</td>
+          <td style="font-weight:700">${(o.total||0).toLocaleString('vi-VN')}₫</td>
+          <td>${o.status}</td>
+          <td><button onclick="viewOrder('${o.id}')">Xem</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderUsersList(){
+      const body = document.getElementById('usersBody');
+      const users = getUsers();
+      if(users.length===0) body.innerHTML = '<tr><td colspan="3" class="empty">Không có người dùng</td></tr>';
+      else body.innerHTML = users.map(u=>`
+        <tr>
+          <td>${u.email}</td>
+          <td>${u.locked? '🔒 Đã khóa' : '✅ Hoạt động'}</td>
+          <td>
+            <button onclick="toggleLock('${u.email}')">${u.locked? 'Mở khóa':'Khóa'}</button>
+            <button onclick="deleteUser('${u.email}')">Xóa</button>
+          </td>
+        </tr>
+      `).join('');
+      updateStats();
+    }
+
+    /* ===== actions ===== */
+    function addProduct(){
+      const title = document.getElementById('pTitle').value.trim();
+      if(!title){ alert('Nhập tiêu đề'); return; }
+      const author = document.getElementById('pAuthor').value.trim();
+      const price = Number(document.getElementById('pPrice').value) || 0;
+      const img = document.getElementById('pImage').value.trim();
+      const products = getProducts();
+      const id = 'B' + Math.floor(Math.random()*900000 + 100000);
+      products.push({id,title,author,price,image:img});
+      saveProducts(products);
+      clearProductForm();
+      renderProductsList();
+      renderTopProducts();
+      updateStats();
+      alert('Đã thêm sản phẩm');
+    }
+    function clearProductForm(){
+      document.getElementById('pTitle').value=''; document.getElementById('pAuthor').value=''; document.getElementById('pPrice').value=''; document.getElementById('pImage').value='';
+    }
+    function removeProduct(id){
+      if(!confirm('Xóa sản phẩm?')) return;
+      const arr = getProducts().filter(p=>p.id!==id);
+      saveProducts(arr); renderProductsList(); renderTopProducts(); updateStats();
+    }
+    function editProduct(id){
+      const p = getProducts().find(x=>x.id===id);
+      if(!p) return;
+      document.getElementById('pTitle').value = p.title;
+      document.getElementById('pAuthor').value = p.author || '';
+      document.getElementById('pPrice').value = p.price || 0;
+      document.getElementById('pImage').value = p.image || '';
+      // when clicking Save, it will add new entry (simpler). You can extend to support update.
+      // For now remove old so save will create new with new id
+      removeProduct(id);
+    }
+
+    function viewOrder(id){
+      const o = getOrders().find(x=>x.id===id);
+      if(!o) return alert('Không tìm thấy');
+      alert(`Đơn ${o.id}\nKhách: ${o.customer}\nTổng: ${(o.total||0).toLocaleString('vi-VN')}₫\nTrạng thái: ${o.status}`);
+    }
+
+    function toggleLock(email){
+      const users = getUsers();
+      const u = users.find(x=>x.email===email);
+      if(!u) return;
+      u.locked = !u.locked; saveUsers(users); renderUsersList();
+    }
+    function deleteUser(email){
+      if(!confirm('Xóa user?')) return;
+      const arr = getUsers().filter(u=>u.email!==email); saveUsers(arr); renderUsersList();
+    }
+
+    function logout(){ alert('Đã đăng xuất (demo)'); /* remove session logic if any */ }
+
+    /* ===== tab switcher ===== */
+    function switchTab(name, el){
+      document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+      document.getElementById(name).style.display='block';
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      if(el) el.classList.add('active');
+      // render on demand
+      if(name==='dashboard'){ renderRecentOrders(); renderTopProducts(); updateStats(); }
+      if(name==='products'){ renderProductsList(); }
+      if(name==='orders'){ renderOrdersList(); }
+      if(name==='users'){ renderUsersList(); }
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    /* ===== init ===== */
+    (function init(){
+      seed();
+      // initial render
+      renderRecentOrders();
+      renderTopProducts();
+      renderProductsList();
+      renderOrdersList();
+      renderUsersList();
+      updateStats();
+    })();
+
+  </script>
 </body>
 </html>

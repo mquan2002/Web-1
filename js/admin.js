@@ -431,17 +431,49 @@ function renderUsers() {
     <tr>
       <td>${u.username || 'N/A'}</td>
       <td>
-        <span class="status-badge status-active">Hoạt động</span>
+        <span class="status-badge ${u.locked ? 'status-pending' : 'status-active'}">
+          ${u.locked ? '🔒 Đã khóa' : '✅ Hoạt động'}
+        </span>
       </td>
       <td style="font-size:0.85rem;">
+        ${u.locked 
+          ? `<button class="btn btn-edit" onclick="unlockUser('${u.username}')">🔓 Mở khóa</button>`
+          : `<button class="btn btn-delete" onclick="lockUser('${u.username}')">🔒 Khóa</button>`
+        }
         <button class="btn btn-edit" onclick="resetPassword('${u.username}')">🔑 Reset</button>
-        <button class="btn btn-delete" onclick="deleteUser('${u.username}')">🗑️</button>
+        <button class="btn btn-delete" onclick="deleteUser('${u.username}')">🗑️ Xóa</button>
       </td>
     </tr>
   `).join('');
   
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#666;">Không có người dùng nào</td></tr>';
+  }
+}
+
+function lockUser(username) {
+  if (confirm(`Bạn có chắc muốn khóa tài khoản ${username}?`)) {
+    let users = getUsers();
+    const user = users.find(u => u.username === username);
+    if (user) {
+      user.locked = true;
+      localStorage.setItem('bs_users', JSON.stringify(users));
+      renderUsers();
+      alert('✅ Đã khóa tài khoản!');
+    }
+  }
+}
+
+function unlockUser(username) {
+  if (confirm(`Bạn có chắc muốn mở khóa tài khoản ${username}?`)) {
+    let users = getUsers();
+    const user = users.find(u => u.username === username);
+    if (user) {
+      user.locked = false;
+      localStorage.setItem('bs_users', JSON.stringify(users));
+      renderUsers();
+      alert('✅ Đã mở khóa tài khoản!');
+    }
   }
 }
 
