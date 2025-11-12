@@ -248,8 +248,6 @@ function renderDetail(book){
 
 /* ---------- Cart ---------- */
 function addToCart(id, qty=1){
-  const auth = getAuth();
-  if (!auth) return alert('Bạn cần đăng nhập để thêm sản phẩm!');
   const book = BOOKS.find(b=>b.id===id);
   if(!book) return alert('Sách không tồn tại.');
   const cart = getCart();
