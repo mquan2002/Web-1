@@ -370,7 +370,7 @@ function initAuthPage(){
   const loginPass = $('#login-password');
   const regEmail = $('#reg-username');
   const regPass = $('#reg-password');
-  const authMsg = $('#auth-msg');
+  const authMsg = $('#auth-msg') || $('#login-alert') || $('#register-alert');
 
 
   // login email and password validation onblur
@@ -461,7 +461,7 @@ function initAuthPage(){
       authMsg.style.color = '#e81123';
       return;
     }
-    users.push({username: email, password: pass});
+    users.push({username: email, password: pass, locked: false});
     saveUsers(users);
     $('#auth-msg').textContent = 'Đăng ký thành công. Bạn có thể đăng nhập.';
     $('#auth-msg').style.color = '#00a884';
@@ -472,8 +472,10 @@ $('#btn-login').addEventListener('click', ()=>{
     const email = $('#login-username').value.trim();
     const pass = $('#login-password').value;
 
-    authMsg.textContent = '';
-    authMsg.style.color = '';
+    if(authMsg) {
+      authMsg.textContent = '';
+      authMsg.style.color = '';
+    }
     let hasError = false;
     if(!email){
       showError(loginEmail, "Email không được để trống");
@@ -488,18 +490,24 @@ $('#btn-login').addEventListener('click', ()=>{
     const users = getUsers();
     const u = users.find(x=>x.username===email && x.password===pass);
     if(!u){
-      authMsg.textContent = 'Sai thông tin đăng nhập.'; 
-      authMsg.style.color = '#e81123';
+      if(authMsg) {
+        authMsg.textContent = 'Sai thông tin đăng nhập.'; 
+        authMsg.style.color = '#e81123';
+      }
       return;
     }
     
-    // ✅ CHECK TÀI KHOẢN BỊ KHÓA
+   
     if(u.locked === true){
-      authMsg.textContent = '🔒 Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.';
-      authMsg.style.color = '#e81123';
+      console.log('❌ TÀI KHOẢN BỊ KHÓA - RETURN NGAY');
+      if(authMsg) {
+        authMsg.textContent = '🔒 Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.';
+        authMsg.style.color = '#e81123';
+      }
       return;
     }
     
+    console.log('✅ Đăng nhập thành công - chuyển hướng');
     setAuth({username: u.username, email: u.username});
     cleanupLegacyStorage();
     location.href = 'home.html';
@@ -647,20 +655,10 @@ document.addEventListener('DOMContentLoaded', function() {
       total: total,
       shippingAddress: shippingAddress,
       paymentMethod: paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng' : 'Thanh toán trực tuyến',
-      status: 'Đang xử lý',
+      status: 'Chưa xử lý',
       userEmail: auth.email
     };
-    const products = BOOKS; // hoặc getProducts() nếu có
-cart.forEach(item => {
-  const product = products.find(p => p.id === item.id);
-  if(product && product.stock !== undefined){
-    product.stock -= item.quantity;
-    if(product.stock < 0) product.stock = 0;
-  }
-});
-// Lưu lại vào localStorage
-localStorage.setItem('bs_products', JSON.stringify(products));
-    
+
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));

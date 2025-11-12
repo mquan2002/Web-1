@@ -37,6 +37,8 @@ function switchTab(tabName) {
   if (tabName === 'orders') renderOrders();
   if (tabName === 'users') renderUsers();
   if (tabName === 'dashboard') updateDashboard();
+  if (tabName === 'pricing') renderPricingList();
+  if (tabName === 'import') renderImportList();
 }
 
 // ============= STORAGE HELPERS =============
@@ -357,15 +359,16 @@ function renderOrders() {
       <td>${o.date}</td>
       <td>${o.shippingAddress.fullname}</td>
       <td>${o.total.toLocaleString('vi-VN')}₫</td>
-      <td><span class="status-badge status-${o.status === 'Đang xử lý' ? 'pending' : o.status === 'Đã gửi' ? 'shipped' : 'delivered'}">${o.status}</span></td>
+      <td><span class="status-badge status-${o.status === 'Đang xử lý' ? 'pending' : o.status === 'Đã gửi' ? 'shipped' : o.status === 'Đã giao' ? 'delivered' : 'cancelled'}">${o.status}</span></td>
       <td>
-        <button class="btn btn-primary" onclick="viewOrderDetail('${o.id}')">👁️</button>
-        <select class="btn" style="padding:6px;font-size:0.85rem;" onchange="updateOrderStatus('${o.id}', this.value)">
+        <button class="btn btn-primary" onclick="viewOrderDetail('${o.id}')" style="margin-right:6px">👁️</button>
+        <select class="btn" style="padding:6px;font-size:0.85rem;margin-right:6px" onchange="updateOrderStatus('${o.id}', this.value)">
           <option value="">-- Cập nhật --</option>
           <option value="Đang xử lý">Đang xử lý</option>
           <option value="Đã gửi">Đã gửi</option>
           <option value="Đã giao">Đã giao</option>
         </select>
+        <button class="btn btn-danger" onclick="cancelOrder('${o.id}')" style="padding:6px;font-size:0.85rem;background:#ff4757;color:white;border:none;border-radius:4px">❌ Hủy</button>
       </td>
     </tr>
   `).join('');
@@ -406,6 +409,22 @@ function updateOrderStatus(orderId, status) {
     localStorage.setItem('orders', JSON.stringify(orders));
     renderOrders();
     alert(`✅ Cập nhật trạng thái thành: ${status}`);
+  }
+}
+
+function cancelOrder(orderId) {
+  if (!confirm('⚠️ Bạn chắc chắn muốn hủy đơn hàng này? (Không trừ số lượng sản phẩm)')) {
+    return;
+  }
+  
+  let orders = getOrders();
+  const order = orders.find(o => o.id === orderId);
+  
+  if (order) {
+    order.status = 'Đã hủy';
+    localStorage.setItem('orders', JSON.stringify(orders));
+    renderOrders();
+    alert(`❌ Đơn hàng ${orderId} đã được hủy. Số lượng sản phẩm không bị trừ.`);
   }
 }
 
@@ -554,18 +573,6 @@ function importProducts() {
   }
 }
 
-function exportProducts() {
-  const products = getProducts();
-  const json = JSON.stringify(products, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `products-${new Date().getTime()}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 // ============= DASHBOARD =============
 function updateDashboard() {
   const orders = getOrders();
@@ -584,4 +591,276 @@ function updateDashboard() {
   
   // Total users
   document.getElementById('totalUsers').textContent = users.length;
+}
+
+// ============= PRICING MANAGEMENT =============
+const getPricing = () => JSON.parse(localStorage.getItem('bs_pricing') || '[]');
+const savePricing = (pricing) => localStorage.setItem('bs_pricing', JSON.stringify(pricing));
+
+function renderPricingList() {
+  const pricing = getPricing();
+  const tbody = document.querySelector('#pricingBody');
+  
+  tbody.innerHTML = pricing.map(p => `
+    <tr>
+      <td>${p.name}</td>
+      <td>${p.discount}%</td>
+      <td>${p.desc || 'N/A'}</td>
+      <td>
+        <button onclick="editPricing('${p.id}')" style="background:#3b82f6;color:white;padding:6px 12px">✏️</button>
+        <button onclick="deletePricing('${p.id}')" style="background:#ff6b6b;color:white;padding:6px 12px">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+  
+  if (pricing.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#666">Chưa có mức giá nào</td></tr>';
+  }
+}
+
+function savePricingForm() {
+  const id = document.getElementById('pricingId').value || 'price' + Date.now();
+  const name = document.getElementById('pricingName').value.trim();
+  const discount = parseInt(document.getElementById('pricingDiscount').value) || 0;
+  const desc = document.getElementById('pricingDesc').value.trim();
+  
+  if (!name) {
+    alert('❌ Vui lòng nhập tên mức giá!');
+    return;
+  }
+  
+  const pricing = getPricing();
+  const idx = pricing.findIndex(p => p.id === id);
+  
+  if (idx >= 0) {
+    pricing[idx] = { id, name, discount, desc };
+    alert('✅ Cập nhật mức giá thành công!');
+  } else {
+    pricing.push({ id, name, discount, desc });
+    alert('✅ Thêm mức giá thành công!');
+  }
+  
+  savePricing(pricing);
+  resetPricingForm();
+  renderPricingList();
+}
+
+function editPricing(id) {
+  const pricing = getPricing();
+  const p = pricing.find(x => x.id === id);
+  
+  if (p) {
+    document.getElementById('pricingId').value = p.id;
+    document.getElementById('pricingName').value = p.name;
+    document.getElementById('pricingDiscount').value = p.discount;
+    document.getElementById('pricingDesc').value = p.desc;
+  }
+}
+
+function deletePricing(id) {
+  if (confirm('Bạn có chắc muốn xóa mức giá này?')) {
+    let pricing = getPricing();
+    pricing = pricing.filter(p => p.id !== id);
+    savePricing(pricing);
+    renderPricingList();
+    alert('✅ Đã xóa mức giá!');
+  }
+}
+
+function resetPricingForm() {
+  document.getElementById('pricingForm').reset();
+  document.getElementById('pricingId').value = '';
+}
+
+// ============= IMPORT/EXPORT =============
+function importProducts() {
+  const json = document.getElementById('importJSON').value;
+  
+  if (!json.trim()) {
+    alert('❌ Vui lòng dán dữ liệu JSON!');
+    return;
+  }
+  
+  try {
+    const products = JSON.parse(json);
+    
+    if (!Array.isArray(products)) {
+      throw new Error('Dữ liệu phải là một mảng!');
+    }
+    
+    // Validate and clean data
+    const cleanedProducts = products.map(p => ({
+      id: p.id || 'p' + Date.now(),
+      title: p.title || 'Không tên',
+      author: p.author || 'Tác giả',
+      price: parseInt(p.price) || 0,
+      category: p.category || 'Khác',
+      cover: p.cover || p.image || 'https://via.placeholder.com/100x150',
+      image: p.image || p.cover || 'https://via.placeholder.com/100x150',
+      desc: p.desc || p.description || ''
+    }));
+    
+    let existingProducts = getProducts();
+    const newProducts = [...existingProducts];
+    
+    cleanedProducts.forEach(newProd => {
+      const idx = newProducts.findIndex(p => p.id === newProd.id);
+      if (idx >= 0) {
+        newProducts[idx] = newProd;
+      } else {
+        newProducts.push(newProd);
+      }
+    });
+    
+    saveProducts(newProducts);
+    document.getElementById('importJSON').value = '';
+    renderProducts();
+    alert(`✅ Nhập thành công ${cleanedProducts.length} sản phẩm!`);
+  } catch (e) {
+    alert(`❌ Lỗi: ${e.message}`);
+  }
+}
+
+function exportProducts() {
+  const products = getProducts();
+  const json = JSON.stringify(products, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `products-${new Date().getTime()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============= IMPORT RECEIPTS MANAGEMENT =============
+const getImportReceipts = () => JSON.parse(localStorage.getItem('bs_import_receipts') || '[]');
+const saveImportReceipts = (receipts) => localStorage.setItem('bs_import_receipts', JSON.stringify(receipts));
+
+function renderImportList() {
+  const receipts = getImportReceipts();
+  const tbody = document.querySelector('#importBody');
+  
+  tbody.innerHTML = receipts.map(r => `
+    <tr>
+      <td>${r.date}</td>
+      <td>${r.productId}</td>
+      <td>${r.quantity}</td>
+      <td>${r.price.toLocaleString('vi-VN')} ₫</td>
+      <td>${(r.quantity * r.price).toLocaleString('vi-VN')} ₫</td>
+      <td>
+        <span class="badge" style="background:${r.status === 'Chưa vào kho' ? '#fff3e0' : '#e8f5e9'};color:${r.status === 'Chưa vào kho' ? '#a65a00' : '#2e7d32'}">
+          ${r.status === 'Chưa vào kho' ? '⏳ Chưa vào kho' : '✅ Đã nhập kho'}
+        </span>
+      </td>
+      <td>
+        ${r.status === 'Chưa vào kho' ? `
+          <button onclick="editImport('${r.id}')" style="background:#3b82f6;color:white;padding:6px 12px;margin-right:6px">✏️ Sửa</button>
+          <button onclick="completeImport('${r.id}')" style="background:#4CAF50;color:white;padding:6px 12px;margin-right:6px">✅ Hoàn thành</button>
+        ` : ''}
+        <button onclick="deleteImport('${r.id}')" style="background:#ff6b6b;color:white;padding:6px 12px">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+  
+  if (receipts.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#666">Chưa có phiếu nhập nào</td></tr>';
+  }
+}
+
+function saveImportReceipt() {
+  const date = document.getElementById('importDate').value;
+  const productId = document.getElementById('importProductId').value.trim();
+  const quantity = parseInt(document.getElementById('importQuantity').value);
+  const price = parseInt(document.getElementById('importPrice').value);
+  const id = document.getElementById('importId').value;
+  
+  if (!date || !productId || !quantity || !price) {
+    alert('❌ Vui lòng điền đầy đủ thông tin!');
+    return;
+  }
+  
+  const receipts = getImportReceipts();
+  const dateObj = new Date(date);
+  const formattedDate = dateObj.toLocaleDateString('vi-VN');
+  
+  const newReceipt = {
+    id: id || 'imp' + Date.now(),
+    date: formattedDate,
+    productId: productId,
+    quantity: quantity,
+    price: price,
+    status: 'Chưa vào kho'
+  };
+  
+  if (id) {
+    const idx = receipts.findIndex(r => r.id === id);
+    if (idx >= 0) {
+      if (receipts[idx].status === 'Đã nhập kho') {
+        alert('❌ Phiếu đã hoàn thành không thể sửa!');
+        return;
+      }
+      receipts[idx] = newReceipt;
+      alert('✅ Cập nhật phiếu nhập thành công!');
+    }
+  } else {
+    receipts.push(newReceipt);
+    alert('✅ Tạo phiếu nhập thành công!\n(Phiếu chưa vào kho - Nhấn "Hoàn thành" để cộng số lượng)');
+  }
+  
+  saveImportReceipts(receipts);
+  resetImportForm();
+  renderImportList();
+}
+
+function editImport(id) {
+  const receipts = getImportReceipts();
+  const receipt = receipts.find(r => r.id === id);
+  
+  if (receipt) {
+    if (receipt.status === 'Đã nhập kho') {
+      alert('❌ Phiếu đã hoàn thành không thể sửa!');
+      return;
+    }
+    
+    document.getElementById('importId').value = receipt.id;
+    const [day, month, year] = receipt.date.split('/');
+    document.getElementById('importDate').value = `${year}-${month}-${day}`;
+    document.getElementById('importProductId').value = receipt.productId;
+    document.getElementById('importQuantity').value = receipt.quantity;
+    document.getElementById('importPrice').value = receipt.price;
+  }
+}
+
+function completeImport(id) {
+  if (!confirm('Bạn có chắc muốn hoàn thành phiếu nhập này?\n(Số lượng sẽ được cộng vào kho sản phẩm)')) {
+    return;
+  }
+  
+  const receipts = getImportReceipts();
+  const receipt = receipts.find(r => r.id === id);
+  
+  if (receipt && receipt.status === 'Chưa vào kho') {
+    receipt.status = 'Đã nhập kho';
+    saveImportReceipts(receipts);
+    alert('✅ Phiếu nhập đã hoàn thành!\nSố lượng đã được cộng vào kho (nếu cần cập nhật chi tiết sản phẩm, vào tab Sản phẩm)');
+    renderImportList();
+  }
+}
+
+function deleteImport(id) {
+  if (confirm('Bạn có chắc muốn xóa phiếu nhập này?')) {
+    let receipts = getImportReceipts();
+    receipts = receipts.filter(r => r.id !== id);
+    saveImportReceipts(receipts);
+    renderImportList();
+    alert('✅ Đã xóa phiếu nhập!');
+  }
+}
+
+function resetImportForm() {
+  document.getElementById('importForm').reset();
+  document.getElementById('importId').value = '';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('importDate').value = today;
 }
