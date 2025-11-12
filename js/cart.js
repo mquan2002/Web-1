@@ -1,3 +1,6 @@
+// cart.js - Cart Preview functionality
+// Thêm file này vào cuối body của các trang cần cart preview
+
 (function() {
   'use strict';
 
@@ -7,26 +10,17 @@
 
   // Lấy dữ liệu sách từ localStorage hoặc từ biến BOOKS global
   const getBooks = () => {
-    // Ưu tiên lấy từ localStorage trước
-    const localBooks = JSON.parse(localStorage.getItem('books') || '[]');
-    if (localBooks.length > 0) {
-      return localBooks;
-    }
-    // Nếu không có trong localStorage thì lấy từ biến BOOKS global
+    // Nếu có biến BOOKS global từ main.js
     if (typeof BOOKS !== 'undefined' && BOOKS.length > 0) {
       return BOOKS;
     }
-    return [];
+    // Nếu không thì lấy từ localStorage
+    return JSON.parse(localStorage.getItem('books') || '[]');
   };
 
   function updateCartPreview() {
     const cart = getCart();
     const books = getBooks();
-    
-    // Nếu không có dữ liệu sách, thử load từ localStorage
-    if (books.length === 0) {
-      console.warn('Không tìm thấy dữ liệu sách');
-    }
     
     // Cập nhật số lượng trong icon giỏ hàng
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -84,11 +78,14 @@
         title: book ? book.title : 'Sản phẩm',
         author: book ? book.author : '',
         price: book ? book.price : 0,
-        cover: book ? (book.cover || book.image) : 'https://via.placeholder.com/60x80'
+        cover: book ? book.cover || book.image : 'https://via.placeholder.com/60x80'
       };
     });
 
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    // Check auth status
+    const auth = typeof getAuth === 'function' ? getAuth() : null;
 
     // Render header
     let html = `
@@ -123,9 +120,13 @@
           <span>Tạm tính:</span>
           <span>${money(subtotal)}</span>
         </div>
+        ${!auth ? '<div style="color:#e81123;font-size:0.85rem;text-align:center;margin-bottom:12px;">⚠️ Cần đăng nhập để thanh toán</div>' : ''}
         <div class="cart-preview-actions">
           <a href="cart.html" class="cart-preview-btn view-cart">Xem giỏ hàng</a>
-          <a href="checkout.html" class="cart-preview-btn checkout">Thanh toán</a>
+          ${auth ? 
+            '<a href="checkout.html" class="cart-preview-btn checkout">Thanh toán</a>' :
+            '<a href="login.html" class="cart-preview-btn checkout" onclick="sessionStorage.setItem(\'redirect_after_login\', \'checkout.html\')">Đăng nhập</a>'
+          }
         </div>
       </div>
     `;
@@ -134,24 +135,20 @@
   }
 
   // Khởi tạo cart preview khi DOM ready
-  async function initCartPreview() {
-    // Đợi dữ liệu sách được load nếu có hàm loadBooks
-    if (typeof loadBooks === 'function') {
-      try {
-        await loadBooks();
-      } catch(e) {
-        console.warn('Không thể load dữ liệu sách:', e);
-      }
-    }
-    
+  function initCartPreview() {
     updateCartPreview();
     
+    // Không cần event listeners phức tạp, CSS :hover sẽ xử lý
+    // Chỉ cần đảm bảo preview có thể tương tác được
+    
+    // Lắng nghe sự kiện thay đổi localStorage từ các tab khác
     window.addEventListener('storage', (e) => {
       if (e.key === 'bs_cart') {
         updateCartPreview();
       }
     });
 
+    // Lắng nghe sự kiện custom để cập nhật từ cùng trang
     window.addEventListener('cartUpdated', () => {
       updateCartPreview();
     });

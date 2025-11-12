@@ -49,26 +49,9 @@ function updateAuthUI() {
 /* ---------- Fetch data ---------- */
 async function loadBooks(){
   if(BOOKS.length) return BOOKS;
-  
-  // Thử load từ localStorage trước
-  const localBooks = localStorage.getItem('books');
-  if (localBooks) {
-    try {
-      BOOKS = JSON.parse(localBooks);
-      if (BOOKS.length > 0) {
-        return BOOKS;
-      }
-    } catch(e) {
-      console.error('Lỗi parse dữ liệu từ localStorage', e);
-    }
-  }
-  
-  // Nếu không có trong localStorage, load từ file JSON
   try{
     const res = await fetch(DATA_URL);
     BOOKS = await res.json();
-    // Lưu vào localStorage để sử dụng cho lần sau
-    localStorage.setItem('books', JSON.stringify(BOOKS));
     return BOOKS;
   }catch(e){
     console.error('Không load được data. Nếu mở bằng file:// hãy chạy local server.', e);
@@ -227,8 +210,7 @@ function renderDetail(book){
 
 /* ---------- Cart ---------- */
 function addToCart(id, qty=1){
-  const auth = getAuth();
-  if (!auth) return alert('Bạn cần đăng nhập để thêm sản phẩm!');
+  // Không cần đăng nhập để thêm vào giỏ hàng
   const book = BOOKS.find(b=>b.id===id);
   if(!book) return alert('Sách không tồn tại.');
   const cart = getCart();
@@ -273,11 +255,14 @@ function renderCart(){
 
   // summary
   const total = rows.reduce((s,r)=>s + r.price * r.qty, 0);
+  const auth = getAuth();
+  
   $('#cart-summary').innerHTML = `
     <div class="cart-summary">
       <div class="cart-row"><div>Tạm tính</div><div>${money(total)}</div></div>
+      ${!auth ? '<div style="padding:10px 0;color:#e81123;font-size:0.9rem;text-align:center;">⚠️ Bạn cần đăng nhập để thanh toán</div>' : ''}
       <div style="padding-top:10px;text-align:right">
-        <button id="checkout" class="btn primary">Thanh toán</button>
+        <button id="checkout" class="btn primary" ${!auth ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>Thanh toán</button>
       </div>
     </div>
   `;
@@ -304,6 +289,8 @@ function renderCart(){
     const auth = getAuth();
     if (!auth) {
       if (confirm('Bạn cần đăng nhập để thanh toán.\nChuyển đến trang đăng nhập?')) {
+        // Lưu URL hiện tại để redirect back sau khi login
+        sessionStorage.setItem('redirect_after_login', 'checkout.html');
         location.href = 'login.html';
       }
       return;
@@ -473,7 +460,15 @@ function initAuthPage(){
       return;
     }
     setAuth({username: u.username});
-    location.href = 'home.html';
+    
+    // Check if there's a redirect URL
+    const redirectUrl = sessionStorage.getItem('redirect_after_login');
+    if (redirectUrl) {
+      sessionStorage.removeItem('redirect_after_login');
+      location.href = redirectUrl;
+    } else {
+      location.href = 'home.html';
+    }
   });
 }
 
@@ -699,6 +694,18 @@ if(document.getElementById('year6')) {
     if (cart.length === 0) {
       if (confirm('Giỏ hàng của bạn đang trống! Bạn có muốn quay lại trang chủ không?')) {
         window.location.href = 'home.html';
+      }
+      return;
+    }
+    
+    // Kiểm tra đăng nhập
+    const auth = getAuth();
+    if (!auth) {
+      if (confirm('Bạn cần đăng nhập để thanh toán.\nChuyển đến trang đăng nhập?')) {
+        sessionStorage.setItem('redirect_after_login', 'checkout.html');
+        window.location.href = 'login.html';
+      } else {
+        window.location.href = 'cart.html';
       }
     }
   });
