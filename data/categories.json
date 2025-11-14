@@ -1,0 +1,48 @@
+[
+    {
+        "id": "cat001",
+        "name": "Văn học",
+        "desc": "Các tác phẩm văn học kinh điển và đương đại"
+    },
+    {
+        "id": "cat002",
+        "name": "Phát triển bản thân",
+        "desc": "Sách về kỹ năng sống, thói quen và phát triển cá nhân"
+    },
+    {
+        "id": "cat003",
+        "name": "Công nghệ",
+        "desc": "Sách về lập trình, phần mềm và công nghệ thông tin"
+    },
+    {
+        "id": "cat004",
+        "name": "Lịch sử",
+        "desc": "Sách về lịch sử thế giới và nhân loại"
+    },
+    {
+        "id": "cat005",
+        "name": "Tài chính",
+        "desc": "Sách về đầu tư, quản lý tài chính và làm giàu"
+    },
+    {
+        "id": "cat006",
+        "name": "Tâm lý học",
+        "desc": "Sách về tâm lý học, hành vi con người và tư duy"
+    },
+    {
+        "id": "cat007",
+        "name": "Kinh doanh",
+        "desc": "Sách về khởi nghiệp, quản trị và chiến lược kinh doanh"
+    },
+    {
+        "id": "cat008",
+        "name": "Hồi ký",
+        "desc": "Hồi ký và tự truyện của các nhân vật nổi tiếng"
+    },
+    {
+        "id": "cat009",
+        "name": "Khoa học viễn tưởng",
+        "desc": "Tiểu thuyết khoa học viễn tưởng và fantasy"
+    }
+]
+

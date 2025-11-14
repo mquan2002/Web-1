@@ -1,0 +1,26 @@
+[
+    {
+        "id": "1",
+        "name": "Admin",
+        "email": "admin@bookstore.com",
+        "password": "admin123",
+        "locked": false,
+        "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+        "id": "2",
+        "name": "User 1",
+        "email": "user1@example.com",
+        "password": "password123",
+        "locked": false,
+        "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+        "id": "3",
+        "name": "User 2",
+        "email": "user2@example.com",
+        "password": "password123",
+        "locked": false,
+        "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+]
