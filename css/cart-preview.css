@@ -39,7 +39,7 @@
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   overflow-y: auto;
   pointer-events: none;
 }
@@ -124,6 +124,7 @@
 /* Cart Items List */
 .cart-preview-items {
   max-height: 320px;
+  overflow-x: hidden;
   overflow-y: auto;
   margin-bottom: 16px;
   position: relative;
@@ -275,6 +276,13 @@
 
 .cart-preview-items::-webkit-scrollbar-thumb:hover {
   background: #096a94;
+}
+
+.cart-preview a,
+.cart-preview button {
+  pointer-events: auto;
+  position: relative;
+  z-index: 2;
 }
 
 /* Đảm bảo cart preview không ảnh hưởng đến layout khác */

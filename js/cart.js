@@ -5,7 +5,17 @@
   'use strict';
 
   // Helper functions
-  const getCart = () => JSON.parse(localStorage.getItem('bs_cart') || '[]');
+  const getAuth = () => {
+    const localAuth = localStorage.getItem('bs_auth');
+    const sessionAuth = sessionStorage.getItem('bs_auth');
+    return JSON.parse(localAuth || sessionAuth || 'null');
+  };
+  const getCart = () => {
+    const auth = getAuth();
+    if (!auth) return [];
+    const cartKey = `bs_cart_${auth.email}`;
+    return JSON.parse(localStorage.getItem(cartKey) || '[]');
+  };
   const money = v => new Intl.NumberFormat('vi-VN').format(v) + '₫';
 
   // Lấy dữ liệu sách từ localStorage hoặc từ biến BOOKS global
@@ -137,24 +147,18 @@
   // Khởi tạo cart preview khi DOM ready
   function initCartPreview() {
     updateCartPreview();
-    
-    // Không cần event listeners phức tạp, CSS :hover sẽ xử lý
-    // Chỉ cần đảm bảo preview có thể tương tác được
-    
-    // Lắng nghe sự kiện thay đổi localStorage từ các tab khác
+  
     window.addEventListener('storage', (e) => {
       if (e.key === 'bs_cart') {
         updateCartPreview();
       }
     });
 
-    // Lắng nghe sự kiện custom để cập nhật từ cùng trang
     window.addEventListener('cartUpdated', () => {
       updateCartPreview();
     });
   }
 
-  // Chạy khi DOM sẵn sàng
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCartPreview);
   } else {
