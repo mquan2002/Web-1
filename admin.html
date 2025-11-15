@@ -333,6 +333,10 @@
                         </thead>
                         <tbody id="productsBody"></tbody>
                     </table>
+
+                    <!-- Pagination -->
+                    <div id="productsPagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px; padding: 15px 0; flex-wrap: wrap;">
+                    </div>
                 </div>
             </section>
 
@@ -800,12 +804,14 @@
             }
 
             /* ===== PRODUCTS ===== */
+            const PRODUCTS_PER_PAGE = 10
+            let currentProductPage = 1
+
             function renderProductsList() {
                 const q = (
                     document.getElementById('searchProd')?.value || ''
                 ).toLowerCase()
-                const body = document.getElementById('productsBody')
-                const products = getProducts().filter(
+                const allProducts = getProducts().filter(
                     (p) =>
                         p.title.toLowerCase().includes(q) ||
                         (p.author || '').toLowerCase().includes(q) ||
@@ -813,7 +819,18 @@
                         (p.id || '').toLowerCase().includes(q)
                 )
 
-                if (products.length === 0) {
+                // Reset to page 1 when search changes
+                if (document.getElementById('searchProd')?.value !== '') {
+                    currentProductPage = 1
+                }
+
+                const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE)
+                const startIdx = (currentProductPage - 1) * PRODUCTS_PER_PAGE
+                const products = allProducts.slice(startIdx, startIdx + PRODUCTS_PER_PAGE)
+
+                const body = document.getElementById('productsBody')
+
+                if (allProducts.length === 0) {
                     body.innerHTML =
                         '<tr><td colspan="7" class="empty" style="text-align:center;padding:40px">📭 Không tìm thấy sản phẩm</td></tr>'
                 } else {
@@ -849,7 +866,60 @@
                         })
                         .join('')
                 }
+
+                // Render pagination
+                const paginationDiv = document.getElementById('productsPagination')
+                if (totalPages <= 1) {
+                    paginationDiv.innerHTML = ''
+                } else {
+                    let paginationHTML = ''
+
+                    // Previous button
+                    paginationHTML += `
+                        <button onclick="gotoProductPage(${currentProductPage - 1})" 
+                            ${currentProductPage === 1 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'}>
+                            ◀ Trước
+                        </button>
+                    `
+
+                    // Page info
+                    paginationHTML += `
+                        <span style="color:#6b7280;font-weight:600;min-width:120px;text-align:center">
+                            Trang ${currentProductPage} / ${totalPages}
+                        </span>
+                    `
+
+                    // Next button
+                    paginationHTML += `
+                        <button onclick="gotoProductPage(${currentProductPage + 1})" 
+                            ${currentProductPage === totalPages ? 'disabled style="opacity:0.5;cursor:not-allowed"' : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'}>
+                            Sau ▶
+                        </button>
+                    `
+
+                    paginationDiv.innerHTML = paginationHTML
+                }
+
                 updateStats()
+            }
+
+            function gotoProductPage(page) {
+                const q = (
+                    document.getElementById('searchProd')?.value || ''
+                ).toLowerCase()
+                const allProducts = getProducts().filter(
+                    (p) =>
+                        p.title.toLowerCase().includes(q) ||
+                        (p.author || '').toLowerCase().includes(q) ||
+                        (p.category || '').toLowerCase().includes(q) ||
+                        (p.id || '').toLowerCase().includes(q)
+                )
+                const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE)
+
+                if (page >= 1 && page <= totalPages) {
+                    currentProductPage = page
+                    renderProductsList()
+                }
             }
 
             function saveProduct() {
@@ -1558,7 +1628,8 @@ ${items}`)
                 if (confirm('❓ Bạn có chắc muốn đăng xuất?')) {
                     localStorage.removeItem('bs_admin_session')
                     localStorage.removeItem('bs_auth')
-                    window.location.href = 'admin-login.html'
+                    sessionStorage.removeItem('bs_auth')
+                    window.location.href = 'index.html'
                 }
             }
 
