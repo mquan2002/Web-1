@@ -56,6 +56,13 @@
                 >
                     💲 Giá bán
                 </div>
+                <div
+                    class="nav-item"
+                    data-tab="inventory"
+                    onclick="switchTab('inventory', this)"
+                >
+                    📊 Nhập xuất tồn
+                </div>
             </nav>
 
             <div class="top-actions">
@@ -99,6 +106,23 @@
                         <div class="meta">
                             <div class="label">Người dùng</div>
                             <div class="value" id="statUsers">0</div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="card"
+                        id="lowStockCard"
+                        style="display: none; border-left: 4px solid #f59e0b"
+                    >
+                        <div class="meta">
+                            <div class="label">Sản phẩm sắp hết</div>
+                            <div
+                                class="value"
+                                id="statLowStock"
+                                style="font-weight: 800"
+                            >
+                                0
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,10 +241,11 @@
                                 />
                             </div>
                             <div class="form-group">
-                                <label>Tác giả</label>
+                                <label>Tác giả *</label>
                                 <input
                                     id="productAuthor"
                                     placeholder="Tên tác giả"
+                                    required
                                 />
                             </div>
                         </div>
@@ -235,39 +260,69 @@
                                     required
                                 />
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label>Số lượng tồn kho *</label>
                                 <input
                                     id="productStock"
                                     type="number"
                                     placeholder="0"
                                     min="0"
-                                    required
                                 />
-                            </div>
+                            </div> -->
                             <div class="form-group">
-                                <label>Thể loại</label>
+                                <label>Thể loại *</label>
                                 <input
                                     id="productCategory"
                                     placeholder="VD: Văn học, Công nghệ..."
+                                    required
                                 />
                             </div>
                         </div>
+                        <input type="hidden" id="productStock" value="0" />
 
                         <div class="form-group">
-                            <label>URL ảnh bìa</label>
+                            <label>Ảnh bìa *</label>
                             <input
+                                type="file"
                                 id="productImage"
-                                placeholder="https://example.com/image.jpg"
+                                accept="image/*"
+                                onchange="previewProductImage(this)"
                             />
+                            <div
+                                id="productImagePreview"
+                                style="margin-top: 10px; display: none"
+                            >
+                                <img
+                                    id="productImagePreviewImg"
+                                    src=""
+                                    alt="Preview"
+                                    style="
+                                        max-width: 200px;
+                                        max-height: 200px;
+                                        border-radius: 8px;
+                                        border: 1px solid #e6eef2;
+                                    "
+                                />
+                            </div>
+                            <small
+                                style="
+                                    color: var(--muted);
+                                    font-size: 0.85rem;
+                                    display: block;
+                                    margin-top: 4px;
+                                "
+                            >
+                                * Bắt buộc khi thêm mới, tùy chọn khi chỉnh sửa
+                            </small>
                         </div>
 
                         <div class="form-group">
-                            <label>Mô tả</label>
+                            <label>Mô tả *</label>
                             <textarea
                                 id="productDesc"
                                 rows="3"
                                 placeholder="Mô tả ngắn về sách..."
+                                required
                             ></textarea>
                         </div>
 
@@ -335,8 +390,18 @@
                     </table>
 
                     <!-- Pagination -->
-                    <div id="productsPagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px; padding: 15px 0; flex-wrap: wrap;">
-                    </div>
+                    <div
+                        id="productsPagination"
+                        style="
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            gap: 10px;
+                            margin-top: 20px;
+                            padding: 15px 0;
+                            flex-wrap: wrap;
+                        "
+                    ></div>
                 </div>
             </section>
 
@@ -415,83 +480,104 @@
             </section>
 
             <!-- PRICING -->
-          <!-- PRICING -->
-<section id="pricing" class="tab" style="display: none">
-    <h1 class="page-title">💲 Quản lý Giá Bán Theo Sản Phẩm</h1>
+            <!-- PRICING -->
+            <section id="pricing" class="tab" style="display: none">
+                <h1 class="page-title">💲 Quản lý Giá Bán Theo Sản Phẩm</h1>
 
-    <!-- Thống kê tổng quan -->
-    <div class="stats-grid" style="margin-bottom: 20px">
-        <div class="card">
-            <div class="icon">📊</div>
-            <div class="meta">
-                <div class="label">% Lợi nhuận TB</div>
-                <div class="value" id="avgProfit">0%</div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="icon">💰</div>
-            <div class="meta">
-                <div class="label">Lợi nhuận/SP TB</div>
-                <div class="value" id="avgProfitAmount">0 ₫</div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="icon">🔥</div>
-            <div class="meta">
-                <div class="label">SP lợi nhuận cao</div>
-                <div class="value" id="highProfitCount">0</div>
-            </div>
-        </div>
-    </div>
+                <!-- Thống kê tổng quan -->
+                <div class="stats-grid" style="margin-bottom: 20px">
+                    <div class="card">
+                        <div class="icon">📊</div>
+                        <div class="meta">
+                            <div class="label">% Lợi nhuận TB</div>
+                            <div class="value" id="avgProfit">0%</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">💰</div>
+                        <div class="meta">
+                            <div class="label">Lợi nhuận/SP TB</div>
+                            <div class="value" id="avgProfitAmount">0 ₫</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🔥</div>
+                        <div class="meta">
+                            <div class="label">SP lợi nhuận cao</div>
+                            <div class="value" id="highProfitCount">0</div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Bảng quản lý giá -->
-    <div class="panel">
-        <div class="section-title">📋 Danh sách sản phẩm và giá bán</div>
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 15px">
-            <input 
-                type="text" 
-                id="searchPricing" 
-                placeholder="🔍 Tìm kiếm theo tên sách hoặc ID..."
-                style="padding: 10px; border: 1px solid #eef3f6; border-radius: 8px"
-                oninput="renderPricingTable()"
-            >
-            <select 
-                id="categoryFilterPricing" 
-                style="padding: 10px; border: 1px solid #eef3f6; border-radius: 8px"
-                onchange="renderPricingTable()"
-            >
-                <option value="">-- Tất cả thể loại --</option>
-            </select>
-            <select 
-                id="profitFilterPricing" 
-                style="padding: 10px; border: 1px solid #eef3f6; border-radius: 8px"
-                onchange="renderPricingTable()"
-            >
-                <option value="">-- Lọc theo lợi nhuận --</option>
-                <option value="low">0-20%</option>
-                <option value="medium">20-40%</option>
-                <option value="high">>40%</option>
-            </select>
-        </div>
+                <!-- Bảng quản lý giá -->
+                <div class="panel">
+                    <div class="section-title">
+                        📋 Danh sách sản phẩm và giá bán
+                    </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên sách</th>
-                    <th>Thể loại</th>
-                    <th>Giá vốn (₫)</th>
-                    <th>% Lợi nhuận</th>
-                    <th>Giá bán (₫)</th>
-                    <th>Lợi nhuận/SP (₫)</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody id="pricingTableBody"></tbody>
-        </table>
-    </div>
-</section>
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns: 2fr 1fr 1fr;
+                            gap: 10px;
+                            margin-bottom: 15px;
+                        "
+                    >
+                        <input
+                            type="text"
+                            id="searchPricing"
+                            placeholder="🔍 Tìm kiếm theo tên sách hoặc ID..."
+                            style="
+                                padding: 10px;
+                                border: 1px solid #eef3f6;
+                                border-radius: 8px;
+                            "
+                            oninput="renderPricingTable()"
+                        />
+                        <select
+                            id="categoryFilterPricing"
+                            style="
+                                padding: 10px;
+                                border: 1px solid #eef3f6;
+                                border-radius: 8px;
+                            "
+                            onchange="renderPricingTable()"
+                        >
+                            <option value="">-- Tất cả thể loại --</option>
+                        </select>
+                        <select
+                            id="profitFilterPricing"
+                            style="
+                                padding: 10px;
+                                border: 1px solid #eef3f6;
+                                border-radius: 8px;
+                            "
+                            onchange="renderPricingTable()"
+                        >
+                            <option value="">-- Lọc theo lợi nhuận --</option>
+                            <option value="low">0-20%</option>
+                            <option value="medium">20-40%</option>
+                            <option value="high">>40%</option>
+                        </select>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sách</th>
+                                <th>Thể loại</th>
+                                <th>Giá vốn (₫)</th>
+                                <th>% Lợi nhuận</th>
+                                <th>Giá bán (₫)</th>
+                                <th>Lợi nhuận/SP (₫)</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pricingTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
 
             <!-- IMPORT -->
             <section id="import" class="tab" style="display: none">
@@ -508,64 +594,140 @@
                                 <label>Ngày nhập (dd/mm/yyyy):</label>
                                 <input type="date" id="importDate" required />
                             </div>
-                            <div class="form-group">
-    <label>Chọn sản phẩm:</label>
-    <select 
-        id="importProductSelect" 
-        style="padding: 10px; border: 1px solid #eef3f6; border-radius: 8px; width: 100%"
-        onchange="fillProductId(this.value)"
-    >
-        <option value="">-- Chọn sản phẩm từ danh sách --</option>
-    </select>
-</div>
+                        </div>
 
-<div class="form-group">
-    <label>Hoặc nhập ID Sản phẩm thủ công:</label>
-    <input
-        type="text"
-        id="importProductId"
-        placeholder="b001"
-        required
-    />
-    <div style="margin-top: 8px; padding: 8px; background: #f0f9ff; border-left: 3px solid #3b82f6; border-radius: 4px; font-size: 0.85rem">
-        💡 <strong>Gợi ý:</strong> Chọn từ dropdown hoặc nhập ID thủ công (VD: b001, b002...)
-    </div>
-</div>
-                            <div class="form-group">
-                                <label>Số lượng nhập:</label>
-                                <input
-                                    type="number"
-                                    id="importQuantity"
-                                    placeholder="0"
-                                    min="1"
-                                    required
-                                />
+                        <div
+                            style="
+                                margin-bottom: 20px;
+                                padding: 15px;
+                                background: #f0f9ff;
+                                border-radius: 8px;
+                                border-left: 3px solid #3b82f6;
+                            "
+                        >
+                            <div
+                                style="
+                                    font-weight: 600;
+                                    margin-bottom: 12px;
+                                    color: #1e40af;
+                                "
+                            >
+                                ➕ Thêm sản phẩm vào phiếu nhập
                             </div>
-                            <div class="form-group">
-                                <label>Giá nhập (VNĐ) / 1 sản phẩm:</label>
-                                <input
-                                    type="number"
-                                    id="importPrice"
-                                    placeholder="0"
-                                    min="0"
-                                    required
-                                />
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Chọn sản phẩm:</label>
+                                    <select
+                                        id="importProductSelect"
+                                        style="
+                                            padding: 10px;
+                                            border: 1px solid #eef3f6;
+                                            border-radius: 8px;
+                                            width: 100%;
+                                        "
+                                        onchange="fillProductId(this.value)"
+                                    >
+                                        <option value="">
+                                            -- Chọn sản phẩm từ danh sách --
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Hoặc nhập ID Sản phẩm:</label>
+                                    <input
+                                        type="text"
+                                        id="importProductId"
+                                        placeholder="b001"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label>Số lượng nhập:</label>
+                                    <input
+                                        type="number"
+                                        id="importQuantity"
+                                        placeholder="0"
+                                        min="1"
+                                    />
+                                </div>
+                                <div class="form-group">
+                                    <label>Giá nhập (VNĐ) / 1 sản phẩm:</label>
+                                    <input
+                                        type="number"
+                                        id="importPrice"
+                                        placeholder="0"
+                                        min="0"
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onclick="addProductToReceipt()"
+                                style="
+                                    background: #10b981;
+                                    color: white;
+                                    padding: 10px 20px;
+                                    border: none;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 600;
+                                "
+                            >
+                                ➕ Thêm vào phiếu
+                            </button>
+                        </div>
+
+                        <div id="importItemsList" style="margin-bottom: 20px">
+                            <div style="font-weight: 600; margin-bottom: 12px">
+                                📦 Danh sách sản phẩm trong phiếu:
+                            </div>
+                            <div
+                                id="importItemsContainer"
+                                style="min-height: 50px"
+                            >
+                                <div
+                                    style="
+                                        text-align: center;
+                                        padding: 20px;
+                                        color: var(--muted);
+                                    "
+                                >
+                                    Chưa có sản phẩm nào trong phiếu
+                                </div>
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            onclick="saveImportReceipt()"
-                            style="background: teal; color: white; width: 200px"
-                        >
-                            📥 Lưu / Hoàn thành phiếu kho
-                        </button>
-                        <button
-                            type="button"
-                            onclick="resetImportForm()"
-                            style="background: #ddd; width: 200px"
-                        >
-                            🗑️ Xóa form
-                        </button>
+
+                        <div style="display: flex; gap: 10px">
+                            <button
+                                type="button"
+                                onclick="saveImportReceipt()"
+                                style="
+                                    background: teal;
+                                    color: white;
+                                    padding: 12px 24px;
+                                    border: none;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 600;
+                                "
+                            >
+                                💾 Lưu phiếu nhập
+                            </button>
+                            <button
+                                type="button"
+                                onclick="resetImportForm()"
+                                style="
+                                    background: #ddd;
+                                    color: #374151;
+                                    padding: 12px 24px;
+                                    border: none;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 600;
+                                "
+                            >
+                                🔄 Xóa form
+                            </button>
+                        </div>
                         <div
                             style="
                                 margin-top: 12px;
@@ -579,12 +741,16 @@
                             <strong>💡 Hướng dẫn:</strong>
                             <ul style="margin: 8px 0 0 20px">
                                 <li>
-                                    Bước 1: Điền thông tin và nhấn "Lưu" → Tạo
-                                    phiếu nhập (chưa vào kho)
+                                    Bước 1: Thêm các sản phẩm vào phiếu nhập
+                                    bằng nút "➕ Thêm vào phiếu"
                                 </li>
                                 <li>
-                                    Bước 2: Nhấn "✅ Sửa" → Kiểm tra lại → Nhấn
-                                    "Lưu" → Số lượng tự động cộng vào kho
+                                    Bước 2: Nhấn "💾 Lưu phiếu nhập" → Tạo phiếu
+                                    nhập (chưa vào kho)
+                                </li>
+                                <li>
+                                    Bước 3: Nhấn "✅ Hoàn thành" → Số lượng tự
+                                    động cộng vào kho cho tất cả sản phẩm
                                 </li>
                                 <li>
                                     Lưu ý: Phiếu đã hoàn thành không thể sửa!
@@ -600,15 +766,84 @@
                         <thead>
                             <tr>
                                 <th>Ngày nhập</th>
-                                <th>ID Sản phẩm</th>
-                                <th>Số lượng</th>
-                                <th>Giá nhập</th>
+                                <th>Sản phẩm</th>
+                                <th>Tổng số lượng</th>
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="importBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- INVENTORY TRACKING -->
+            <section id="inventory" class="tab" style="display: none">
+                <h1 class="page-title">📊 Tra cứu Nhập - Xuất - Tồn</h1>
+
+                <div class="panel" style="margin-bottom: 18px">
+                    <div
+                        style="
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            margin-bottom: 12px;
+                            flex-wrap: wrap;
+                            gap: 12px;
+                        "
+                    >
+                        <div class="section-title">🔍 Tìm kiếm và lọc</div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tìm kiếm sản phẩm:</label>
+                            <input
+                                id="inventorySearch"
+                                placeholder="Nhập ID, tên sách hoặc tác giả..."
+                                style="
+                                    padding: 10px;
+                                    border: 1px solid #eef3f6;
+                                    border-radius: 8px;
+                                "
+                                oninput="renderInventoryList()"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <label>Lọc theo thể loại:</label>
+                            <select
+                                id="inventoryCategoryFilter"
+                                style="
+                                    padding: 10px;
+                                    border: 1px solid #eef3f6;
+                                    border-radius: 8px;
+                                "
+                                onchange="renderInventoryList()"
+                            >
+                                <option value="">-- Tất cả thể loại --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="section-title">
+                        📋 Báo cáo Nhập - Xuất - Tồn
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Tác giả</th>
+                                <th>Tồn đầu kỳ</th>
+                                <th>Tổng nhập</th>
+                                <th>Tổng xuất</th>
+                                <th>Tồn cuối kỳ</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryBody"></tbody>
                     </table>
                 </div>
             </section>
@@ -642,7 +877,7 @@
                         const books = await res.json()
                         // Thêm stock mặc định cho mỗi sản phẩm
                         books.forEach((book) => {
-                            if (book.stock === undefined) book.stock = 100
+                            if (book.stock === undefined) book.stock = 0
                         })
                         saveProducts(books)
                         console.log(
@@ -660,7 +895,7 @@
                                 title: 'Atomic Habits',
                                 author: 'James Clear',
                                 price: 195000,
-                                stock: 100,
+                                stock: 0,
                                 category: 'Phát triển bản thân',
                                 cover: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800',
                                 desc: 'Cẩm nang thay đổi thói quen hiệu quả',
@@ -670,7 +905,7 @@
                                 title: 'Clean Code',
                                 author: 'Robert C. Martin',
                                 price: 250000,
-                                stock: 50,
+                                stock: 0,
                                 category: 'Công nghệ',
                                 cover: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800',
                                 desc: 'Nguyên tắc viết code sạch',
@@ -680,7 +915,7 @@
                                 title: 'Sapiens',
                                 author: 'Yuval Noah Harari',
                                 price: 180000,
-                                stock: 75,
+                                stock: 0,
                                 category: 'Lịch sử',
                                 cover: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800',
                                 desc: 'Lược sử loài người',
@@ -757,6 +992,28 @@
                 document.getElementById('statOrders').textContent =
                     orders.length
                 document.getElementById('statUsers').textContent = users.length
+
+                // Đếm sản phẩm sắp hết (stock < 5)
+                const lowStockProducts = products.filter(
+                    (p) => (p.stock || 0) < 5 && (p.stock || 0) > 0
+                )
+                const outOfStockProducts = products.filter(
+                    (p) => (p.stock || 0) === 0
+                )
+                const totalLowStock =
+                    lowStockProducts.length + outOfStockProducts.length
+
+                const lowStockCard = document.getElementById('lowStockCard')
+                const statLowStock = document.getElementById('statLowStock')
+
+                if (totalLowStock > 0) {
+                    lowStockCard.style.display = 'flex'
+                    statLowStock.textContent = totalLowStock
+                    statLowStock.style.color =
+                        outOfStockProducts.length > 0 ? '#dc2626' : '#f59e0b'
+                } else {
+                    lowStockCard.style.display = 'none'
+                }
             }
 
             function renderRecentOrders() {
@@ -845,9 +1102,14 @@
                     currentProductPage = 1
                 }
 
-                const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE)
+                const totalPages = Math.ceil(
+                    allProducts.length / PRODUCTS_PER_PAGE
+                )
                 const startIdx = (currentProductPage - 1) * PRODUCTS_PER_PAGE
-                const products = allProducts.slice(startIdx, startIdx + PRODUCTS_PER_PAGE)
+                const products = allProducts.slice(
+                    startIdx,
+                    startIdx + PRODUCTS_PER_PAGE
+                )
 
                 const body = document.getElementById('productsBody')
 
@@ -889,7 +1151,8 @@
                 }
 
                 // Render pagination
-                const paginationDiv = document.getElementById('productsPagination')
+                const paginationDiv =
+                    document.getElementById('productsPagination')
                 if (totalPages <= 1) {
                     paginationDiv.innerHTML = ''
                 } else {
@@ -897,8 +1160,14 @@
 
                     // Previous button
                     paginationHTML += `
-                        <button onclick="gotoProductPage(${currentProductPage - 1})" 
-                            ${currentProductPage === 1 ? 'disabled style="opacity:0.5;cursor:not-allowed"' : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'}>
+                        <button onclick="gotoProductPage(${
+                            currentProductPage - 1
+                        })" 
+                            ${
+                                currentProductPage === 1
+                                    ? 'disabled style="opacity:0.5;cursor:not-allowed"'
+                                    : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'
+                            }>
                             ◀ Trước
                         </button>
                     `
@@ -912,8 +1181,14 @@
 
                     // Next button
                     paginationHTML += `
-                        <button onclick="gotoProductPage(${currentProductPage + 1})" 
-                            ${currentProductPage === totalPages ? 'disabled style="opacity:0.5;cursor:not-allowed"' : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'}>
+                        <button onclick="gotoProductPage(${
+                            currentProductPage + 1
+                        })" 
+                            ${
+                                currentProductPage === totalPages
+                                    ? 'disabled style="opacity:0.5;cursor:not-allowed"'
+                                    : 'style="background:#3b82f6;color:white;padding:8px 12px;border:none;border-radius:6px;cursor:pointer"'
+                            }>
                             Sau ▶
                         </button>
                     `
@@ -935,7 +1210,9 @@
                         (p.category || '').toLowerCase().includes(q) ||
                         (p.id || '').toLowerCase().includes(q)
                 )
-                const totalPages = Math.ceil(allProducts.length / PRODUCTS_PER_PAGE)
+                const totalPages = Math.ceil(
+                    allProducts.length / PRODUCTS_PER_PAGE
+                )
 
                 if (page >= 1 && page <= totalPages) {
                     currentProductPage = page
@@ -944,51 +1221,139 @@
             }
 
             function saveProduct() {
+                // Validation: Kiểm tra tất cả các trường bắt buộc
+                const title = document
+                    .getElementById('productTitle')
+                    .value.trim()
+                const author = document
+                    .getElementById('productAuthor')
+                    .value.trim()
+                const price = document.getElementById('productPrice').value
+                const stock = document.getElementById('productStock').value
+                const category = document
+                    .getElementById('productCategory')
+                    .value.trim()
+                const desc = document.getElementById('productDesc').value.trim()
+                const imageFile =
+                    document.getElementById('productImage').files[0]
+
+                // Kiểm tra từng trường
+                if (!title) {
+                    alert('❌ Vui lòng nhập tiêu đề sản phẩm!')
+                    document.getElementById('productTitle').focus()
+                    return
+                }
+
+                if (!author) {
+                    alert('❌ Vui lòng nhập tên tác giả!')
+                    document.getElementById('productAuthor').focus()
+                    return
+                }
+
+                if (!price || isNaN(parseInt(price)) || parseInt(price) <= 0) {
+                    alert('❌ Vui lòng nhập giá sản phẩm hợp lệ (lớn hơn 0)!')
+                    document.getElementById('productPrice').focus()
+                    return
+                }
+
+                if (!category) {
+                    alert('❌ Vui lòng nhập thể loại!')
+                    document.getElementById('productCategory').focus()
+                    return
+                }
+
+                if (!desc) {
+                    alert('❌ Vui lòng nhập mô tả sản phẩm!')
+                    document.getElementById('productDesc').focus()
+                    return
+                }
+
+                // Kiểm tra ảnh
+                const productId = document.getElementById('productId').value
+                const isEditMode = !!productId
+
+                let imageData = null
+                if (imageFile) {
+                    // Đọc file và convert sang base64
+                    const reader = new FileReader()
+                    reader.onload = function (e) {
+                        imageData = e.target.result
+                        saveProductWithImage(imageData)
+                    }
+                    reader.readAsDataURL(imageFile)
+                    return // Đợi file được đọc xong
+                } else {
+                    // Nếu đang edit và không chọn file mới, giữ nguyên ảnh cũ
+                    if (isEditMode) {
+                        const existingProduct = getProducts().find(
+                            (p) => p.id === productId
+                        )
+                        if (existingProduct) {
+                            imageData =
+                                existingProduct.cover || existingProduct.image
+                        } else {
+                            alert('❌ Không tìm thấy sản phẩm để chỉnh sửa!')
+                            return
+                        }
+                    } else {
+                        // Thêm mới thì bắt buộc phải có ảnh
+                        alert('❌ Vui lòng chọn ảnh bìa!')
+                        document.getElementById('productImage').focus()
+                        return
+                    }
+                }
+
+                saveProductWithImage(imageData)
+            }
+
+            function saveProductWithImage(imageData) {
                 const id =
                     document.getElementById('productId').value ||
                     'b' + Date.now()
                 const title = document
                     .getElementById('productTitle')
                     .value.trim()
-
-                if (!title) {
-                    alert('❌ Vui lòng nhập tiêu đề sản phẩm!')
-                    return
-                }
-
-                const stock = parseInt(
-                    document.getElementById('productStock').value
+                const author = document
+                    .getElementById('productAuthor')
+                    .value.trim()
+                const price = parseInt(
+                    document.getElementById('productPrice').value
                 )
-                if (isNaN(stock) || stock < 0) {
-                    alert('❌ Vui lòng nhập số lượng tồn kho hợp lệ (>= 0)!')
-                    return
+                const category = document
+                    .getElementById('productCategory')
+                    .value.trim()
+                const desc = document.getElementById('productDesc').value.trim()
+
+                let products = getProducts()
+                const idx = products.findIndex((p) => p.id === id)
+
+                let stock = 0
+                if (idx >= 0) {
+                    // Khi chỉnh sửa, giữ nguyên số lượng tồn kho hiện tại
+                    stock =
+                        products[idx].stock !== undefined
+                            ? products[idx].stock
+                            : 0
+                } else {
+                    // Khi thêm mới, luôn đặt số lượng tồn kho = 0
+                    stock = 0
                 }
 
                 const product = {
                     id: id,
                     title: title,
-                    author: document
-                        .getElementById('productAuthor')
-                        .value.trim(),
-                    price:
-                        parseInt(
-                            document.getElementById('productPrice').value
-                        ) || 0,
+                    author: author,
+                    price: price,
                     stock: stock,
-                    category: document
-                        .getElementById('productCategory')
-                        .value.trim(),
+                    category: category,
                     cover:
-                        document.getElementById('productImage').value.trim() ||
+                        imageData ||
                         'https://via.placeholder.com/100x150?text=📖',
                     image:
-                        document.getElementById('productImage').value.trim() ||
+                        imageData ||
                         'https://via.placeholder.com/100x150?text=📖',
-                    desc: document.getElementById('productDesc').value.trim(),
+                    desc: desc,
                 }
-
-                let products = getProducts()
-                const idx = products.findIndex((p) => p.id === id)
 
                 if (idx >= 0) {
                     products[idx] = product
@@ -1007,10 +1372,33 @@
                 updateStats()
             }
 
+            function previewProductImage(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader()
+                    reader.onload = function (e) {
+                        const preview = document.getElementById(
+                            'productImagePreview'
+                        )
+                        const previewImg = document.getElementById(
+                            'productImagePreviewImg'
+                        )
+                        previewImg.src = e.target.result
+                        preview.style.display = 'block'
+                    }
+                    reader.readAsDataURL(input.files[0])
+                } else {
+                    document.getElementById(
+                        'productImagePreview'
+                    ).style.display = 'none'
+                }
+            }
+
             function clearProductForm() {
                 document.getElementById('productForm').reset()
                 document.getElementById('productId').value = ''
                 document.getElementById('productStock').value = '0'
+                document.getElementById('productImagePreview').style.display =
+                    'none'
             }
 
             function editProduct(id) {
@@ -1021,13 +1409,32 @@
                 document.getElementById('productTitle').value = p.title
                 document.getElementById('productAuthor').value = p.author || ''
                 document.getElementById('productPrice').value = p.price || 0
-                document.getElementById('productStock').value =
-                    p.stock !== undefined ? p.stock : 0
+                // Số lượng tồn kho không được chỉnh sửa, giữ nguyên giá trị hiện tại
+                const currentStock = p.stock !== undefined ? p.stock : 0
+                document.getElementById('productStock').value = currentStock
                 document.getElementById('productCategory').value =
                     p.category || ''
-                document.getElementById('productImage').value =
-                    p.cover || p.image || ''
                 document.getElementById('productDesc').value = p.desc || ''
+
+                // Hiển thị preview ảnh cũ nếu có
+                const imageUrl = p.cover || p.image || ''
+                if (imageUrl) {
+                    const preview = document.getElementById(
+                        'productImagePreview'
+                    )
+                    const previewImg = document.getElementById(
+                        'productImagePreviewImg'
+                    )
+                    previewImg.src = imageUrl
+                    preview.style.display = 'block'
+                } else {
+                    document.getElementById(
+                        'productImagePreview'
+                    ).style.display = 'none'
+                }
+
+                // Reset file input (không thể set value cho file input)
+                document.getElementById('productImage').value = ''
 
                 document
                     .getElementById('productForm')
@@ -1401,141 +1808,189 @@ ${items}`)
                 if (name === 'import') {
                     renderImportList()
                     loadProductsToSelect()
+                    currentImportItems = []
+                    renderImportItems()
+                }
+                if (name === 'inventory') {
+                    renderInventoryList()
+                    loadInventoryCategories()
                 }
 
                 window.scrollTo({ top: 0, behavior: 'smooth' })
             }
 
-           /* ===== PRICING MANAGEMENT (Theo Sản Phẩm) ===== */
-let editingPricingProductId = null
+            /* ===== PRICING MANAGEMENT (Theo Sản Phẩm) ===== */
+            let editingPricingProductId = null
 
-// Khởi tạo giá trị mặc định cho sản phẩm
-function initializeProductPricing() {
-    let products = getProducts()
-    let hasChanges = false
-    
-    products.forEach(product => {
-        if (!product.costPrice) {
-            product.costPrice = product.price // Giá vốn = giá gốc
-            hasChanges = true
-        }
-        if (product.profitPercent === undefined) {
-            product.profitPercent = 30 // Mặc định 30% lợi nhuận
-            hasChanges = true
-        }
-        if (!product.sellPrice) {
-            product.sellPrice = Math.round(product.costPrice * (1 + product.profitPercent / 100))
-            hasChanges = true
-        }
-    })
-    
-    if (hasChanges) {
-        saveProducts(products)
-    }
-}
+            // Khởi tạo giá trị mặc định cho sản phẩm
+            function initializeProductPricing() {
+                let products = getProducts()
+                let hasChanges = false
 
-// Render thống kê giá
-function renderPricingStats() {
-    const products = getProducts()
-    const totalProducts = products.length
-    
-    const avgProfit = products.length > 0 
-        ? (products.reduce((sum, p) => sum + (p.profitPercent || 0), 0) / products.length).toFixed(1)
-        : 0
-    
-    const totalProfitAmount = products.reduce((sum, p) => {
-        const profit = (p.sellPrice || 0) - (p.costPrice || 0)
-        return sum + profit
-    }, 0)
-    
-    const avgProfitAmount = totalProducts > 0 ? Math.round(totalProfitAmount / totalProducts) : 0
-    const highProfitCount = products.filter(p => (p.profitPercent || 0) > 40).length
+                products.forEach((product) => {
+                    if (!product.costPrice) {
+                        product.costPrice = product.price // Giá vốn = giá gốc
+                        hasChanges = true
+                    }
+                    if (product.profitPercent === undefined) {
+                        product.profitPercent = 30 // Mặc định 30% lợi nhuận
+                        hasChanges = true
+                    }
+                    if (!product.sellPrice) {
+                        product.sellPrice = Math.round(
+                            product.costPrice *
+                                (1 + product.profitPercent / 100)
+                        )
+                        hasChanges = true
+                    }
+                })
 
-    document.getElementById('avgProfit').textContent = avgProfit + '%'
-    document.getElementById('avgProfitAmount').textContent = avgProfitAmount.toLocaleString('vi-VN') + ' ₫'
-    document.getElementById('highProfitCount').textContent = highProfitCount
-}
+                if (hasChanges) {
+                    saveProducts(products)
+                }
+            }
 
-// Load categories vào filter
-function loadPricingCategories() {
-    const products = getProducts()
-    const categories = [...new Set(products.map(p => p.category).filter(Boolean))]
-    const select = document.getElementById('categoryFilterPricing')
-    
-    // Xóa các option cũ (giữ lại option đầu tiên)
-    while(select.options.length > 1) {
-        select.remove(1)
-    }
-    
-    categories.forEach(cat => {
-        const option = document.createElement('option')
-        option.value = cat
-        option.textContent = cat
-        select.appendChild(option)
-    })
-}
+            // Render thống kê giá
+            function renderPricingStats() {
+                const products = getProducts()
+                const totalProducts = products.length
 
-// Lọc sản phẩm cho pricing
-function getFilteredPricingProducts() {
-    const products = getProducts()
-    const searchTerm = (document.getElementById('searchPricing')?.value || '').toLowerCase()
-    const categoryFilter = document.getElementById('categoryFilterPricing')?.value || ''
-    const profitFilter = document.getElementById('profitFilterPricing')?.value || ''
+                const avgProfit =
+                    products.length > 0
+                        ? (
+                              products.reduce(
+                                  (sum, p) => sum + (p.profitPercent || 0),
+                                  0
+                              ) / products.length
+                          ).toFixed(1)
+                        : 0
 
-    return products.filter(product => {
-        const matchSearch = product.title.toLowerCase().includes(searchTerm) || 
-                           product.id.toLowerCase().includes(searchTerm)
-        const matchCategory = !categoryFilter || product.category === categoryFilter
-        
-        let matchProfit = true
-        if (profitFilter === 'low') {
-            matchProfit = (product.profitPercent || 0) < 20
-        } else if (profitFilter === 'medium') {
-            matchProfit = (product.profitPercent || 0) >= 20 && (product.profitPercent || 0) <= 40
-        } else if (profitFilter === 'high') {
-            matchProfit = (product.profitPercent || 0) > 40
-        }
+                const totalProfitAmount = products.reduce((sum, p) => {
+                    const profit = (p.sellPrice || 0) - (p.costPrice || 0)
+                    return sum + profit
+                }, 0)
 
-        return matchSearch && matchCategory && matchProfit
-    })
-}
+                const avgProfitAmount =
+                    totalProducts > 0
+                        ? Math.round(totalProfitAmount / totalProducts)
+                        : 0
+                const highProfitCount = products.filter(
+                    (p) => (p.profitPercent || 0) > 40
+                ).length
 
-// Render bảng pricing
-function renderPricingTable() {
-    const filteredProducts = getFilteredPricingProducts()
-    const tbody = document.getElementById('pricingTableBody')
-    
-    if (filteredProducts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#666">📭 Không tìm thấy sản phẩm nào</td></tr>'
-        return
-    }
+                document.getElementById('avgProfit').textContent =
+                    avgProfit + '%'
+                document.getElementById('avgProfitAmount').textContent =
+                    avgProfitAmount.toLocaleString('vi-VN') + ' ₫'
+                document.getElementById('highProfitCount').textContent =
+                    highProfitCount
+            }
 
-    tbody.innerHTML = filteredProducts.map(product => {
-        const costPrice = product.costPrice || product.price || 0
-        const profitPercent = product.profitPercent || 0
-        const sellPrice = product.sellPrice || costPrice
-        const profitAmount = sellPrice - costPrice
-        
-        const profitBadgeColor = profitPercent > 40 ? 'background:#fef3c7;color:#92400e' : 'background:#d1fae5;color:#065f46'
+            // Load categories vào filter
+            function loadPricingCategories() {
+                const products = getProducts()
+                const categories = [
+                    ...new Set(products.map((p) => p.category).filter(Boolean)),
+                ]
+                const select = document.getElementById('categoryFilterPricing')
 
-        if (editingPricingProductId === product.id) {
-            return `
+                // Xóa các option cũ (giữ lại option đầu tiên)
+                while (select.options.length > 1) {
+                    select.remove(1)
+                }
+
+                categories.forEach((cat) => {
+                    const option = document.createElement('option')
+                    option.value = cat
+                    option.textContent = cat
+                    select.appendChild(option)
+                })
+            }
+
+            // Lọc sản phẩm cho pricing
+            function getFilteredPricingProducts() {
+                const products = getProducts()
+                const searchTerm = (
+                    document.getElementById('searchPricing')?.value || ''
+                ).toLowerCase()
+                const categoryFilter =
+                    document.getElementById('categoryFilterPricing')?.value ||
+                    ''
+                const profitFilter =
+                    document.getElementById('profitFilterPricing')?.value || ''
+
+                return products.filter((product) => {
+                    const matchSearch =
+                        product.title.toLowerCase().includes(searchTerm) ||
+                        product.id.toLowerCase().includes(searchTerm)
+                    const matchCategory =
+                        !categoryFilter || product.category === categoryFilter
+
+                    let matchProfit = true
+                    if (profitFilter === 'low') {
+                        matchProfit = (product.profitPercent || 0) < 20
+                    } else if (profitFilter === 'medium') {
+                        matchProfit =
+                            (product.profitPercent || 0) >= 20 &&
+                            (product.profitPercent || 0) <= 40
+                    } else if (profitFilter === 'high') {
+                        matchProfit = (product.profitPercent || 0) > 40
+                    }
+
+                    return matchSearch && matchCategory && matchProfit
+                })
+            }
+
+            // Render bảng pricing
+            function renderPricingTable() {
+                const filteredProducts = getFilteredPricingProducts()
+                const tbody = document.getElementById('pricingTableBody')
+
+                if (filteredProducts.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="8" style="text-align:center;padding:40px;color:#666">📭 Không tìm thấy sản phẩm nào</td></tr>'
+                    return
+                }
+
+                tbody.innerHTML = filteredProducts
+                    .map((product) => {
+                        const costPrice =
+                            product.costPrice || product.price || 0
+                        const profitPercent = product.profitPercent || 0
+                        const sellPrice = product.sellPrice || costPrice
+                        const profitAmount = sellPrice - costPrice
+
+                        const profitBadgeColor =
+                            profitPercent > 40
+                                ? 'background:#fef3c7;color:#92400e'
+                                : 'background:#d1fae5;color:#065f46'
+
+                        if (editingPricingProductId === product.id) {
+                            return `
                 <tr style="background:#f8f9ff">
                     <td><strong>${product.id}</strong></td>
                     <td>${product.title}</td>
                     <td>${product.category || 'N/A'}</td>
                     <td>
-                        <input type="number" id="cost-${product.id}" value="${costPrice}" min="0" 
+                        <input type="number" id="cost-${
+                            product.id
+                        }" value="${costPrice}" min="0" 
                             style="width:100px;padding:6px;border:1px solid #667eea;border-radius:4px">
                     </td>
                     <td>
                         <div style="display:flex;align-items:center;gap:4px">
-                            <input type="number" id="profit-${product.id}" value="${profitPercent}" min="0" max="1000" 
+                            <input type="number" id="profit-${
+                                product.id
+                            }" value="${profitPercent}" min="0" max="1000" 
                                 style="width:70px;padding:6px;border:1px solid #667eea;border-radius:4px"> %
                         </div>
                     </td>
-                    <td><strong style="color:#667eea;font-size:15px">${sellPrice.toLocaleString('vi-VN')}₫</strong></td>
-                    <td><strong style="color:#10b981">+${profitAmount.toLocaleString('vi-VN')}₫</strong></td>
+                    <td><strong style="color:#667eea;font-size:15px">${sellPrice.toLocaleString(
+                        'vi-VN'
+                    )}₫</strong></td>
+                    <td><strong style="color:#10b981">+${profitAmount.toLocaleString(
+                        'vi-VN'
+                    )}₫</strong></td>
                     <td>
                         <button onclick="savePricingProduct('${product.id}')" 
                             style="background:#10b981;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;margin-right:4px">
@@ -1548,20 +2003,26 @@ function renderPricingTable() {
                     </td>
                 </tr>
             `
-        } else {
-            return `
+                        } else {
+                            return `
                 <tr>
                     <td><strong>${product.id}</strong></td>
                     <td>${product.title}</td>
                     <td>${product.category || 'N/A'}</td>
-                    <td><strong>${costPrice.toLocaleString('vi-VN')}₫</strong></td>
+                    <td><strong>${costPrice.toLocaleString(
+                        'vi-VN'
+                    )}₫</strong></td>
                     <td>
                         <span style="display:inline-block;padding:4px 12px;border-radius:12px;font-weight:600;font-size:13px;${profitBadgeColor}">
                             ${profitPercent}%
                         </span>
                     </td>
-                    <td><strong style="color:#667eea;font-size:15px">${sellPrice.toLocaleString('vi-VN')}₫</strong></td>
-                    <td><strong style="color:#10b981">+${profitAmount.toLocaleString('vi-VN')}₫</strong></td>
+                    <td><strong style="color:#667eea;font-size:15px">${sellPrice.toLocaleString(
+                        'vi-VN'
+                    )}₫</strong></td>
+                    <td><strong style="color:#10b981">+${profitAmount.toLocaleString(
+                        'vi-VN'
+                    )}₫</strong></td>
                     <td>
                         <button onclick="editPricingProduct('${product.id}')" 
                             style="background:#3b82f6;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer">
@@ -1570,98 +2031,116 @@ function renderPricingTable() {
                     </td>
                 </tr>
             `
-        }
-    }).join('')
-}
+                        }
+                    })
+                    .join('')
+            }
 
-// Chỉnh sửa giá sản phẩm
-function editPricingProduct(productId) {
-    editingPricingProductId = productId
-    renderPricingTable()
-}
+            // Chỉnh sửa giá sản phẩm
+            function editPricingProduct(productId) {
+                editingPricingProductId = productId
+                renderPricingTable()
+            }
 
-// Lưu giá sản phẩm
-function savePricingProduct(productId) {
-    const costInput = document.getElementById(`cost-${productId}`)
-    const profitInput = document.getElementById(`profit-${productId}`)
-    
-    if (!costInput || !profitInput) return
+            // Lưu giá sản phẩm
+            function savePricingProduct(productId) {
+                const costInput = document.getElementById(`cost-${productId}`)
+                const profitInput = document.getElementById(
+                    `profit-${productId}`
+                )
 
-    const costPrice = parseFloat(costInput.value) || 0
-    const profitPercent = parseFloat(profitInput.value) || 0
-    const sellPrice = Math.round(costPrice * (1 + profitPercent / 100))
+                if (!costInput || !profitInput) return
 
-    let products = getProducts()
-    const product = products.find(p => p.id === productId)
-    
-    if (product) {
-        product.costPrice = costPrice
-        product.profitPercent = profitPercent
-        product.sellPrice = sellPrice
-        product.price = sellPrice // Cập nhật giá hiển thị trên trang chính
-        
-        saveProducts(products)
-        editingPricingProductId = null
-        
-        renderPricingStats()
-        renderPricingTable()
-        
-        alert('✅ Đã cập nhật giá thành công!')
-    }
-}
+                const costPrice = parseFloat(costInput.value) || 0
+                const profitPercent = parseFloat(profitInput.value) || 0
+                const sellPrice = Math.round(
+                    costPrice * (1 + profitPercent / 100)
+                )
 
-// Hủy chỉnh sửa
-function cancelPricingEdit() {
-    editingPricingProductId = null
-    renderPricingTable()
-}
+                let products = getProducts()
+                const product = products.find((p) => p.id === productId)
 
-// Hàm render pricing list chính (được gọi từ switchTab)
-function renderPricingList() {
-    initializeProductPricing()
-    loadPricingCategories()
-    renderPricingStats()
-    renderPricingTable()
-}
+                if (product) {
+                    product.costPrice = costPrice
+                    product.profitPercent = profitPercent
+                    product.sellPrice = sellPrice
+                    product.price = sellPrice // Cập nhật giá hiển thị trên trang chính
 
-/* ===== CHUYỂN TỪ TAB SẢN PHẨM SANG PRICING ===== */
-function goToPricing(productId) {
-    // Chuyển sang tab pricing
-    switchTab('pricing', document.querySelector('[data-tab="pricing"]'))
-    
-    // Đợi một chút để tab được render
-    setTimeout(() => {
-        // Tìm sản phẩm và tự động mở chế độ chỉnh sửa
-        const product = getProducts().find(p => p.id === productId)
-        if (product) {
-            // Clear filter để hiển thị sản phẩm
-            document.getElementById('searchPricing').value = ''
-            document.getElementById('categoryFilterPricing').value = ''
-            document.getElementById('profitFilterPricing').value = ''
-            
-            // Render lại bảng
-            renderPricingTable()
-            
-            // Tự động mở chế độ chỉnh sửa
-            editingPricingProductId = productId
-            renderPricingTable()
-            
-            // Scroll đến sản phẩm đó
-            setTimeout(() => {
-                const row = document.querySelector(`#pricingTableBody tr[style*="background:#f8f9ff"]`)
-                if (row) {
-                    row.scrollIntoView({ behavior: 'smooth', block: 'center' })
-                    // Highlight effect
-                    row.style.boxShadow = '0 0 20px rgba(102, 126, 234, 0.5)'
-                    setTimeout(() => {
-                        row.style.boxShadow = 'none'
-                    }, 2000)
+                    saveProducts(products)
+                    editingPricingProductId = null
+
+                    renderPricingStats()
+                    renderPricingTable()
+
+                    alert('✅ Đã cập nhật giá thành công!')
                 }
-            }, 100)
-            
-            // Hiển thị thông báo
-            const notification = document.createElement('div')
-            notification.style.cssText = `
+            }
+
+            // Hủy chỉnh sửa
+            function cancelPricingEdit() {
+                editingPricingProductId = null
+                renderPricingTable()
+            }
+
+            // Hàm render pricing list chính (được gọi từ switchTab)
+            function renderPricingList() {
+                initializeProductPricing()
+                loadPricingCategories()
+                renderPricingStats()
+                renderPricingTable()
+            }
+
+            /* ===== CHUYỂN TỪ TAB SẢN PHẨM SANG PRICING ===== */
+            function goToPricing(productId) {
+                // Chuyển sang tab pricing
+                switchTab(
+                    'pricing',
+                    document.querySelector('[data-tab="pricing"]')
+                )
+
+                // Đợi một chút để tab được render
+                setTimeout(() => {
+                    // Tìm sản phẩm và tự động mở chế độ chỉnh sửa
+                    const product = getProducts().find(
+                        (p) => p.id === productId
+                    )
+                    if (product) {
+                        // Clear filter để hiển thị sản phẩm
+                        document.getElementById('searchPricing').value = ''
+                        document.getElementById('categoryFilterPricing').value =
+                            ''
+                        document.getElementById('profitFilterPricing').value =
+                            ''
+
+                        // Render lại bảng
+                        renderPricingTable()
+
+                        // Tự động mở chế độ chỉnh sửa
+                        editingPricingProductId = productId
+                        renderPricingTable()
+
+                        // Scroll đến sản phẩm đó
+                        setTimeout(() => {
+                            const row = document.querySelector(
+                                `#pricingTableBody tr[style*="background:#f8f9ff"]`
+                            )
+                            if (row) {
+                                row.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'center',
+                                })
+                                // Highlight effect
+                                row.style.boxShadow =
+                                    '0 0 20px rgba(102, 126, 234, 0.5)'
+                                setTimeout(() => {
+                                    row.style.boxShadow = 'none'
+                                }, 2000)
+                            }
+                        }, 100)
+
+                        // Hiển thị thông báo
+                        const notification = document.createElement('div')
+                        notification.style.cssText = `
                 position: fixed;
                 top: 20px;
                 right: 20px;
@@ -1674,23 +2153,23 @@ function goToPricing(productId) {
                 font-weight: 600;
                 animation: slideIn 0.3s ease;
             `
-            notification.innerHTML = `
+                        notification.innerHTML = `
                 💲 Đang chỉnh sửa giá: <strong>${product.title}</strong>
             `
-            document.body.appendChild(notification)
-            
-            // Tự động xóa notification sau 3 giây
-            setTimeout(() => {
-                notification.style.animation = 'slideOut 0.3s ease'
-                setTimeout(() => notification.remove(), 300)
-            }, 3000)
-        }
-    }, 100)
-}
+                        document.body.appendChild(notification)
 
-// Thêm CSS animation cho notification
-const styleAnimation = document.createElement('style')
-styleAnimation.textContent = `
+                        // Tự động xóa notification sau 3 giây
+                        setTimeout(() => {
+                            notification.style.animation = 'slideOut 0.3s ease'
+                            setTimeout(() => notification.remove(), 300)
+                        }, 3000)
+                    }
+                }, 100)
+            }
+
+            // Thêm CSS animation cho notification
+            const styleAnimation = document.createElement('style')
+            styleAnimation.textContent = `
     @keyframes slideIn {
         from {
             transform: translateX(400px);
@@ -1712,7 +2191,7 @@ styleAnimation.textContent = `
         }
     }
 `
-document.head.appendChild(styleAnimation)
+            document.head.appendChild(styleAnimation)
 
             /* ===== IMPORT RECEIPTS MANAGEMENT ===== */
             const getImportReceipts = () =>
@@ -1720,128 +2199,303 @@ document.head.appendChild(styleAnimation)
             const setImportReceipts = (r) =>
                 localStorage.setItem('bs_import_receipts', JSON.stringify(r))
 
+            // Biến lưu danh sách sản phẩm tạm thời trong form
+            let currentImportItems = []
+
+            function renderImportItems() {
+                const container = document.getElementById(
+                    'importItemsContainer'
+                )
+                if (!container) return
+
+                if (currentImportItems.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: var(--muted);">
+                            Chưa có sản phẩm nào trong phiếu
+                        </div>
+                    `
+                    return
+                }
+
+                const products = getProducts()
+                let totalQuantity = 0
+                let totalAmount = 0
+
+                container.innerHTML = `
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                                <th style="padding: 10px; text-align: left;">Sản phẩm</th>
+                                <th style="padding: 10px; text-align: center;">Số lượng</th>
+                                <th style="padding: 10px; text-align: right;">Giá nhập</th>
+                                <th style="padding: 10px; text-align: right;">Thành tiền</th>
+                                <th style="padding: 10px; text-align: center;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${currentImportItems
+                                .map((item, index) => {
+                                    const product = products.find(
+                                        (p) => p.id === item.productId
+                                    )
+                                    const productName = product
+                                        ? product.title
+                                        : item.productId
+                                    const itemTotal = item.quantity * item.price
+                                    totalQuantity += item.quantity
+                                    totalAmount += itemTotal
+                                    return `
+                                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                                        <td style="padding: 10px;">${productName} (${
+                                        item.productId
+                                    })</td>
+                                        <td style="padding: 10px; text-align: center;">${
+                                            item.quantity
+                                        }</td>
+                                        <td style="padding: 10px; text-align: right;">${item.price.toLocaleString(
+                                            'vi-VN'
+                                        )} ₫</td>
+                                        <td style="padding: 10px; text-align: right; font-weight: 600;">${itemTotal.toLocaleString(
+                                            'vi-VN'
+                                        )} ₫</td>
+                                        <td style="padding: 10px; text-align: center;">
+                                            <button onclick="removeImportItem(${index})" style="background:#ef4444;color:white;padding:4px 8px;border:none;border-radius:4px;cursor:pointer;">🗑️</button>
+                                        </td>
+                                    </tr>
+                                `
+                                })
+                                .join('')}
+                            <tr style="background: #f9fafb; font-weight: 700; border-top: 2px solid #e5e7eb;">
+                                <td style="padding: 10px;" colspan="2">TỔNG CỘNG</td>
+                                <td style="padding: 10px; text-align: center;">${totalQuantity}</td>
+                                <td style="padding: 10px; text-align: right; color: var(--primary); font-size: 16px;">${totalAmount.toLocaleString(
+                                    'vi-VN'
+                                )} ₫</td>
+                                <td style="padding: 10px;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `
+            }
+
+            function addProductToReceipt() {
+                const productId = document
+                    .getElementById('importProductId')
+                    .value.trim()
+                const quantity = parseInt(
+                    document.getElementById('importQuantity').value
+                )
+                const price = parseInt(
+                    document.getElementById('importPrice').value
+                )
+
+                if (!productId || !quantity || !price) {
+                    alert('❌ Vui lòng điền đầy đủ thông tin sản phẩm!')
+                    return
+                }
+
+                if (quantity <= 0) {
+                    alert('❌ Số lượng phải lớn hơn 0!')
+                    return
+                }
+
+                if (price < 0) {
+                    alert('❌ Giá nhập không được âm!')
+                    return
+                }
+
+                // Kiểm tra sản phẩm có tồn tại không
+                const products = getProducts()
+                const product = products.find((p) => p.id === productId)
+
+                if (!product) {
+                    alert(
+                        `❌ KHÔNG TÌM THẤY SẢN PHẨM!\n\n` +
+                            `ID bạn nhập: "${productId}"\n\n` +
+                            `Vui lòng kiểm tra lại ID sản phẩm!`
+                    )
+                    return
+                }
+
+                // Kiểm tra sản phẩm đã có trong danh sách chưa
+                const existingIndex = currentImportItems.findIndex(
+                    (item) => item.productId === productId
+                )
+                if (existingIndex >= 0) {
+                    if (
+                        confirm(
+                            `Sản phẩm "${product.title}" đã có trong phiếu. Bạn có muốn cập nhật số lượng và giá không?`
+                        )
+                    ) {
+                        currentImportItems[existingIndex].quantity = quantity
+                        currentImportItems[existingIndex].price = price
+                    } else {
+                        return
+                    }
+                } else {
+                    // Thêm sản phẩm mới vào danh sách
+                    currentImportItems.push({
+                        productId: productId,
+                        quantity: quantity,
+                        price: price,
+                    })
+                }
+
+                // Xóa form nhập
+                document.getElementById('importProductId').value = ''
+                document.getElementById('importQuantity').value = ''
+                document.getElementById('importPrice').value = ''
+                document.getElementById('importProductSelect').value = ''
+
+                // Render lại danh sách
+                renderImportItems()
+            }
+
+            function removeImportItem(index) {
+                if (confirm('Bạn có chắc muốn xóa sản phẩm này khỏi phiếu?')) {
+                    currentImportItems.splice(index, 1)
+                    renderImportItems()
+                }
+            }
+
             function renderImportList() {
                 const receipts = getImportReceipts()
                 const tbody = document.querySelector('#importBody')
-                tbody.innerHTML = receipts
-                    .map(
-                        (r) => `
-        <tr>
-          <td>${r.date}</td>
-          <td>${r.productId}</td>
-          <td>${r.quantity}</td>
-          <td>${r.price.toLocaleString('vi-VN')} ₫</td>
-          <td>${(r.quantity * r.price).toLocaleString('vi-VN')} ₫</td>
-          <td><span class="badge" style="background:${
-              r.status === 'Chưa vào kho' ? '#fff3e0' : '#e8f5e9'
-          };color:${r.status === 'Chưa vào kho' ? '#a65a00' : '#2e7d32'}">${
-                            r.status === 'Chưa vào kho'
-                                ? '⏳ Chưa vào kho'
-                                : '✅ Đã nhập kho'
-                        }</span></td>
-          <td>
-            ${
-                r.status === 'Chưa vào kho'
-                    ? `<button onclick="editImport('${r.id}')" style="background:#3b82f6;color:white;padding:6px 12px;margin-right:6px">✏️</button><button onclick="completeImport('${r.id}')" style="background:#4CAF50;color:white;padding:6px 12px;margin-right:6px">✅</button>`
-                    : ''
-            }
-            <button onclick="deleteImport('${
-                r.id
-            }')" style="background:#ff6b6b;color:white;padding:6px 12px">🗑️</button>
-          </td>
-        </tr>
-      `
-                    )
-                    .join('')
-                if (!receipts.length)
+
+                if (!receipts.length) {
                     tbody.innerHTML =
-                        '<tr><td colspan="7" style="text-align:center;color:#666">Chưa có phiếu nhập</td></tr>'
+                        '<tr><td colspan="6" style="text-align:center;color:#666">Chưa có phiếu nhập</td></tr>'
+                    return
+                }
+
+                tbody.innerHTML = receipts
+                    .map((r) => {
+                        // Hỗ trợ cả format cũ (1 sản phẩm) và format mới (nhiều sản phẩm)
+                        const items = r.items || [
+                            {
+                                productId: r.productId,
+                                quantity: r.quantity,
+                                price: r.price,
+                            },
+                        ]
+
+                        const products = getProducts()
+                        let totalQuantity = 0
+                        let totalAmount = 0
+                        const itemsList = items
+                            .map((item) => {
+                                const product = products.find(
+                                    (p) => p.id === item.productId
+                                )
+                                const productName = product
+                                    ? product.title
+                                    : item.productId
+                                const itemTotal = item.quantity * item.price
+                                totalQuantity += item.quantity
+                                totalAmount += itemTotal
+                                return `${productName} (${item.productId}) x${item.quantity}`
+                            })
+                            .join('<br>')
+
+                        return `
+                        <tr>
+                            <td>${r.date}</td>
+                            <td style="max-width: 300px;">
+                                <div style="font-size: 0.9rem;">${itemsList}</div>
+                            </td>
+                            <td style="text-align: center; font-weight: 600;">${totalQuantity}</td>
+                            <td style="text-align: right; font-weight: 600; color: var(--primary);">${totalAmount.toLocaleString(
+                                'vi-VN'
+                            )} ₫</td>
+                            <td>
+                                <span class="badge" style="background:${
+                                    r.status === 'Chưa vào kho'
+                                        ? '#fff3e0'
+                                        : '#e8f5e9'
+                                };color:${
+                            r.status === 'Chưa vào kho' ? '#a65a00' : '#2e7d32'
+                        }">
+                                    ${
+                                        r.status === 'Chưa vào kho'
+                                            ? '⏳ Chưa vào kho'
+                                            : '✅ Đã nhập kho'
+                                    }
+                                </span>
+                            </td>
+                            <td>
+                                ${
+                                    r.status === 'Chưa vào kho'
+                                        ? `<button onclick="editImport('${r.id}')" style="background:#3b82f6;color:white;padding:6px 12px;margin-right:6px;border:none;border-radius:4px;cursor:pointer;">✏️</button>
+                                           <button onclick="completeImport('${r.id}')" style="background:#4CAF50;color:white;padding:6px 12px;margin-right:6px;border:none;border-radius:4px;cursor:pointer;">✅</button>`
+                                        : ''
+                                }
+                                <button onclick="deleteImport('${
+                                    r.id
+                                }')" style="background:#ff6b6b;color:white;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">🗑️</button>
+                            </td>
+                        </tr>
+                    `
+                    })
+                    .join('')
             }
 
             function saveImportReceipt() {
-    const date = document.getElementById('importDate').value
-    const productId = document
-        .getElementById('importProductId')
-        .value.trim()
-    const quantity = parseInt(
-        document.getElementById('importQuantity').value
-    )
-    const price = parseInt(
-        document.getElementById('importPrice').value
-    )
-    const id = document.getElementById('importId').value
-    
-    // ✅ VALIDATION CƠ BẢN
-    if (!date || !productId || !quantity || !price) {
-        alert('❌ Vui lòng điền đầy đủ thông tin!')
-        return
-    }
-    
-    // ✅ KIỂM TRA SẢN PHẨM CÓ TỒN TẠI KHÔNG
-    const products = getProducts()
-    const product = products.find((p) => p.id === productId)
-    
-    if (!product) {
-        alert(
-            `❌ KHÔNG TÌM THẤY SẢN PHẨM!\n\n` +
-            `ID bạn nhập: "${productId}"\n\n` +
-            `Vui lòng:\n` +
-            `1. Kiểm tra lại ID sản phẩm (VD: b001, b002...)\n` +
-            `2. Đảm bảo sản phẩm đã được tạo trong tab "Sản phẩm"\n` +
-            `3. Nhập đúng chữ hoa/thường (phân biệt b001 ≠ B001)`
-        )
-        return
-    }
-    
-    const receipts = getImportReceipts()
-    const dateObj = new Date(date)
-    const formattedDate = dateObj.toLocaleDateString('vi-VN')
-    
-    const newReceipt = {
-        id: id || 'imp' + Date.now(),
-        date: formattedDate,
-        productId,
-        quantity,
-        price,
-        status: 'Chưa vào kho',
-    }
-    
-    if (id) {
-        // EDIT MODE
-        const idx = receipts.findIndex((r) => r.id === id)
-        if (idx >= 0 && receipts[idx].status === 'Đã nhập kho') {
-            alert('❌ Phiếu đã hoàn thành không thể sửa!')
-            return
-        }
-        if (idx >= 0) {
-            receipts[idx] = newReceipt
-            alert(
-                `✅ Cập nhật phiếu nhập thành công!\n\n` +
-                `📦 Sản phẩm: ${product.title}\n` +
-                `📊 Số lượng: ${quantity} cái\n` +
-                `💰 Giá nhập: ${price.toLocaleString('vi-VN')} ₫/cái\n` +
-                `💵 Tổng: ${(quantity * price).toLocaleString('vi-VN')} ₫\n\n` +
-                `⚠️ Chưa vào kho - Nhấn "✅" để hoàn thành`
-            )
-        }
-    } else {
-        // CREATE MODE
-        receipts.push(newReceipt)
-        alert(
-            `✅ Tạo phiếu nhập thành công!\n\n` +
-            `📦 Sản phẩm: ${product.title} (ID: ${productId})\n` +
-            `📊 Số lượng: ${quantity} cái\n` +
-            `💰 Giá nhập: ${price.toLocaleString('vi-VN')} ₫/cái\n` +
-            `💵 Tổng giá trị: ${(quantity * price).toLocaleString('vi-VN')} ₫\n\n` +
-            `⏳ Trạng thái: Chưa vào kho\n` +
-            `💡 Nhấn nút "✅" để hoàn thành và cộng vào kho`
-        )
-    }
-    
-    setImportReceipts(receipts)
-    resetImportForm()
-    renderImportList()
-}
+                const date = document.getElementById('importDate').value
+                const id = document.getElementById('importId').value
+
+                // ✅ VALIDATION
+                if (!date) {
+                    alert('❌ Vui lòng chọn ngày nhập!')
+                    return
+                }
+
+                if (currentImportItems.length === 0) {
+                    alert(
+                        '❌ Vui lòng thêm ít nhất một sản phẩm vào phiếu nhập!'
+                    )
+                    return
+                }
+
+                const receipts = getImportReceipts()
+                const dateObj = new Date(date)
+                const formattedDate = dateObj.toLocaleDateString('vi-VN')
+
+                const newReceipt = {
+                    id: id || 'imp' + Date.now(),
+                    date: formattedDate,
+                    items: [...currentImportItems], // Lưu mảng sản phẩm
+                    status: 'Chưa vào kho',
+                }
+
+                if (id) {
+                    // EDIT MODE
+                    const idx = receipts.findIndex((r) => r.id === id)
+                    if (idx >= 0 && receipts[idx].status === 'Đã nhập kho') {
+                        alert('❌ Phiếu đã hoàn thành không thể sửa!')
+                        return
+                    }
+                    if (idx >= 0) {
+                        receipts[idx] = newReceipt
+                        alert('✅ Cập nhật phiếu nhập thành công!')
+                    }
+                } else {
+                    // CREATE MODE
+                    receipts.push(newReceipt)
+                    const totalAmount = currentImportItems.reduce(
+                        (sum, item) => sum + item.quantity * item.price,
+                        0
+                    )
+                    const totalQuantity = currentImportItems.reduce(
+                        (sum, item) => sum + item.quantity,
+                        0
+                    )
+                    alert(`✅ Tạo phiếu nhập thành công!\n\n`)
+                }
+
+                setImportReceipts(receipts)
+                resetImportForm()
+                renderImportList()
+            }
             function editImport(id) {
                 const receipts = getImportReceipts()
                 const receipt = receipts.find((r) => r.id === id)
@@ -1853,47 +2507,59 @@ document.head.appendChild(styleAnimation)
                     document.getElementById(
                         'importDate'
                     ).value = `${year}-${month}-${day}`
-                    document.getElementById('importProductId').value =
-                        receipt.productId
-                    document.getElementById('importQuantity').value =
-                        receipt.quantity
-                    document.getElementById('importPrice').value = receipt.price
+
+                    // Load danh sách sản phẩm vào form
+                    if (receipt.items && receipt.items.length > 0) {
+                        currentImportItems = [...receipt.items]
+                    } else {
+                        // Hỗ trợ format cũ (1 sản phẩm)
+                        currentImportItems = [
+                            {
+                                productId: receipt.productId,
+                                quantity: receipt.quantity,
+                                price: receipt.price,
+                            },
+                        ]
+                    }
+                    renderImportItems()
                 }
             }
 
             function loadProductsToSelect() {
-    const products = getProducts()
-    const select = document.getElementById('importProductSelect')
-    
-    if (!select) return
-    
-    // Xóa các option cũ (giữ lại option đầu tiên)
-    while(select.options.length > 1) {
-        select.remove(1)
-    }
-    
-    // Thêm các sản phẩm
-    products.forEach(product => {
-        const option = document.createElement('option')
-        option.value = product.id
-        option.textContent = `${product.id} - ${product.title} (Tồn: ${product.stock || 0})`
-        select.appendChild(option)
-    })
-}
+                const products = getProducts()
+                const select = document.getElementById('importProductSelect')
 
-// Hàm điền ID khi chọn từ dropdown
-function fillProductId(productId) {
-    const input = document.getElementById('importProductId')
-    if (input && productId) {
-        input.value = productId
-        
-        // Hiển thị thông tin sản phẩm
-        const products = getProducts()
-        const product = products.find(p => p.id === productId)
-        if (product) {
-            // Tạo notification nhỏ
-            const notification = document.createElement('div')
-            notification.style.cssText = `
+                if (!select) return
+
+                // Xóa các option cũ (giữ lại option đầu tiên)
+                while (select.options.length > 1) {
+                    select.remove(1)
+                }
+
+                // Thêm các sản phẩm
+                products.forEach((product) => {
+                    const option = document.createElement('option')
+                    option.value = product.id
+                    option.textContent = `${product.id} - ${
+                        product.title
+                    } (Tồn: ${product.stock || 0})`
+                    select.appendChild(option)
+                })
+            }
+
+            // Hàm điền ID khi chọn từ dropdown
+            function fillProductId(productId) {
+                const input = document.getElementById('importProductId')
+                if (input && productId) {
+                    input.value = productId
+
+                    // Hiển thị thông tin sản phẩm
+                    const products = getProducts()
+                    const product = products.find((p) => p.id === productId)
+                    if (product) {
+                        // Tạo notification nhỏ
+                        const notification = document.createElement('div')
+                        notification.style.cssText = `
                 position: fixed;
                 top: 80px;
                 right: 20px;
@@ -1905,74 +2571,105 @@ function fillProductId(productId) {
                 z-index: 10000;
                 font-size: 14px;
             `
-            notification.innerHTML = `
+                        notification.innerHTML = `
                 ✅ Đã chọn: <strong>${product.title}</strong><br>
                 <small>Tồn kho hiện tại: ${product.stock || 0} cái</small>
             `
-            document.body.appendChild(notification)
-            
-            // Tự động xóa sau 2 giây
-            setTimeout(() => notification.remove(), 2000)
-        }
-    }
-}
+                        document.body.appendChild(notification)
 
+                        // Tự động xóa sau 2 giây
+                        setTimeout(() => notification.remove(), 2000)
+                    }
+                }
+            }
 
-    function completeImport(id) {
-    if (
-        !confirm(
-            'Hoàn thành phiếu? (Sẽ cộng số lượng vào kho sản phẩm)'
-        )
-    )
-        return
-    const receipts = getImportReceipts()
-    const receipt = receipts.find((r) => r.id === id)
-    
-    if (receipt && receipt.status === 'Chưa vào kho') {
-        // ✅ KIỂM TRA SẢN PHẨM CÓ TỒN TẠI KHÔNG
-        const products = getProducts()
-        const product = products.find(
-            (p) => p.id === receipt.productId
-        )
+            function completeImport(id) {
+                if (
+                    !confirm(
+                        'Hoàn thành phiếu? (Sẽ cộng số lượng vào kho cho tất cả sản phẩm trong phiếu)'
+                    )
+                )
+                    return
+                const receipts = getImportReceipts()
+                const receipt = receipts.find((r) => r.id === id)
 
-        if (!product) {
-            alert(
-                `❌ Không tìm thấy sản phẩm với ID: "${receipt.productId}"!\n\n` +
-                `Vui lòng kiểm tra lại:\n` +
-                `- ID sản phẩm có đúng không?\n` +
-                `- Sản phẩm đã được tạo trong hệ thống chưa?`
-            )
-            return
-        }
+                if (receipt && receipt.status === 'Chưa vào kho') {
+                    // Lấy danh sách sản phẩm (hỗ trợ cả format cũ và mới)
+                    const items = receipt.items || [
+                        {
+                            productId: receipt.productId,
+                            quantity: receipt.quantity,
+                            price: receipt.price,
+                        },
+                    ]
 
-        // ✅ CỘNG SỐ LƯỢNG VÀO KHO
-        if (product.stock === undefined) product.stock = 0
-        const oldStock = product.stock
-        product.stock += receipt.quantity
-        saveProducts(products)
+                    const products = getProducts()
+                    const updateDetails = []
+                    let hasError = false
 
-        // ✅ CẬP NHẬT TRẠNG THÁI PHIẾU
-        receipt.status = 'Đã nhập kho'
-        setImportReceipts(receipts)
-        
-        // ✅ RENDER LẠI
-        renderImportList()
-        
-        // Render lại danh sách sản phẩm nếu đang ở tab products
-        const activeTab = document.querySelector('.tab:not([style*="display: none"])')
-        if (activeTab && activeTab.id === 'products') {
-            renderProductsList()
-        }
-        
-        alert(
-            `✅ Phiếu nhập đã hoàn thành!\n\n` +
-            `📦 Sản phẩm: ${product.title} (ID: ${receipt.productId})\n` +
-            `➕ Nhập: ${receipt.quantity} cái\n` +
-            `📊 Tồn kho: ${oldStock} → ${product.stock} cái\n` +
-            `💰 Tổng giá trị: ${(receipt.quantity * receipt.price).toLocaleString('vi-VN')} ₫`
-        )
-    }
-}
+                    // ✅ CỘNG SỐ LƯỢNG VÀO KHO CHO TẤT CẢ SẢN PHẨM
+                    items.forEach((item) => {
+                        const product = products.find(
+                            (p) => p.id === item.productId
+                        )
+                        if (!product) {
+                            alert(
+                                `❌ Không tìm thấy sản phẩm với ID: "${item.productId}"!\n\n` +
+                                    `Vui lòng kiểm tra lại!`
+                            )
+                            hasError = true
+                            return
+                        }
+
+                        if (product.stock === undefined) product.stock = 0
+                        const oldStock = product.stock
+                        product.stock += item.quantity
+                        updateDetails.push(
+                            `  • ${product.title} (${item.productId}): +${item.quantity} (${oldStock} → ${product.stock})`
+                        )
+                    })
+
+                    if (hasError) return
+
+                    saveProducts(products)
+
+                    // ✅ CẬP NHẬT TRẠNG THÁI PHIẾU
+                    receipt.status = 'Đã nhập kho'
+                    setImportReceipts(receipts)
+
+                    // ✅ RENDER LẠI
+                    renderImportList()
+
+                    // Render lại danh sách sản phẩm nếu đang ở tab products
+                    const activeTab = document.querySelector(
+                        '.tab:not([style*="display: none"])'
+                    )
+                    if (activeTab && activeTab.id === 'products') {
+                        renderProductsList()
+                    }
+
+                    const totalAmount = items.reduce(
+                        (sum, item) => sum + item.quantity * item.price,
+                        0
+                    )
+                    const totalQuantity = items.reduce(
+                        (sum, item) => sum + item.quantity,
+                        0
+                    )
+
+                    alert(
+                        `✅ Phiếu nhập đã hoàn thành!\n\n` +
+                            `📦 Số sản phẩm: ${items.length}\n` +
+                            `➕ Tổng số lượng nhập: ${totalQuantity} cái\n` +
+                            `💰 Tổng giá trị: ${totalAmount.toLocaleString(
+                                'vi-VN'
+                            )} ₫\n\n` +
+                            `📊 Chi tiết cập nhật kho:\n${updateDetails.join(
+                                '\n'
+                            )}`
+                    )
+                }
+            }
             function deleteImport(id) {
                 if (confirm('Xóa phiếu?')) {
                     let receipts = getImportReceipts()
@@ -1987,6 +2684,251 @@ function fillProductId(productId) {
                 document.getElementById('importId').value = ''
                 const today = new Date().toISOString().split('T')[0]
                 document.getElementById('importDate').value = today
+                currentImportItems = []
+                renderImportItems()
+            }
+
+            /* ===== INVENTORY TRACKING (Nhập - Xuất - Tồn) ===== */
+            function loadInventoryCategories() {
+                const products = getProducts()
+                const categories = [
+                    ...new Set(products.map((p) => p.category).filter(Boolean)),
+                ]
+                const select = document.getElementById(
+                    'inventoryCategoryFilter'
+                )
+
+                if (!select) return
+
+                // Xóa các option cũ (giữ lại option đầu tiên)
+                while (select.options.length > 1) {
+                    select.remove(1)
+                }
+
+                categories.forEach((cat) => {
+                    const option = document.createElement('option')
+                    option.value = cat
+                    option.textContent = cat
+                    select.appendChild(option)
+                })
+            }
+
+            function renderInventoryList() {
+                const products = getProducts()
+                const receipts = getImportReceipts()
+                const orders = getOrders()
+
+                const searchTerm = (
+                    document.getElementById('inventorySearch')?.value || ''
+                ).toLowerCase()
+                const categoryFilter =
+                    document.getElementById('inventoryCategoryFilter')?.value ||
+                    ''
+
+                // Lọc sản phẩm
+                let filteredProducts = products.filter((p) => {
+                    const matchSearch =
+                        p.title.toLowerCase().includes(searchTerm) ||
+                        (p.author || '').toLowerCase().includes(searchTerm) ||
+                        (p.id || '').toLowerCase().includes(searchTerm)
+                    const matchCategory =
+                        !categoryFilter || p.category === categoryFilter
+                    return matchSearch && matchCategory
+                })
+
+                const tbody = document.getElementById('inventoryBody')
+
+                if (filteredProducts.length === 0) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="8" style="text-align:center;padding:40px;color:#666">📭 Không tìm thấy sản phẩm</td></tr>'
+                    return
+                }
+
+                tbody.innerHTML = filteredProducts
+                    .map((product) => {
+                        const productId = product.id
+
+                        // Tính tổng nhập (từ phiếu nhập đã hoàn thành)
+                        let totalImport = 0
+                        receipts.forEach((receipt) => {
+                            if (receipt.status === 'Đã nhập kho') {
+                                const items = receipt.items || [
+                                    {
+                                        productId: receipt.productId,
+                                        quantity: receipt.quantity,
+                                    },
+                                ]
+                                items.forEach((item) => {
+                                    if (item.productId === productId) {
+                                        totalImport += item.quantity || 0
+                                    }
+                                })
+                            }
+                        })
+
+                        // Tính tổng xuất (từ đơn hàng đã xử lý)
+                        let totalExport = 0
+                        orders.forEach((order) => {
+                            if (
+                                order.status === 'Đang xử lý' ||
+                                order.status === 'Đã gửi' ||
+                                order.status === 'Đã giao'
+                            ) {
+                                if (order.items) {
+                                    order.items.forEach((item) => {
+                                        if (item.id === productId) {
+                                            totalExport += item.quantity || 0
+                                        }
+                                    })
+                                }
+                            }
+                        })
+
+                        // Tồn đầu kỳ: giả sử là 0 (vì mặc định stock = 0 khi thêm sản phẩm)
+                        const openingStock = 0
+
+                        // Tồn cuối kỳ: số lượng hiện tại
+                        const closingStock = product.stock || 0
+
+                        // Kiểm tra công thức: Tồn đầu + Nhập - Xuất = Tồn cuối
+                        const calculatedStock =
+                            openingStock + totalImport - totalExport
+
+                        // Màu sắc cảnh báo
+                        let stockColor = 'color:#10b981'
+                        if (closingStock === 0) {
+                            stockColor = 'color:#ef4444;font-weight:800'
+                        } else if (closingStock < 5) {
+                            stockColor = 'color:#dc2626;font-weight:800'
+                        } else if (closingStock < 10) {
+                            stockColor = 'color:#f59e0b;font-weight:700'
+                        }
+
+                        return `
+                            <tr>
+                                <td><strong>${product.id}</strong></td>
+                                <td>${product.title}</td>
+                                <td>${product.author || ''}</td>
+                                <td style="text-align: center; font-weight: 600;">${openingStock}</td>
+                                <td style="text-align: center; font-weight: 600; color: #10b981;">+${totalImport}</td>
+                                <td style="text-align: center; font-weight: 600; color: #ef4444;">-${totalExport}</td>
+                                <td style="text-align: center; font-weight: 700; ${stockColor};">${closingStock}</td>
+                                <td>
+                                    <button onclick="viewInventoryDetail('${
+                                        product.id
+                                    }')" style="background:#3b82f6;color:white;padding:6px 12px;border:none;border-radius:4px;cursor:pointer;">
+                                        👁️ Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        `
+                    })
+                    .join('')
+            }
+
+            function viewInventoryDetail(productId) {
+                const products = getProducts()
+                const product = products.find((p) => p.id === productId)
+                if (!product) {
+                    alert('❌ Không tìm thấy sản phẩm!')
+                    return
+                }
+
+                const receipts = getImportReceipts()
+                const orders = getOrders()
+
+                // Lấy danh sách phiếu nhập
+                const importList = []
+                receipts.forEach((receipt) => {
+                    if (receipt.status === 'Đã nhập kho') {
+                        const items = receipt.items || [
+                            {
+                                productId: receipt.productId,
+                                quantity: receipt.quantity,
+                                price: receipt.price,
+                            },
+                        ]
+                        items.forEach((item) => {
+                            if (item.productId === productId) {
+                                importList.push({
+                                    date: receipt.date,
+                                    quantity: item.quantity,
+                                    price: item.price,
+                                    receiptId: receipt.id,
+                                })
+                            }
+                        })
+                    }
+                })
+
+                // Lấy danh sách đơn hàng xuất
+                const exportList = []
+                orders.forEach((order) => {
+                    if (
+                        order.status === 'Đang xử lý' ||
+                        order.status === 'Đã gửi' ||
+                        order.status === 'Đã giao'
+                    ) {
+                        if (order.items) {
+                            order.items.forEach((item) => {
+                                if (item.id === productId) {
+                                    exportList.push({
+                                        date: order.date,
+                                        quantity: item.quantity,
+                                        orderId: order.id,
+                                        customer:
+                                            order.shippingAddress?.fullname ||
+                                            order.customer ||
+                                            'N/A',
+                                    })
+                                }
+                            })
+                        }
+                    }
+                })
+
+                const totalImport = importList.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                )
+                const totalExport = exportList.reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                )
+                const openingStock = 0
+                const closingStock = product.stock || 0
+
+                const importDetails = importList
+                    .map(
+                        (item) =>
+                            `  • ${item.date}: +${
+                                item.quantity
+                            } cái (Giá: ${item.price.toLocaleString(
+                                'vi-VN'
+                            )} ₫)`
+                    )
+                    .join('\n')
+                const exportDetails = exportList
+                    .map(
+                        (item) =>
+                            `  • ${item.date}: -${item.quantity} cái (Đơn: ${item.orderId}, KH: ${item.customer})`
+                    )
+                    .join('\n')
+
+                alert(`📊 CHI TIẾT NHẬP - XUẤT - TỒN
+
+
+📈 TỔNG KẾT:
+  Tồn đầu kỳ: ${openingStock} cái
+  Tổng nhập: +${totalImport} cái
+  Tổng xuất: -${totalExport} cái
+  Tồn cuối kỳ: ${closingStock} cái
+
+📥 LỊCH SỬ NHẬP (${importList.length} phiếu):
+${importDetails || '  Chưa có phiếu nhập nào'}
+
+📤 LỊCH SỬ XUẤT (${exportList.length} đơn hàng):
+${exportDetails || '  Chưa có đơn hàng nào'}`)
             }
 
             /* ===== LOGOUT ===== */
