@@ -3,70 +3,521 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý giá bán</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script defer src="js/pricing.js"></script>
+  <title>Quản lý giá bán theo sản phẩm</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      color: #667eea;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header nav {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .header nav a {
+      padding: 8px 16px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .header nav a:hover, .header nav a.active {
+      background: #667eea;
+      color: white;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 22px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .search-filter {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    input, select {
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 10px;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 15px 10px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tr:hover {
+      background: #f8f9ff;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+
+    .profit-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .profit-positive {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .profit-high {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .price-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price-input {
+      width: 120px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    .profit-input {
+      width: 80px;
+      padding: 6px 10px;
+      font-size: 14px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-card .icon {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .label {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .value {
+      color: #667eea;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+    }
+
+    .empty-state .icon {
+      font-size: 64px;
+      margin-bottom: 15px;
+      opacity: 0.3;
+    }
+
+    @media (max-width: 768px) {
+      .search-filter {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 13px;
+      }
+
+      th, td {
+        padding: 10px 5px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-  <header class="admin-header">
-    <h1>💲 Quản lý Giá Bán</h1>
-    <nav>
-      <a href="index.html">🏠 Trang chủ</a>
-      <a href="admin.html">📘 Sách</a>
-      <a class="active" href="pricing.html">💲 Giá bán</a>
-    </nav>
-  </header>
+  <div class="container">
+    <div class="header">
+      <h1>💲 Quản lý Giá Bán Theo Sản Phẩm</h1>
+      <nav>
+        <a href="index.html">🏠 Trang chủ</a>
+        <a href="admin.html">📘 Quản trị</a>
+        <a class="active" href="#">💲 Giá bán</a>
+      </nav>
+    </div>
 
-  <main class="admin-container">
+    <!-- Thống kê tổng quan -->
+    <div class="stats-grid" id="statsGrid"></div>
 
-    <!-- QUẢN LÝ % LỢI NHUẬN -->
-    <section class="admin-form">
-      <h2>Thiết lập % Lợi nhuận theo thể loại</h2>
-      <form id="profitForm">
-        <label>Thể loại:</label>
-        <input type="text" id="category" required>
+    <!-- Bảng quản lý giá -->
+    <div class="card">
+      <h2>📋 Danh sách sản phẩm và giá bán</h2>
+      
+      <div class="search-filter">
+        <input type="text" id="searchProduct" placeholder="🔍 Tìm kiếm theo tên sách hoặc ID...">
+        <select id="categoryFilter">
+          <option value="">-- Tất cả thể loại --</option>
+        </select>
+        <select id="profitFilter">
+          <option value="">-- Lọc theo lợi nhuận --</option>
+          <option value="low">0-20%</option>
+          <option value="medium">20-40%</option>
+          <option value="high">>40%</option>
+        </select>
+      </div>
 
-        <label>% lợi nhuận:</label>
-        <input type="number" id="percent" min="0" required>
-
-        <button type="submit" class="btn-save">💾 Lưu</button>
-        <button type="reset" class="btn-clear">🧹 Xóa</button>
-      </form>
-    </section>
-
-    <section class="admin-list">
-      <h2>Bảng % lợi nhuận</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Thể loại</th>
-            <th>% lợi nhuận</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody id="profitTable"></tbody>
-      </table>
-    </section>
-
-    <!-- BẢNG GIÁ BÁN -->
-    <section class="admin-list">
-      <h2>Giá vốn – % – Giá bán</h2>
       <table>
         <thead>
           <tr>
             <th>ID</th>
             <th>Tên sách</th>
             <th>Thể loại</th>
-            <th>Giá vốn</th>
-            <th>% lợi nhuận</th>
-            <th>Giá bán</th>
+            <th>Giá vốn (₫)</th>
+            <th>% Lợi nhuận</th>
+            <th>Giá bán (₫)</th>
+            <th>Lợi nhuận/SP (₫)</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody id="priceTable"></tbody>
       </table>
-    </section>
+    </div>
+  </div>
 
-  </main>
+  <script>
+    // Lấy dữ liệu từ localStorage
+    const getProducts = () => JSON.parse(localStorage.getItem('bs_products') || '[]');
+    const saveProducts = (arr) => localStorage.setItem('bs_products', JSON.stringify(arr));
+
+    let products = getProducts();
+    let editingProductId = null;
+
+    // Khởi tạo giá trị mặc định cho sản phẩm chưa có pricing
+    function initializeProductPricing() {
+      let hasChanges = false;
+      products.forEach(product => {
+        if (!product.costPrice) {
+          product.costPrice = product.price; // Giá vốn = giá gốc
+          hasChanges = true;
+        }
+        if (product.profitPercent === undefined) {
+          product.profitPercent = 30; // Mặc định 30% lợi nhuận
+          hasChanges = true;
+        }
+        if (!product.sellPrice) {
+          product.sellPrice = Math.round(product.costPrice * (1 + product.profitPercent / 100));
+          hasChanges = true;
+        }
+      });
+      
+      if (hasChanges) {
+        saveProducts(products);
+      }
+    }
+
+    // Render thống kê
+    function renderStats() {
+      const totalProducts = products.length;
+      const avgProfit = products.length > 0 
+        ? (products.reduce((sum, p) => sum + (p.profitPercent || 0), 0) / products.length).toFixed(1)
+        : 0;
+      
+      const totalRevenue = products.reduce((sum, p) => {
+        const profit = (p.sellPrice || 0) - (p.costPrice || 0);
+        return sum + profit;
+      }, 0);
+
+      const highProfitCount = products.filter(p => (p.profitPercent || 0) > 40).length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="icon">📚</div>
+          <div class="label">Tổng sản phẩm</div>
+          <div class="value">${totalProducts}</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">📊</div>
+          <div class="label">% Lợi nhuận TB</div>
+          <div class="value">${avgProfit}%</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">💰</div>
+          <div class="label">Lợi nhuận/SP TB</div>
+          <div class="value">${Math.round(totalRevenue / (totalProducts || 1)).toLocaleString()}₫</div>
+        </div>
+        <div class="stat-card">
+          <div class="icon">🔥</div>
+          <div class="label">SP lợi nhuận cao</div>
+          <div class="value">${highProfitCount}</div>
+        </div>
+      `;
+    }
+
+    // Render bảng giá
+    function renderPriceTable(filteredProducts = products) {
+      const tbody = document.getElementById('priceTable');
+      
+      if (filteredProducts.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <div class="icon">📭</div>
+                <p>Không tìm thấy sản phẩm nào</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filteredProducts.map(product => {
+        const costPrice = product.costPrice || product.price || 0;
+        const profitPercent = product.profitPercent || 0;
+        const sellPrice = product.sellPrice || costPrice;
+        const profitAmount = sellPrice - costPrice;
+        
+        const profitClass = profitPercent > 40 ? 'profit-high' : 'profit-positive';
+
+        return `
+          <tr>
+            <td><strong>${product.id}</strong></td>
+            <td>${product.title}</td>
+            <td>${product.category || 'N/A'}</td>
+            <td>
+              ${editingProductId === product.id 
+                ? `<input type="number" class="price-input" id="cost-${product.id}" value="${costPrice}" min="0">`
+                : `<strong>${costPrice.toLocaleString()}₫</strong>`
+              }
+            </td>
+            <td>
+              ${editingProductId === product.id
+                ? `<div class="price-group"><input type="number" class="profit-input" id="profit-${product.id}" value="${profitPercent}" min="0" max="1000"> %</div>`
+                : `<span class="profit-badge ${profitClass}">${profitPercent}%</span>`
+              }
+            </td>
+            <td>
+              <strong style="color: #667eea; font-size: 16px">${sellPrice.toLocaleString()}₫</strong>
+            </td>
+            <td>
+              <strong style="color: #10b981">+${profitAmount.toLocaleString()}₫</strong>
+            </td>
+            <td>
+              ${editingProductId === product.id
+                ? `<button class="btn btn-success" onclick="savePricing('${product.id}')">💾 Lưu</button> <button class="btn" onclick="cancelEdit()">❌</button>`
+                : `<button class="btn btn-primary" onclick="editPricing('${product.id}')">✏️ Sửa giá</button>`
+              }
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Load categories vào filter
+    function loadCategories() {
+      const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+      const select = document.getElementById('categoryFilter');
+      
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+      });
+    }
+
+    // Chỉnh sửa giá
+    function editPricing(productId) {
+      editingProductId = productId;
+      renderPriceTable(getFilteredProducts());
+    }
+
+    // Lưu giá mới
+    function savePricing(productId) {
+      const costInput = document.getElementById(`cost-${productId}`);
+      const profitInput = document.getElementById(`profit-${productId}`);
+      
+      if (!costInput || !profitInput) return;
+
+      const costPrice = parseFloat(costInput.value) || 0;
+      const profitPercent = parseFloat(profitInput.value) || 0;
+      const sellPrice = Math.round(costPrice * (1 + profitPercent / 100));
+
+      const product = products.find(p => p.id === productId);
+      if (product) {
+        product.costPrice = costPrice;
+        product.profitPercent = profitPercent;
+        product.sellPrice = sellPrice;
+        product.price = sellPrice; // Cập nhật giá hiển thị trên trang chính
+        
+        saveProducts(products);
+        editingProductId = null;
+        
+        renderStats();
+        renderPriceTable(getFilteredProducts());
+        
+        alert('✅ Đã cập nhật giá thành công!');
+      }
+    }
+
+    // Hủy chỉnh sửa
+    function cancelEdit() {
+      editingProductId = null;
+      renderPriceTable(getFilteredProducts());
+    }
+
+    // Lọc sản phẩm
+    function getFilteredProducts() {
+      const searchTerm = document.getElementById('searchProduct').value.toLowerCase();
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const profitFilter = document.getElementById('profitFilter').value;
+
+      return products.filter(product => {
+        const matchSearch = product.title.toLowerCase().includes(searchTerm) || 
+                           product.id.toLowerCase().includes(searchTerm);
+        const matchCategory = !categoryFilter || product.category === categoryFilter;
+        
+        let matchProfit = true;
+        if (profitFilter === 'low') {
+          matchProfit = (product.profitPercent || 0) < 20;
+        } else if (profitFilter === 'medium') {
+          matchProfit = (product.profitPercent || 0) >= 20 && (product.profitPercent || 0) <= 40;
+        } else if (profitFilter === 'high') {
+          matchProfit = (product.profitPercent || 0) > 40;
+        }
+
+        return matchSearch && matchCategory && matchProfit;
+      });
+    }
+
+    // Xử lý sự kiện filter
+    function setupFilters() {
+      document.getElementById('searchProduct').addEventListener('input', () => {
+        renderPriceTable(getFilteredProducts());
+      });
+
+      document.getElementById('categoryFilter').addEventListener('change', () => {
+        renderPriceTable(getFilteredProducts());
+      });
+
+      document.getElementById('profitFilter').addEventListener('change', () => {
+        renderPriceTable(getFilteredProducts());
+      });
+    }
+
+    // Khởi tạo
+    initializeProductPricing();
+    loadCategories();
+    renderStats();
+    renderPriceTable();
+    setupFilters();
+  </script>
 </body>
 </html>
