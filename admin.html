@@ -509,6 +509,73 @@
                     </div>
                 </div>
 
+                <!-- Cập nhật lợi nhuận hàng loạt -->
+                <div
+                    class="panel"
+                    style="
+                        margin-bottom: 18px;
+                        background: #f0f9ff;
+                        border-left: 4px solid #3b82f6;
+                    "
+                >
+                  
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Chọn thể loại:</label>
+                            <select
+                                id="bulkUpdateCategory"
+                                style="
+                                    padding: 10px;
+                                    border: 1px solid #eef3f6;
+                                    border-radius: 8px;
+                                    width: 100%;
+                                "
+                            >
+                                <option value="">-- Chọn thể loại --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tỷ lệ lợi nhuận (%):</label>
+                            <input
+                                type="number"
+                                id="bulkUpdateProfit"
+                                placeholder="VD: 15"
+                                min="0"
+                                max="1000"
+                                step="0.1"
+                                style="
+                                    padding: 10px;
+                                    border: 1px solid #eef3f6;
+                                    border-radius: 8px;
+                                    width: 100%;
+                                "
+                            />
+                        </div>
+                        <div
+                            class="form-group"
+                            style="display: flex; align-items: flex-end"
+                        >
+                            <button
+                                type="button"
+                                onclick="bulkUpdateProfitByCategory()"
+                                style="
+                                    background: #3b82f6;
+                                    color: white;
+                                    padding: 10px 24px;
+                                    border: none;
+                                    border-radius: 8px;
+                                    cursor: pointer;
+                                    font-weight: 600;
+                                    width: 100%;
+                                "
+                            >
+                                Cập nhật 
+                            </button>
+                        </div>
+                    </div>
+                  
+                </div>
+
                 <!-- Bảng quản lý giá -->
                 <div class="panel">
                     <div class="section-title">
@@ -518,7 +585,7 @@
                     <div
                         style="
                             display: grid;
-                            grid-template-columns: 2fr 1fr 1fr;
+                            grid-template-columns: 2fr 1fr 1fr 1fr;
                             gap: 10px;
                             margin-bottom: 15px;
                         "
@@ -545,20 +612,32 @@
                         >
                             <option value="">-- Tất cả thể loại --</option>
                         </select>
-                        <select
-                            id="profitFilterPricing"
+                        <input
+                            type="number"
+                            id="profitFilterMin"
+                            placeholder="Lợi nhuận từ (%)"
+                            min="0"
+                            step="0.1"
                             style="
                                 padding: 10px;
                                 border: 1px solid #eef3f6;
                                 border-radius: 8px;
                             "
-                            onchange="renderPricingTable()"
-                        >
-                            <option value="">-- Lọc theo lợi nhuận --</option>
-                            <option value="low">0-20%</option>
-                            <option value="medium">20-40%</option>
-                            <option value="high">>40%</option>
-                        </select>
+                            oninput="renderPricingTable()"
+                        />
+                        <input
+                            type="number"
+                            id="profitFilterMax"
+                            placeholder="Lợi nhuận đến (%)"
+                            min="0"
+                            step="0.1"
+                            style="
+                                padding: 10px;
+                                border: 1px solid #eef3f6;
+                                border-radius: 8px;
+                            "
+                            oninput="renderPricingTable()"
+                        />
                     </div>
 
                     <table class="table">
@@ -1892,19 +1971,108 @@ ${items}`)
                 const categories = [
                     ...new Set(products.map((p) => p.category).filter(Boolean)),
                 ]
-                const select = document.getElementById('categoryFilterPricing')
+                const selectFilter = document.getElementById(
+                    'categoryFilterPricing'
+                )
+                const selectBulk = document.getElementById('bulkUpdateCategory')
 
-                // Xóa các option cũ (giữ lại option đầu tiên)
-                while (select.options.length > 1) {
-                    select.remove(1)
+                // Load vào select filter
+                if (selectFilter) {
+                    while (selectFilter.options.length > 1) {
+                        selectFilter.remove(1)
+                    }
+                    categories.forEach((cat) => {
+                        const option = document.createElement('option')
+                        option.value = cat
+                        option.textContent = cat
+                        selectFilter.appendChild(option)
+                    })
                 }
 
-                categories.forEach((cat) => {
-                    const option = document.createElement('option')
-                    option.value = cat
-                    option.textContent = cat
-                    select.appendChild(option)
+                // Load vào select bulk update
+                if (selectBulk) {
+                    while (selectBulk.options.length > 1) {
+                        selectBulk.remove(1)
+                    }
+                    categories.forEach((cat) => {
+                        const option = document.createElement('option')
+                        option.value = cat
+                        option.textContent = cat
+                        selectBulk.appendChild(option)
+                    })
+                }
+            }
+
+            // Cập nhật tỷ lệ lợi nhuận hàng loạt theo thể loại
+            function bulkUpdateProfitByCategory() {
+                const category =
+                    document.getElementById('bulkUpdateCategory').value
+                const profitPercent = parseFloat(
+                    document.getElementById('bulkUpdateProfit').value
+                )
+
+                // Validation
+                if (!category) {
+                    alert('❌ Vui lòng chọn thể loại!')
+                    return
+                }
+
+                if (isNaN(profitPercent) || profitPercent < 0) {
+                    alert('❌ Vui lòng nhập tỷ lệ lợi nhuận hợp lệ (>= 0)!')
+                    return
+                }
+
+                const products = getProducts()
+                const productsInCategory = products.filter(
+                    (p) => p.category === category
+                )
+
+                if (productsInCategory.length === 0) {
+                    alert(
+                        `❌ Không tìm thấy sản phẩm nào thuộc thể loại "${category}"!`
+                    )
+                    return
+                }
+
+                if (
+                    !confirm(
+                        `⚠️ Bạn có chắc muốn cập nhật tỷ lệ lợi nhuận ${profitPercent}% cho TẤT CẢ ${productsInCategory.length} sản phẩm thuộc thể loại "${category}"?\n\nGiá bán sẽ được tính lại tự động.`
+                    )
+                ) {
+                    return
+                }
+
+                let updatedCount = 0
+                products.forEach((product) => {
+                    if (product.category === category) {
+                        // Cập nhật tỷ lệ lợi nhuận
+                        product.profitPercent = profitPercent
+
+                        // Tính lại giá bán
+                        const costPrice =
+                            product.costPrice || product.price || 0
+                        product.sellPrice = Math.round(
+                            costPrice * (1 + profitPercent / 100)
+                        )
+                        product.price = product.sellPrice // Cập nhật giá hiển thị
+
+                        updatedCount++
+                    }
                 })
+
+                saveProducts(products)
+
+                // Render lại
+                renderPricingStats()
+                renderPricingTable()
+
+                alert(
+                    `✅ Đã cập nhật tỷ lệ lợi nhuận ${profitPercent}% cho ${updatedCount} sản phẩm thuộc thể loại "${category}"!\n\nGiá bán đã được tính lại tự động.`
+                )
+
+                // Clear form
+                document.getElementById('bulkUpdateCategory').value = ''
+                document.getElementById('bulkUpdateProfit').value = ''
             }
 
             // Lọc sản phẩm cho pricing
@@ -1916,8 +2084,12 @@ ${items}`)
                 const categoryFilter =
                     document.getElementById('categoryFilterPricing')?.value ||
                     ''
-                const profitFilter =
-                    document.getElementById('profitFilterPricing')?.value || ''
+                const profitMin = parseFloat(
+                    document.getElementById('profitFilterMin')?.value || ''
+                )
+                const profitMax = parseFloat(
+                    document.getElementById('profitFilterMax')?.value || ''
+                )
 
                 return products.filter((product) => {
                     const matchSearch =
@@ -1926,15 +2098,15 @@ ${items}`)
                     const matchCategory =
                         !categoryFilter || product.category === categoryFilter
 
+                    // Lọc theo khoảng lợi nhuận tùy ý
                     let matchProfit = true
-                    if (profitFilter === 'low') {
-                        matchProfit = (product.profitPercent || 0) < 20
-                    } else if (profitFilter === 'medium') {
-                        matchProfit =
-                            (product.profitPercent || 0) >= 20 &&
-                            (product.profitPercent || 0) <= 40
-                    } else if (profitFilter === 'high') {
-                        matchProfit = (product.profitPercent || 0) > 40
+                    const profitPercent = product.profitPercent || 0
+
+                    if (!isNaN(profitMin) && profitPercent < profitMin) {
+                        matchProfit = false
+                    }
+                    if (!isNaN(profitMax) && profitPercent > profitMax) {
+                        matchProfit = false
                     }
 
                     return matchSearch && matchCategory && matchProfit
@@ -2109,8 +2281,8 @@ ${items}`)
                         document.getElementById('searchPricing').value = ''
                         document.getElementById('categoryFilterPricing').value =
                             ''
-                        document.getElementById('profitFilterPricing').value =
-                            ''
+                        document.getElementById('profitFilterMin').value = ''
+                        document.getElementById('profitFilterMax').value = ''
 
                         // Render lại bảng
                         renderPricingTable()
