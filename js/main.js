@@ -8,7 +8,6 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const money = v => new Intl.NumberFormat('vi-VN').format(v) + '₫';
 const getCart = () => {
   const auth = getAuth();
-  // Cho phép lấy giỏ hàng từ localStorage dù chưa đăng nhập
   let cartKey = 'bs_cart';
   if (auth) {
     cartKey = `bs_cart_${auth.email}`;
@@ -17,7 +16,6 @@ const getCart = () => {
 };
 const saveCart = (cart) => {
   const auth = getAuth();
-  // Cho phép lưu giỏ hàng dù chưa đăng nhập
   let cartKey = 'bs_cart';
   if (auth) {
     cartKey = `bs_cart_${auth.email}`;
@@ -41,7 +39,6 @@ const clearAuth = () => {
 function cleanupLegacyStorage() {
   const auth = getAuth();
   
-  // Migrate old cart to new user-specific cart
   if (auth) {
     const oldCart = JSON.parse(localStorage.getItem('bs_cart') || '[]');
     if (oldCart.length > 0) {
@@ -129,7 +126,6 @@ async function initHome(){
   const featured = BOOKS.slice(0,6);
   const container = $('#featured-list');
   featured.forEach(b => container.appendChild(createProductCard(b)));
-  // bind add-to-cart
   container.addEventListener('click', e=>{
     if(e.target.classList.contains('add-btn')){
       const id = e.target.dataset.id; addToCart(id,1);
@@ -155,7 +151,6 @@ function renderProducts(list){
   const grid = $('#product-grid');
   grid.innerHTML = '';
   
-  // Calc Pagination
   const startIdx = (currentPage - 1) * itemsPerPage;
   const endIdx = startIdx + itemsPerPage;
   const paginatedList = list.slice(startIdx, endIdx);
@@ -181,10 +176,6 @@ function renderPagination(totalItems){
     <span class="page-info">Trang ${currentPage} / ${totalPages}</span>
     <button id="next-page" ${currentPage === totalPages ? 'disabled' : ''}> > </button>
   `;
-  
-  // Pagination event
-  const prevBtn = $('#prev-page');
-  const nextBtn = $('#next-page');
 
   $('#prev-page')?.addEventListener('click', ()=>{
     if(currentPage > 1){
@@ -206,12 +197,20 @@ function renderPagination(totalItems){
 function applyFilters(){
   let list = BOOKS.slice();
   const q = $('#search-input') ? $('#search-input').value.trim().toLowerCase() : '';
+  const advSearch = $('#advanced-search') ? $('#advanced-search').value.trim().toLowerCase() : '';
   const cat = $('#filter-category') ? $('#filter-category').value : '';
   const min = parseInt($('#price-min')?.value || '') || 0;
   const max = parseInt($('#price-max')?.value || '') || Infinity;
   const sort = $('#sort-select') ? $('#sort-select').value : 'default';
 
+  // Tìm kiếm từ header (tìm kiếm tổng hợp)
   if(q) list = list.filter(b => (b.title + ' ' + b.author + ' ' + b.desc).toLowerCase().includes(q));
+  
+  // Tìm kiếm nâng cao theo tên sách
+  if(advSearch) {
+    list = list.filter(b => b.title.toLowerCase().includes(advSearch));
+  }
+  
   if(cat) list = list.filter(b => b.category === cat);
   list = list.filter(b => b.price >= min && b.price <= max);
 
@@ -267,7 +266,6 @@ function addToCart(id, qty=1){
 
   window.dispatchEvent(new Event('cartUpdated'));
   alert('Đã thêm vào giỏ hàng.');
-  // if on cart page, refresh
   if(document.body.id === 'page-cart') renderCart();
 }
 function renderCart(){
@@ -300,7 +298,6 @@ function renderCart(){
     container.appendChild(row);
   });
 
-  // summary
   const total = rows.reduce((s,r)=>s + r.price * r.qty, 0);
   $('#cart-summary').innerHTML = `
     <div class="cart-summary">
@@ -311,7 +308,6 @@ function renderCart(){
     </div>
   `;
 
-  // events: qty change
   $$('.cart-qty').forEach(el=>{
     el.addEventListener('change', e=>{
       const id = el.dataset.id;
@@ -321,14 +317,12 @@ function renderCart(){
       if(it){ it.qty = val; saveCart(cart); renderCart(); updateCartCount(); window.dispatchEvent(new Event('cartUpdated')); }
     });
   });
-  // remove
   $$('[data-remove]').forEach(b=>{
     b.addEventListener('click', e=>{
       const id = b.getAttribute('data-remove');
       let cart = getCart(); cart = cart.filter(i=>i.id!==id); saveCart(cart); renderCart(); updateCartCount(); window.dispatchEvent(new Event('cartUpdated'));
     });
   });
-  // checkout
   $('#checkout').addEventListener('click', ()=>{
     const auth = getAuth();
     if (!auth) {
@@ -381,9 +375,7 @@ function initAuthPage(){
   const regPass = $('#reg-password');
   const authMsg = $('#auth-msg') || $('#login-alert') || $('#register-alert');
 
-
-  // login email and password validation onblur
-    loginEmail.addEventListener('blur', () => {
+  loginEmail.addEventListener('blur', () => {
     const val = loginEmail.value.trim();
     if (val === '') {
       showError(loginEmail, 'Email không được trống');
@@ -391,7 +383,7 @@ function initAuthPage(){
       clearError(loginEmail);
     }
   });
-    loginPass.addEventListener('blur', () => {
+  loginPass.addEventListener('blur', () => {
     const val = loginPass.value;
     if (val === '') {
       showError(loginPass, 'Mật khẩu không được để trống');
@@ -400,8 +392,7 @@ function initAuthPage(){
     }
   });
 
-    // register email and password validation onblur
-    regEmail.addEventListener('blur', () => {
+  regEmail.addEventListener('blur', () => {
     const val = regEmail.value.trim();
     if (val === '') {
       showError(regEmail, 'Email không được để trống');
@@ -411,7 +402,7 @@ function initAuthPage(){
       clearError(regEmail);
     }
   });
-    regPass.addEventListener('blur', () => {
+  regPass.addEventListener('blur', () => {
     const val = regPass.value;
     if (val === '') {
       showError(regPass, 'Mật khẩu không được để trống');
@@ -422,18 +413,18 @@ function initAuthPage(){
     }
   });
 
-    loginEmail.addEventListener('input', () => {
-      if (loginEmail.value.trim() !== '') clearError(loginEmail);
-    });
-    loginPass.addEventListener('input', () => {
-      if (loginPass.value !== '') clearError(loginPass);
-    });
-    regEmail.addEventListener('input', () => {
-      if (regEmail.value.trim() !== '') clearError(regEmail);
-    });
-    regPass.addEventListener('input', () => {
-      if (regPass.value !== '') clearError(regPass);
-    });
+  loginEmail.addEventListener('input', () => {
+    if (loginEmail.value.trim() !== '') clearError(loginEmail);
+  });
+  loginPass.addEventListener('input', () => {
+    if (loginPass.value !== '') clearError(loginPass);
+  });
+  regEmail.addEventListener('input', () => {
+    if (regEmail.value.trim() !== '') clearError(regEmail);
+  });
+  regPass.addEventListener('input', () => {
+    if (regPass.value !== '') clearError(regPass);
+  });
 
   $('#btn-register').addEventListener('click', ()=>{
     const email = $('#reg-username').value.trim();
@@ -477,7 +468,7 @@ function initAuthPage(){
     $('#reg-username').value=''; $('#reg-password').value='';
     clearError(regEmail); clearError(regPass);
   });
-$('#btn-login').addEventListener('click', ()=>{
+  $('#btn-login').addEventListener('click', ()=>{
     const email = $('#login-username').value.trim();
     const pass = $('#login-password').value;
 
@@ -506,9 +497,7 @@ $('#btn-login').addEventListener('click', ()=>{
       return;
     }
     
-   
     if(u.locked === true){
-      console.log('❌ TÀI KHOẢN BỊ KHÓA - RETURN NGAY');
       if(authMsg) {
         authMsg.textContent = '🔒 Tài khoản của bạn đã bị khóa. Vui lòng liên hệ Admin.';
         authMsg.style.color = '#e81123';
@@ -516,7 +505,6 @@ $('#btn-login').addEventListener('click', ()=>{
       return;
     }
     
-    console.log('✅ Đăng nhập thành công - chuyển hướng');
     setAuth({username: u.username, email: u.username});
     cleanupLegacyStorage();
     location.href = 'home.html';
@@ -535,13 +523,14 @@ async function init(){
     document.getElementById('year2').textContent = new Date().getFullYear();
     populateCategories($('#filter-category'));
     renderProducts(BOOKS);
-    // events
     $('#filter-category').addEventListener('change', applyFilters);
     $('#sort-select').addEventListener('change', applyFilters);
     $('#price-min').addEventListener('input', applyFilters);
     $('#price-max').addEventListener('input', applyFilters);
     $('#search-input').addEventListener('input', applyFilters);
-    // delegate add-to-cart
+    // Thêm event listener cho tìm kiếm nâng cao
+    $('#advanced-search')?.addEventListener('input', applyFilters);
+    
     document.getElementById('product-grid').addEventListener('click', e=>{
       if(e.target.classList.contains('add-btn')){
         addToCart(e.target.dataset.id,1);
@@ -561,13 +550,11 @@ async function init(){
   }
   if(page === 'page-login') initAuthPage();
 
-  // common year ids fallback
   ['year','year2','year3','year4','year5'].forEach(id=>{
     const el = document.getElementById(id); if(el) el.textContent = new Date().getFullYear();
   });
 }
 
-// safe init
 document.addEventListener('DOMContentLoaded', init);
 
 /* ---------- Address Management ---------- */
@@ -585,7 +572,6 @@ const saveAddresses = (addr) => {
 };
 
 /* ---------- Checkout ---------- */
-/* ---------- Checkout với địa chỉ đã lưu ---------- */
 document.addEventListener('DOMContentLoaded', function() {
   const yearEl6 = document.getElementById('year6');
   if(yearEl6) yearEl6.textContent = new Date().getFullYear();
@@ -599,16 +585,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if(!checkoutForm) return;
 
-  // Load và hiển thị địa chỉ đã lưu vào dropdown
   function loadSavedAddresses() {
     const addresses = getSavedAddresses();
     
-    // Xóa các option cũ (giữ lại 2 option đầu)
     while(addressSelect.options.length > 2) {
       addressSelect.remove(2);
     }
     
-    // Thêm địa chỉ đã lưu vào dropdown
     addresses.forEach((addr, index) => {
       const option = document.createElement('option');
       option.value = index;
@@ -617,22 +600,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Xử lý khi chọn địa chỉ
   addressSelect.addEventListener('change', function() {
     const selectedValue = this.value;
     
     if(selectedValue === '') {
-      // Chưa chọn gì - ẩn form
       newAddressContainer.classList.add('hidden');
       newAddressContainer.setAttribute('aria-hidden', 'true');
       clearAddressForm();
     } else if(selectedValue === 'new') {
-      // Chọn "Nhập địa chỉ mới" - hiện form trống
       newAddressContainer.classList.remove('hidden');
       newAddressContainer.setAttribute('aria-hidden', 'false');
       clearAddressForm();
     } else {
-      // Chọn địa chỉ đã lưu - điền thông tin vào form
       const addresses = getSavedAddresses();
       const selectedAddress = addresses[parseInt(selectedValue)];
       
@@ -644,17 +623,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('city').value = selectedAddress.city;
         document.getElementById('note').value = selectedAddress.note || '';
         
-        // Hiện form với thông tin đã điền
         newAddressContainer.classList.remove('hidden');
         newAddressContainer.setAttribute('aria-hidden', 'false');
         
-        // Bỏ check "Lưu địa chỉ" vì đã là địa chỉ cũ
         document.getElementById('saveAddress').checked = false;
       }
     }
   });
 
-  // Hàm xóa form địa chỉ
   function clearAddressForm() {
     document.getElementById('fullname').value = '';
     document.getElementById('phone').value = '';
@@ -665,22 +641,19 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('saveAddress').checked = true;
   }
 
-  // Load địa chỉ đã lưu khi trang load
   loadSavedAddresses();
 
-  // Mặc định ẩn form địa chỉ
   if(newAddressContainer) {
     newAddressContainer.classList.add('hidden');
     newAddressContainer.setAttribute('aria-hidden', 'true');
   }
 
-  // Xử lý submit form
+  // Xử lý submit form với xác nhận
   checkoutForm.addEventListener('submit', function(e) {
     e.preventDefault();
     
     const selectedAddressValue = addressSelect.value;
     
-    // Kiểm tra đã chọn địa chỉ chưa
     if(selectedAddressValue === '') {
       alert('Vui lòng chọn địa chỉ giao hàng!');
       return;
@@ -705,14 +678,20 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
+    // THÊM XÁC NHẬN THANH TOÁN
+    const confirmPurchase = confirm('Bạn có chắc chắn muốn thanh toán đơn hàng này không?');
+    if (!confirmPurchase) {
+      // Nếu user chọn "Hủy", không làm gì cả, giữ nguyên form
+      return;
+    }
+    
+    // Nếu user chọn "OK", tiếp tục xử lý thanh toán
     const shippingAddress = { fullname, phone, street, district, city, note };
     
-    // Lưu địa chỉ nếu là địa chỉ mới và user check vào ô "Lưu địa chỉ"
     const saveAddressCheckbox = document.getElementById('saveAddress');
     if(selectedAddressValue === 'new' && saveAddressCheckbox && saveAddressCheckbox.checked) {
       const addresses = getSavedAddresses();
       
-      // Kiểm tra xem địa chỉ đã tồn tại chưa (tránh trùng lặp)
       const isDuplicate = addresses.some(addr => 
         addr.fullname === fullname && 
         addr.phone === phone && 
@@ -738,11 +717,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let cartKey = `bs_cart_${auth.email}`;
     let cartData = JSON.parse(localStorage.getItem(cartKey) || '[]');
     
-    // Nếu giỏ hàng rỗng ở user-specific key, kiểm tra giỏ hàng chung
     if (cartData.length === 0) {
       cartData = JSON.parse(localStorage.getItem('bs_cart') || '[]');
       if (cartData.length > 0) {
-        // Migrate từ giỏ chung sang giỏ user-specific
         localStorage.setItem(cartKey, JSON.stringify(cartData));
         localStorage.removeItem('bs_cart');
       }
