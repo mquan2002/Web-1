@@ -12,9 +12,13 @@
   };
   const getCart = () => {
     const auth = getAuth();
-    if (!auth) return [];
-    const cartKey = `bs_cart_${auth.email}`;
-    return JSON.parse(localStorage.getItem(cartKey) || '[]');
+    // Nếu đã đăng nhập, lấy giỏ hàng riêng của user
+    if (auth) {
+      const cartKey = `bs_cart_${auth.email}`;
+      return JSON.parse(localStorage.getItem(cartKey) || '[]');
+    }
+    // Nếu chưa đăng nhập, lấy giỏ hàng chung
+    return JSON.parse(localStorage.getItem('bs_cart') || '[]');
   };
   const money = v => new Intl.NumberFormat('vi-VN').format(v) + '₫';
 
@@ -149,7 +153,12 @@
     updateCartPreview();
   
     window.addEventListener('storage', (e) => {
+      // Cập nhật khi giỏ hàng chung thay đổi
       if (e.key === 'bs_cart') {
+        updateCartPreview();
+      }
+      // Cập nhật khi giỏ hàng user-specific thay đổi
+      if (e.key && e.key.startsWith('bs_cart_')) {
         updateCartPreview();
       }
     });

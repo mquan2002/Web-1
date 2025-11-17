@@ -8,14 +8,20 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const money = v => new Intl.NumberFormat('vi-VN').format(v) + '₫';
 const getCart = () => {
   const auth = getAuth();
-  if (!auth) return [];
-  const cartKey = `bs_cart_${auth.email}`;
+  // Cho phép lấy giỏ hàng từ localStorage dù chưa đăng nhập
+  let cartKey = 'bs_cart';
+  if (auth) {
+    cartKey = `bs_cart_${auth.email}`;
+  }
   return JSON.parse(localStorage.getItem(cartKey) || '[]');
 };
 const saveCart = (cart) => {
   const auth = getAuth();
-  if (!auth) return;
-  const cartKey = `bs_cart_${auth.email}`;
+  // Cho phép lưu giỏ hàng dù chưa đăng nhập
+  let cartKey = 'bs_cart';
+  if (auth) {
+    cartKey = `bs_cart_${auth.email}`;
+  }
   localStorage.setItem(cartKey, JSON.stringify(cart));
 };
 const getUsers = () => JSON.parse(localStorage.getItem('bs_users') || '[]');
@@ -34,32 +40,34 @@ const clearAuth = () => {
 // Cleanup legacy storage keys
 function cleanupLegacyStorage() {
   const auth = getAuth();
-  if (!auth) return;
   
-  const oldCart = JSON.parse(localStorage.getItem('bs_cart') || '[]');
-  if (oldCart.length > 0) {
-    const newCartKey = `bs_cart_${auth.email}`;
-    const existingCart = JSON.parse(localStorage.getItem(newCartKey) || '[]');
-    oldCart.forEach(item => {
-      const existing = existingCart.find(i => i.id === item.id);
-      if (existing) {
-        existing.qty += item.qty;
-      } else {
-        existingCart.push(item);
-      }
-    });
-    localStorage.setItem(newCartKey, JSON.stringify(existingCart));
-    localStorage.removeItem('bs_cart');
-  }
-  
-  const oldAddresses = JSON.parse(localStorage.getItem('bs_addresses') || '[]');
-  if (oldAddresses.length > 0) {
-    const newAddressKey = `bs_addresses_${auth.email}`;
-    const existingAddresses = JSON.parse(localStorage.getItem(newAddressKey) || '[]');
-    if (existingAddresses.length === 0) {
-      localStorage.setItem(newAddressKey, JSON.stringify(oldAddresses));
+  // Migrate old cart to new user-specific cart
+  if (auth) {
+    const oldCart = JSON.parse(localStorage.getItem('bs_cart') || '[]');
+    if (oldCart.length > 0) {
+      const newCartKey = `bs_cart_${auth.email}`;
+      const existingCart = JSON.parse(localStorage.getItem(newCartKey) || '[]');
+      oldCart.forEach(item => {
+        const existing = existingCart.find(i => i.id === item.id);
+        if (existing) {
+          existing.qty += item.qty;
+        } else {
+          existingCart.push(item);
+        }
+      });
+      localStorage.setItem(newCartKey, JSON.stringify(existingCart));
+      localStorage.removeItem('bs_cart');
     }
-    localStorage.removeItem('bs_addresses');
+    
+    const oldAddresses = JSON.parse(localStorage.getItem('bs_addresses') || '[]');
+    if (oldAddresses.length > 0) {
+      const newAddressKey = `bs_addresses_${auth.email}`;
+      const existingAddresses = JSON.parse(localStorage.getItem(newAddressKey) || '[]');
+      if (existingAddresses.length === 0) {
+        localStorage.setItem(newAddressKey, JSON.stringify(oldAddresses));
+      }
+      localStorage.removeItem('bs_addresses');
+    }
   }
 }
 
@@ -325,6 +333,7 @@ function renderCart(){
     const auth = getAuth();
     if (!auth) {
       if (confirm('Bạn cần đăng nhập để thanh toán.\nChuyển đến trang đăng nhập?')) {
+        sessionStorage.setItem('redirect_after_login', 'checkout.html');
         location.href = 'login.html';
       }
       return;
@@ -720,13 +729,25 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const auth = getAuth();
     if (!auth) {
-      alert('Vui lòng đăng nhập!');
+      alert('Vui lòng đăng nhập để thanh toán!');
+      sessionStorage.setItem('redirect_after_login', 'checkout.html');
       window.location.href = 'login.html';
       return;
     }
     
-    const cartKey = `bs_cart_${auth.email}`;
-    const cartData = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    let cartKey = `bs_cart_${auth.email}`;
+    let cartData = JSON.parse(localStorage.getItem(cartKey) || '[]');
+    
+    // Nếu giỏ hàng rỗng ở user-specific key, kiểm tra giỏ hàng chung
+    if (cartData.length === 0) {
+      cartData = JSON.parse(localStorage.getItem('bs_cart') || '[]');
+      if (cartData.length > 0) {
+        // Migrate từ giỏ chung sang giỏ user-specific
+        localStorage.setItem(cartKey, JSON.stringify(cartData));
+        localStorage.removeItem('bs_cart');
+      }
+    }
+    
     if (cartData.length === 0) {
       alert('Giỏ hàng trống!');
       return;
